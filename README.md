@@ -7,16 +7,19 @@ An application aimed at providing resourceful tools to compliment Guild Wars 2 g
 Features:
 
 - Adjustable Window Positioning
+- Collapsable windows
+- Always on top convenience
 
 - Compact Size:
-    - With collapsable windows
-    - Always on top convenience 
 ![GW2_hub_001](https://user-images.githubusercontent.com/54217603/118724731-f5e50280-b7fc-11eb-974e-635152b031a0.png)
 ![GW2_hub_006](https://user-images.githubusercontent.com/54217603/118725675-40b34a00-b7fe-11eb-816c-25b483b5bd16.png)
 
 
 - On Demand Material Tracker (with API functionality):
-    - With tabs to keep all your collections organized
+    - Search and add materials
+    - Set current amount manually or connect an API key
+    - Set the goal amount to reach
+    - Tabs to keep all your collections organized
 ![GW2_hub_002](https://user-images.githubusercontent.com/54217603/118724878-317fcc80-b7fd-11eb-9b49-1b10cfaf5917.png)
 
 - Integrated Wiki Browser:
