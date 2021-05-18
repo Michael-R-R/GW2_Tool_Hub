@@ -22,3 +22,5 @@ Features:
     - Play youtube videos to help with achievements or guides
 
 
+
+- PLUS MORE FEATURES PLANNED
