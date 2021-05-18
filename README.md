@@ -12,7 +12,7 @@ Features:
     - With collapsable windows
     - Always on top convenience 
 ![GW2_hub_001](https://user-images.githubusercontent.com/54217603/118724731-f5e50280-b7fc-11eb-974e-635152b031a0.png)
-![GW2_hub_006](https://user-images.githubusercontent.com/54217603/118724741-f7aec600-b7fc-11eb-85b3-5f5b60eb04ff.png)
+![GW2_hub_006](https://user-images.githubusercontent.com/54217603/118725675-40b34a00-b7fe-11eb-816c-25b483b5bd16.png)
 
 
 - On Demand Material Tracker (with API functionality):
