@@ -7,7 +7,7 @@ An application aimed at providing resourceful tools to compliment Guild Wars 2 g
 Features:
 
 - Adjustable Window Positioning
-- Collapsable windows
+- Collapsable menus
 - Always on top convenience
 
 - Compact Size:
