@@ -17,7 +17,7 @@ Features:
 
 - On Demand Material Tracker (with API functionality):
     - Search and add materials
-    - Set current amount manually or connect an API key
+    - Set current amount by connecting an API key
     - Set the goal amount to reach
     - Tabs to keep all your collections organized
 ![GW2_hub_002](https://user-images.githubusercontent.com/54217603/118724878-317fcc80-b7fd-11eb-9b49-1b10cfaf5917.png)
