@@ -17,7 +17,7 @@ Features:
     - Search and add materials
     - Set current amount by connecting an API key
     - Set the goal amount to reach
-    - Tabs to keep all your collections organized and seperate
+    - Tabs to keep all your collections organized and separate
 ![GW2Hub_03](https://user-images.githubusercontent.com/54217603/119273429-eee13a00-bbd8-11eb-8028-bd65e2aab484.png)
 
 - Convenient Browser:
