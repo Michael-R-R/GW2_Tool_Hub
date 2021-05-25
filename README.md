@@ -2,6 +2,8 @@
 
 *Beta version COMING SOON*
 
+Download Here: www.google.com
+
 An application aimed at providing resourceful tools to compliment Guild Wars 2 gaming experience 
 
 Features:
