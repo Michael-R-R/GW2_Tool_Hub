@@ -58,7 +58,7 @@ FAQ:
       comes from available API queries. 
 
 - How do I know this won't give me a virus?
-    - I wouldn't jepordize my reputation nor my ethics with embedding viruses in my application.
+    - I wouldn't jeopardize my reputation nor my ethics with embedding viruses in my application.
       Otherwise you can use services to scan the files for viruses,
       such as: <a href="https://www.virustotal.com/gui/"> www.virustotal.com </a>
       I only host the installer download for my application here on my github page. 
