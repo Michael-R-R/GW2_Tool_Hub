@@ -2,7 +2,7 @@
 
 *Beta version COMING SOON*
 
-Download Here: <a href=""> .zip file </a>
+Download Here: <a href=""> .zip Installer </a>
 
 An application aimed at providing resourceful tools to compliment Guild Wars 2 gaming experience 
 
