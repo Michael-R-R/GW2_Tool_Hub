@@ -1,4 +1,4 @@
-# GW2_Hub
+# GW2 Hub Tool
 
 *Beta version COMING SOON*
 
