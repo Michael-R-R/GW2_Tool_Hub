@@ -78,6 +78,9 @@ FAQ:
       improvements that I would like to add. So, yes I do still 
       plan to support and improve this application as long as time allots.
       
+- Which platforms are supported?
+    - Windows OS
+      
 - Will this application be perfect and bug free?
     - No, probably not. But, I believe it to be in a stable enough
       condition to finally release to to the public.
