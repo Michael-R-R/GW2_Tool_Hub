@@ -4,7 +4,7 @@
 
 Download Here: <a href="https://www.dropbox.com/s/2cbs88b3kfnpm61/GW2ToolHub_Installer.zip?dl=1"> .zip Installer </a>
 
-An application aimed at providing resourceful tools to compliment Guild Wars 2 gaming experience 
+An application aimed at providing resourceful tools to compliment the Guild Wars 2 gaming experience 
 
 Features:
 
@@ -37,13 +37,63 @@ Features:
     - Color coded text for extra organization
 ![GW2Hub_04](https://user-images.githubusercontent.com/54217603/119273416-e557d200-bbd8-11eb-8559-4031fb4d0738.png)
 
-- WITH MORE FEATURES PLANNED
+- and more planned
 
 
 
+FAQ:
 
+Do I need to sign up for anything to use this application?
+    - Zero signing up required.
+    
+Is this application free to use?
+    - Yes, it is completely free.
 
+Do I need to be in Window/Windowed Fullscreen to use this?
+    - Yes. The application will not work in Fullscreen.
+    
+Is this safe to use?
+    - Yes. This application does not change or alter anything about the game or its files.
+      Any information that is used for data purposes (I.E the Material Tracker Tool)
+      comes from available API queries. 
 
+How do I know this won't give me a virus?
+    - I wouldn't jepordize my reputation nor my ethics with embedding viruses in my application.
+      Otherwise you can use services to scan the files for viruses,
+      such as: <a href="https://www.virustotal.com/gui/"> www.virustotal.com </a>
+      I only host the installer download for my application here on my github page. 
+      Please DO NOT download from anywhere else.
+      
+Where can I report bugs/issues and/or request features?
+    - Here on github: <a href="https://github.com/Michael-R-R/GW2_Hub/issues"> Github Issues </a>
 
+Why did you create this application?
+    - It started as a simple 'Material Goal Tracker' console application example
+      that I had used to help teach my significant other C++. I then later on
+      decided to take that idea and flesh it out into a GUI application and it 
+      quickly became a fun project to continue working on. 
 
-
+Do you plan on continuing support and updates for this application?
+    - I still have a few ideas and a lot of quality of life 
+      improvements that I would like to add. So, yes I do still 
+      plan to support and improve this application as long as time allots.
+      
+Will this application be perfect and bug free?
+    - No, probably not. But, I believe it to be in a stable enough
+      condition to finally release to to the public.
+      
+      
+Known Issues:
+    - Tab names have some limitations that they can be in order for them to work properly.
+      Remember the following (This will be fixed in the next update): 
+        - Each tab name needs to be different from the last,
+          I.E. 'SunriseOne' and 'Sunrise One' will conflict and only be seen as 'SunriseOne'.
+          Meaning that one of the tabs will be completely ignored.
+        - Do not use any special characters or numbers in naming your tabs
+          I.E. 'Sunrise123', 'Sunrise.One', 'Sunrise_100'
+        - Stick to simple naming conventions:
+          I.E. 'Sunrise', 'My Mithril Ore', 'Ascended Weapon Mats'
+   
+   
+   Happy Gaming :)
+      
