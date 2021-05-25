@@ -2,7 +2,7 @@
 
 *Beta version COMING SOON*
 
-Download Here: <a href=""> .zip Installer </a>
+Download Here: <a href="https://www.dropbox.com/s/2cbs88b3kfnpm61/GW2ToolHub_Installer.zip?dl=1"> .zip Installer </a>
 
 An application aimed at providing resourceful tools to compliment Guild Wars 2 gaming experience 
 
