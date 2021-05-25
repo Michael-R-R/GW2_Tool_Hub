@@ -2,7 +2,7 @@
 
 *Beta version COMING SOON*
 
-Download Here: ***
+Download Here: <a href="https://www.google.com/"> Something </a>
 
 An application aimed at providing resourceful tools to compliment Guild Wars 2 gaming experience 
 
