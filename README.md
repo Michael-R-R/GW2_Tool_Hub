@@ -1,6 +1,6 @@
 # GW2 Tool Hub
 
-*Beta version COMING SOON*
+*NOW AVAILABLE*
 
 Download Here: <a href="https://www.dropbox.com/s/2cbs88b3kfnpm61/GW2ToolHub_Installer.zip?dl=1"> .zip Installer </a>
 
