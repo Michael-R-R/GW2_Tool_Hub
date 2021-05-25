@@ -86,12 +86,15 @@ FAQ:
 - Known Issues:
     - Tab names have some limitations that they can be in order for them to work properly.
       Remember the following (This will be fixed in the next update): 
+      
             - Each tab name needs to be different from the last,
             I.E. 'SunriseOne' and 'Sunrise One' will conflict and only be seen as 'SunriseOne'.
             Meaning that one of the tabs will be completely ignored.
-             - Do not use any special characters or numbers in naming your tabs
+            
+            - Do not use any special characters or numbers in naming your tabs
             I.E. 'Sunrise123', 'Sunrise.One', 'Sunrise_100'
-             - Stick to simple naming conventions:
+            
+            - Stick to simple naming conventions:
             I.E. 'Sunrise', 'My Mithril Ore', 'Ascended Weapon Mats'
    
    
