@@ -18,7 +18,7 @@ These guidelines are in place to help me communicate to you what I expect from c
 ### What to keep in mind when contributing.
 
 - Open source may not be something new to you, but it is for me and I am learning as I go. Please keep this in mind and be patient and respectful.
-- As the solo maintainer for this project, please undestand I can deny any feature or change to the application. This is espeically true for any proposed changes that do not provide any documention or evidence of proper testing and compatibility. When proposing a new feature it is much more likely to be granted if you have enough documention and supporting evidence of said feature/change. 
+- As the sole maintainer for this project, please undestand I can deny any feature or change to the application. This is espeically true for any proposed changes that do not provide any documention or evidence of proper testing and compatibility. When proposing a new feature it is much more likely to be granted if you have enough documention and supporting evidence of said feature/change. 
 - Be patient while waiting for contribution approval. This is a free open source project and it may take some time to respond to your contribution.
 - Make me aware of what changes you are proposing to make in the GitHub Issue tracker. Provide as much information as possible.
 
