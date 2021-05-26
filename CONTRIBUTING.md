@@ -81,7 +81,7 @@ Keep in mind when suggesting a feature the philosphy for this project, which is:
 
 # Code review process
 
-For the forseeable future I will be the sole reviewer of all Pull Requests and be the deciding factor in their approval. Please be patient while your Pull Request waits for approval. The more documention provide the faster the process.
+For the forseeable future I will be the sole reviewer of all Pull Requests and be the deciding factor in their approval. Please be patient while your Pull Request waits for approval. The more documention provided the faster the process.
 
 # Code Style
 
