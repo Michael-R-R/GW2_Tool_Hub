@@ -87,6 +87,10 @@ For the forseeable future I will be the sole reviewer of all Pull Requests and b
 
 ### The few code styles I expect
 
+- Brackets: Should be in the style of the following screenshot. Take note of one line statements.
+
+![brackets](https://user-images.githubusercontent.com/54217603/119735072-d0ce4080-be49-11eb-947f-92736682903e.png)
+
 - Functions: All words should be capitalized and brackets should follow, such as: 
 
 ![brackets](https://user-images.githubusercontent.com/54217603/119714120-7bd20080-be30-11eb-8551-f57fd5ee82db.png)
