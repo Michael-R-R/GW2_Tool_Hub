@@ -24,7 +24,6 @@ These guidelines are in place to help me communicate to you what I expect from c
 
 # Ground Rules
 ### Expectations for behavior (mine, and yours).
-This includes not just how to communicate with others (being respectful, considerate, etc) but also technical responsibilities (importance of testing, project dependencies, etc). Mention and link to your code of conduct, if you have one.
 
 # Responsibilities
 - Be welcoming to newcomers and encourage new contributors from all backgrounds.
