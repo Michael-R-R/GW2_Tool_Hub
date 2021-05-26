@@ -8,7 +8,7 @@ These guidelines are in place to help me communicate to you what I expect from c
 
 ### What kind of contributions am I looking for?
 
-- Documention for the application, such as simple tutorials.
+- Documention for the application, such as simple tutorials or code documention.
 - Help answering community questions.
 - Submitting bug reports or feature requests.
 - Bug squashing, such as fixing reported bugs in the GitHub issue tracker.
