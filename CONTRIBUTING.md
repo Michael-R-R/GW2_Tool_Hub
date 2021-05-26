@@ -95,4 +95,4 @@ For the forseeable future I will be the sole reviewer of all Pull Requests and b
 
 ![variables](https://user-images.githubusercontent.com/54217603/119714225-9d32ec80-be30-11eb-887d-ac378ddc3e98.png)
 
-- Comment your code to be human readable and concise.
+- Comment your code in English and make sure it is human readable and concise.
