@@ -89,10 +89,7 @@ For the forseeable future I will be the sole reviewer of all Pull Requests and b
 
 - Functions: All words should be capitalized and brackets should follow, such as: 
 
-void YouAreAwesome()
-{
-  // Code
-}
+![brackets](https://user-images.githubusercontent.com/54217603/119714120-7bd20080-be30-11eb-8551-f57fd5ee82db.png)
 
 - Variables: First word lowercase with the following being uppercase. If variable starts with an acronym make it all lowercase, if it is the last word make it all uppercase.
 > bool isCool;
