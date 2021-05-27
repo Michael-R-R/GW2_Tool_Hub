@@ -46,7 +46,7 @@ An application aimed at providing resourceful tools to compliment the Guild Wars
 ### How to Compile, Build, and Run
 
 - Download the 5.15.2 open source Qt build: [Qt Website](https://www.qt.io/download-qt-installer?hsCtaTracking=99d9dd4f-5681-48d2-b096-470725510d34%7C074ddad0-fdef-4e53-8aa8-5e8a876d6ab4)
-- During installation make sure to add the following Components: MSVC 2019 64-bit, Qt WebEngine, OpenSSL 1.1.1j Toolkit. If you forget to add the components during installation, you can add them by going to the installation folder and runnign the 'MaintenanceTool.exe' and follow the wizard. Refer to the following screenshots:
+- During installation make sure to add the following Components: MSVC 2019 64-bit, Qt WebEngine, OpenSSL 1.1.1j Toolkit. If you forget to add the components during installation, you can add them by going to the installation folder and running the 'MaintenanceTool.exe' and follow the wizard. Refer to the following screenshots:
 
 ![qt comp](https://user-images.githubusercontent.com/54217603/119823730-2430a500-bec3-11eb-9879-a1d0b88a8a4e.png)
 
@@ -64,6 +64,12 @@ An application aimed at providing resourceful tools to compliment the Guild Wars
 
 ### Important notes
 
+- MSVC2019 compiler is needed in order to compile the webenginewidgets, which is what the QWebEngineView uses. The reason is because Chromium is what is used to power the web widgets and the MSVC2019 compiler has support for Chromium.
+- After building the project in debug/release you will get a folder with a name such as: 'build-GW2_Hub-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug' or 'build-GW2_Hub-Desktop_Qt_5_15_2_MSVC2019_64bit-Release'. Inside these folders you will see their respective debug/release folders. In order for the Material Tracker tool to work properly you need to add the 'user.db', 'libcrypto-1_1-x64.dll', and 'libssl-1_1-x64.dll' to their respective folders (This only needs to be done once, unless you delete the folders). The 'user.db' is for storing and retrieving all the material data and the two .dll are needed to be able to query the API network See the following screenshots:
+
+![db](https://user-images.githubusercontent.com/54217603/119827553-44626300-bec7-11eb-92dc-27190a72b0a8.png)
+
+![db1](https://user-images.githubusercontent.com/54217603/119827558-46c4bd00-bec7-11eb-9053-d57195d1d56a.png)
 
 # FAQ
 
