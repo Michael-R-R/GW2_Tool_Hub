@@ -41,7 +41,7 @@ An application aimed at providing resourceful tools to compliment the Guild Wars
 
 - and more planned
 
-# contributors 
+# Contributors 
 
 ### How to Compile, Build, and Run
 
