@@ -100,3 +100,15 @@ For the forseeable future I will be the sole reviewer of all Pull Requests and b
 ![variables](https://user-images.githubusercontent.com/54217603/119714225-9d32ec80-be30-11eb-887d-ac378ddc3e98.png)
 
 - Comment your code in English and make sure it is human readable and concise.
+
+### Qt Form Styles
+
+- Widgets should be 60% transparent when possible
+- Widgets should follow a dark style mode when possible
+- Labels and text editors should be Calibri and 12 font size
+- Otherwise the main font should be MS Shell Dlg
+- Creative freedom is encouraged and welcomed, but it should flow with the overall design of the application
+- Refer to the screenshot for a demo stylesheet:
+
+![style](https://user-images.githubusercontent.com/54217603/119832523-41b63c80-becc-11eb-934b-475af98f9b4f.png)
+
