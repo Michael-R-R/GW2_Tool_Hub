@@ -8,7 +8,7 @@ Download Here: <a href="https://www.dropbox.com/s/2cbs88b3kfnpm61/GW2ToolHub_Ins
 
 An application aimed at providing resourceful tools to compliment the Guild Wars 2 gaming experience 
 
-Features:
+### Features
 
 - Adjustable Window Positioning
 - Collapsable menus
@@ -41,9 +41,28 @@ Features:
 
 - and more planned
 
+# Contributers
+
+### How to Compile, Build, and Run
+
+- Download the 5.15.2 open source Qt build: [Qt Website](https://www.qt.io/download-qt-installer?hsCtaTracking=99d9dd4f-5681-48d2-b096-470725510d34%7C074ddad0-fdef-4e53-8aa8-5e8a876d6ab4)
+- During installation make sure to add the following Components: MSVC 2019 64-bit, Qt WebEngine, OpenSSL 1.1.1j Toolkit. If you forget to add the components during installation, you can add them by going to the installation folder and runnign the 'MaintenanceTool.exe' and follow the wizard. Refer to the following screenshots:
+![qt comp](https://user-images.githubusercontent.com/54217603/119823730-2430a500-bec3-11eb-9879-a1d0b88a8a4e.png)
+![qt comp1](https://user-images.githubusercontent.com/54217603/119823914-53471680-bec3-11eb-9540-798e914cdd59.png)
+
+- Retrieve the source code
+- Open Qt Creator and open the source code (You should be able to either open the GW2_Hub.pro file or open the Creator and open the file from file>Open File> select the GW2_Hub.pro file
+- Before you can compile you need to ensure you have the MSVC 2019 compiler set for the project which is one of the components which you added during installation or by using the 'MaintenanceTool.exe'.
+- On the left hand side open the 'Projects' Tab
+- Disable all other compiles for this project and enable the MSVC2019 64-bit compiler. Refer to the following screenshot:
+![qt build](https://user-images.githubusercontent.com/54217603/119825105-9d7cc780-bec4-11eb-9e53-86533c5bad70.png)
+
+- The code should now be abile to compile, build, and run
+
+### Important notes
 
 
-FAQ:
+# FAQ
 
 - Do I need to sign up for anything to use this application?
     - Zero signing up required.
