@@ -99,6 +99,8 @@ For the forseeable future I will be the sole reviewer of all Pull Requests and b
 
 ![variables](https://user-images.githubusercontent.com/54217603/119714225-9d32ec80-be30-11eb-887d-ac378ddc3e98.png)
 
+- Data Structures: Unless there is any reason not to, when using data structures your go to structure should be a QVector.
+
 - Comment your code in English and make sure it is human readable and concise.
 
 ### Qt Form Styles
