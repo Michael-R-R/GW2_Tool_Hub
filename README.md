@@ -2,7 +2,7 @@
 
 *NOW AVAILABLE*
 
-*Open source*
+*OPEN SOURCE*
 
 Download Here: <a href="https://www.dropbox.com/s/2cbs88b3kfnpm61/GW2ToolHub_Installer.zip?dl=1"> .zip Installer </a>
 
@@ -41,7 +41,7 @@ An application aimed at providing resourceful tools to compliment the Guild Wars
 
 - and more planned
 
-# Contributers
+# Contributors 
 
 ### How to Compile, Build, and Run
 
