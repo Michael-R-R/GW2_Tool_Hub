@@ -52,6 +52,8 @@ void Notes::OpenNotes()
 
     ui->textEdit->clear();
     ui->textEdit->setHtml(fileContent);
+
+    delete openFile;
 }
 
 // If user single clicks on an item in the listView
@@ -181,12 +183,12 @@ void Notes::ListViewCustomMenu(const QPoint &pos)
 // Allow user to create a new folder (directory)
 void Notes::CreateFolder()
 {
-    bool ok = false;
+    bool isOk = false;
     QString name = QInputDialog::getText(this, tr("Folder Name"),
                                                tr("Folder Name"), QLineEdit::Normal,
-                                               tr(""), &ok);
+                                               tr(""), &isOk);
 
-    if(ok && !name.isEmpty())
+    if(isOk && !name.isEmpty())
     {
         QDir newDir;
         newDir.mkdir(listModel->rootPath() + "/" + name);
@@ -197,6 +199,7 @@ void Notes::CreateFolder()
 // Deletes selected folder
 void Notes::DeleteFolder()
 {
+    // Yes or no popup message box
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Delete Folder", "Delete " + folderName + " Folder?",
                           QMessageBox::Yes | QMessageBox::No);
@@ -207,7 +210,7 @@ void Notes::DeleteFolder()
     }
     else
     {
-        qDebug() << "dont delete folder";
+        qDebug() << "don't delete folder";
         return;
     }
 }
