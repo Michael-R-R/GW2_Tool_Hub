@@ -70,7 +70,7 @@ If you find a security vulnerability, do NOT open an issue. Email me at gw2.tool
 
 # How to suggest a feature or enhancement
 
-Keep in mind when suggesting a feature the philosphy for this project, which is: Useful, applicable, and simple tools. This projects entire purpose is to give players an enhanced gaming experience by providing them a tool belt of various tools.
+Keep in mind when suggesting a feature the philosophy for this project, which is: Useful, applicable, and simple tools. This projects entire purpose is to give players an enhanced gaming experience by providing them a tool belt of various tools.
 
 - Use a clear and descriptive title for the issue to identify the suggestion.
 - Provide a step-by-step description of the suggested enhancement in as many details as possible.
