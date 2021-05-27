@@ -53,7 +53,7 @@ An application aimed at providing resourceful tools to compliment the Guild Wars
 ![qt comp1](https://user-images.githubusercontent.com/54217603/119823914-53471680-bec3-11eb-9540-798e914cdd59.png)
 
 - Retrieve the source code
-- Open Qt Creator and open the source code (You should be able to either open the GW2_Hub.pro file or open the Creator and open the file from file>Open File> select the GW2_Hub.pro file
+- Open Qt Creator and open the source code (You should be able to either open the GW2_Hub.pro file or open the Qt Creator and open the file from file>Open File> select the GW2_Hub.pro file
 - Before you can compile you need to ensure you have the MSVC 2019 compiler set for the project which is one of the components which you added during installation or by using the 'MaintenanceTool.exe'.
 - On the left hand side open the 'Projects' Tab
 - Disable all other compiles for this project and enable the MSVC2019 64-bit compiler. Refer to the following screenshot:
