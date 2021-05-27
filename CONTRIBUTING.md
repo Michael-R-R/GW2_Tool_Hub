@@ -1,6 +1,6 @@
 # Contributing
 
-Hello there and thank you for taking interest in the GW2 Tool Hub application. By taking an interest in contributing to this project you are potentially helping the thousands of people that play Guild Wars 2 enchance their gameplay experience. Together we can create a rich and detailed Guild Wars 2 tool.
+Hello there and thank you for taking interest in the GW2 Tool Hub application. By taking an interest in contributing to this project you are potentially helping the thousands of people that play Guild Wars 2 enhance their gameplay experience. Together we can create a rich and detailed Guild Wars 2 tool.
 
 ### The importance of these guidelines
 
