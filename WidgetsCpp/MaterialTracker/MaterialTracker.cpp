@@ -219,12 +219,19 @@ void MaterialTracker::LoadFromFile()
 void MaterialTracker::AddTab()
 {
     // Pop up dialog for user to enter new Tab name
-    bool ok;
+    bool isOk;
     QString name = QInputDialog::getText(this, tr("Enter tab name"),
                                          tr("Tab Name"), QLineEdit::Normal,
-                                         tr("New Tab"), &ok);
+                                         tr("New Tab"), &isOk);
 
-    if(ok && !name.isEmpty())
+    // Check if the tab name is valid
+    bool isValidName = CheckIfValidTabName(name);
+    if(!isValidName)
+    {
+        QMessageBox::warning(this, "Invalid Name", "Invalid Name");
+        return;
+    }
+    else if(isOk && !name.isEmpty())
     {
         // Create the data table for the new tab
         CreateTabDataTable(name);
@@ -253,24 +260,30 @@ void MaterialTracker::RemoveTab(int index)
 void MaterialTracker::RenameTab(int index)
 {
     // Pop up dialog for user to enter new Tab name
-    bool ok;
-    QString newTabName = QInputDialog::getText(this, tr("Enter tab name"),
+    bool isOk;
+    QString name = QInputDialog::getText(this, tr("Enter tab name"),
                                             tr("Tab Name"), QLineEdit::Normal,
-                                            tr(""), &ok);
-
-    if(ok && !newTabName.isEmpty())
+                                            tr(""), &isOk);
+    // Check if the new tab name is valid
+    bool isValidName = CheckIfValidTabName(name);
+    if(!isValidName)
+    {
+        QMessageBox::warning(this, "Invalid Name", "Invalid Name");
+        return;
+    }
+    else if(isOk && !name.isEmpty())
     {
         // Update the database with the new tab name
         QString currentTabName = materialTabs[index]->GetTabName();
         DataInterface* dataInterface = new DataInterface;
-        dataInterface->UpdateTabDataTableName(currentTabName, newTabName);
+        dataInterface->UpdateTabDataTableName(currentTabName, name);
         delete dataInterface;
 
         // Update the ui with the new tab name and
         // update the materials in that tab for the new
         // tab name
-        ui->materialsTabWidget->tabBar()->setTabText(index, newTabName);
-        materialTabs[index]->UpdateTabName(newTabName);
+        ui->materialsTabWidget->tabBar()->setTabText(index, name);
+        materialTabs[index]->UpdateTabName(name);
     }
 }
 
@@ -333,18 +346,18 @@ QVector<QString> MaterialTracker::GetAllTabNames()
     return tabNames;
 }
 
-void MaterialTracker::CreateTabDataTable(QString tabName)
+void MaterialTracker::CreateTabDataTable(QString name)
 {
     DataInterface* dataInterface = new DataInterface;
-    dataInterface->CreateDataTableForNewTab(tabName);
+    dataInterface->CreateDataTableForNewTab(name);
     delete dataInterface;
-    setTabName(tabName);
+    setTabName(name);
 }
 
-void MaterialTracker::DeleteTabDataTable(QString tabName)
+void MaterialTracker::DeleteTabDataTable(QString name)
 {
     DataInterface* dataInterface = new DataInterface;
-    dataInterface->DeleteTabDataTable(tabName);
+    dataInterface->DeleteTabDataTable(name);
     delete dataInterface;
 }
 
@@ -359,6 +372,49 @@ void MaterialTracker::DeleteAllTabDataTables()
         dataInterface->DeleteTabDataTable(tabName);
     }
     delete dataInterface;
+}
+
+// Checks if the tab name that the user entered is valid
+// use. There are certain checks that must be made in order
+// for the user entered tab name to be reflected in the
+// SQLite database.
+bool MaterialTracker::CheckIfValidTabName(QString name)
+{
+    if(name.contains("-") || name.contains("."))
+    {
+        return false;
+    }
+
+    // Check if name starts with a number
+    QString numbers = "0123456789";
+    for(int i = 0; i < numbers.size(); i++)
+    {
+        if(name[0] == numbers[i])
+        {
+            return false;
+        }
+    }
+
+    // Check for existing tab names
+    for(int i = 0; i < materialTabs.size(); i++)
+    {
+        // Strip the new tab name and the current tab name
+        // down to what SQLite sees to make sure that
+        // there are no conflicting names
+        QString tempNewName = name.simplified();
+        tempNewName.replace(" ", "");
+
+        QString tempCurrentName = materialTabs[i]->GetTabName().simplified();
+        tempCurrentName.replace(" ", "");
+
+        if(tempNewName.toLower() == tempCurrentName.toLower())
+        {
+            return false;
+        }
+    }
+
+    // Name is valid
+    return true;
 }
 
 /*************************************************************************

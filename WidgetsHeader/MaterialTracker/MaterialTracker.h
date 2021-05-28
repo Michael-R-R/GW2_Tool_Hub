@@ -44,15 +44,19 @@ private:
     Ui::MaterialTracker* ui;
     QDir iconDir;
 
+    // --- Data Structures ---
     QVector<MaterialStatusBar*> materialTabs;
 
     // --- Variables ---
     QString tabName;
 
     // --- Functions ---
-    void CreateTabDataTable(QString tabName);
-    void DeleteTabDataTable(QString tabName);
+    void CreateTabDataTable(QString name);
+    void DeleteTabDataTable(QString name);
     void DeleteAllTabDataTables();
+
+    bool CheckIfValidTabName(QString name);
+
     void CreateTabsFromFile(int tabAmt,
                             QVector<QString> tabNames,
                             QVector<int> amtOfMatsInTab,
