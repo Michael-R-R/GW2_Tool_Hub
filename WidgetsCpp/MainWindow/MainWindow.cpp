@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Material Tracker:
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::SaveMaterialTracker);
     connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::LoadMaterialTracker);
+    connect(ui->actionImport_Excel_Sheet, &QAction::triggered, this, &MainWindow::ImportExcelSheet);
     // Browser:
     connect(ui->actionDelete_Cookies, &QAction::triggered, this, &MainWindow::DeleteCookies);
     connect(ui->actionClear_All_Visited_Links, &QAction::triggered, this, &MainWindow::DeleteVisitedLinks);
@@ -115,6 +116,11 @@ void MainWindow::SaveMaterialTracker()
 void MainWindow::LoadMaterialTracker()
 {
     materialTrackerWidget->LoadFromFile();
+}
+
+void MainWindow::ImportExcelSheet()
+{
+    materialTrackerWidget->ImportExcelSheet();
 }
 
 // Shows the Notes widget when the ui->notesPushButton is pressed
@@ -259,11 +265,13 @@ void MainWindow::SetMaterialTrackerMenuItemsStatus(bool state)
     {
         ui->actionSave->setEnabled(true);
         ui->actionOpen->setEnabled(true);
+        ui->actionImport_Excel_Sheet->setEnabled(true);
     }
     else
     {
         ui->actionSave->setDisabled(true);
         ui->actionOpen->setDisabled(true);
+        ui->actionImport_Excel_Sheet->setDisabled(true);
     }
 }
 

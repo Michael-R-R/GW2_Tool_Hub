@@ -21,7 +21,6 @@ MaterialTracker::MaterialTracker(QWidget *parent) :
     // Save n Load
     connect(ui->savePushButton, &QPushButton::clicked, this, &MaterialTracker::SaveToFile);
     connect(ui->loadPushButton, &QPushButton::clicked, this, &MaterialTracker::LoadFromFile);
-
 }
 
 MaterialTracker::~MaterialTracker()
@@ -346,6 +345,37 @@ QVector<QString> MaterialTracker::GetAllTabNames()
     return tabNames;
 }
 
+void MaterialTracker::ImportExcelSheet()
+{
+    if(materialTabs.size() <= 0)
+    {
+        QMessageBox::information(this, "Error", "No Active Tabs");
+        return;
+    }
+
+    // Allow user to select the excel file
+    SaveAndLoad* loadExcel = new SaveAndLoad;
+    QString excelPath = loadExcel->LoadExcelSheet(this);
+    delete loadExcel;
+
+    // Retrieve the material counts and material names
+    // from the excel sheet
+    DataInterface* dataInterface = new DataInterface;
+    QVector<int> matCounts = dataInterface->FetchExcelCounts(excelPath);
+    QVector<QString> matNames = dataInterface->FetchExcelNames(excelPath);
+    delete dataInterface;
+
+    int tabIndex = ui->materialsTabWidget->currentIndex();
+    for(int i = 0; i < matCounts.size(); i++)
+    {
+        materialTabs[tabIndex]->AddMaterialFromExcelFile(matCounts[i], matNames[i]);
+    }
+}
+
+/*************************************************************************
+ *                            PRIVATE FUNCTIONS                          *
+ *************************************************************************/
+
 void MaterialTracker::CreateTabDataTable(QString name)
 {
     DataInterface* dataInterface = new DataInterface;
@@ -417,9 +447,6 @@ bool MaterialTracker::CheckIfValidTabName(QString name)
     return true;
 }
 
-/*************************************************************************
- *                            PRIVATE FUNCTIONS                          *
- *************************************************************************/
 
 void MaterialTracker::CreateTabsFromFile(int tabAmt,
                                          QVector<QString> tabNames,
@@ -446,7 +473,7 @@ void MaterialTracker::CreateTabsFromFile(int tabAmt,
         material->SetTabName(tabNames[i]);
         if(amtOfMatsInTab[i] > 0)
         {
-            material->AddMaterialFromFile(amtOfMatsInTab[i], namesInTab[i],
+            material->AddMaterialFromSaveFile(amtOfMatsInTab[i], namesInTab[i],
                                           currentAmtsInTab[i], goalAmtsInTab[i]);
         }
         materialTabs.append(material);

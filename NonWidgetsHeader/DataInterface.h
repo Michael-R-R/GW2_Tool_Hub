@@ -23,6 +23,11 @@ public:
     void CreateDataTableForNewTab(QString tabName);
     void DeleteTabDataTable(QString tabName);
 
+    // Excel
+    QSqlDatabase CreateExcelDatabase(QString sheetPath);
+    QVector<int> FetchExcelCounts(QString sheetPath);
+    QVector<QString> FetchExcelNames(QString sheetPath);
+
     // Database: User
     void UpdateApiKey(QString key);
     QString FetchApiKey();

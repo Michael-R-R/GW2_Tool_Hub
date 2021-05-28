@@ -72,13 +72,32 @@ void Materials::SetMaterialValuesByName(const QString materialName)
 
 // Takes all the information read in from file and sets all the values
 // for each material
-void Materials::SetMaterialValuesFromFile(const QString materialName, const int currentAmt, const int goalAmt)
+void Materials::SetMaterialValuesFromSaveFile(const QString materialName, const int currentAmt, const int goalAmt)
 {
     QString category = dataInterface->FetchMaterialCategory(materialName);
     ui->materialCatagoryComboBox->setCurrentText(category);
     ui->materialTypesComboBox->setCurrentText(materialName);
     ui->currentAmountSpinBox->setValue(currentAmt);
     ui->goalAmountSpinBox->setValue(goalAmt);
+}
+
+// Takes all the information read in from the excel file
+// and sets all the values for each material
+// Returns true if adding valid material, false if excel item
+// is not a valid material
+bool Materials::SetMaterialValuesFromExcelFile(int goalAmount, QString matName)
+{
+    // Checks if item is an actual material, if the category returns back
+    // as an empty string then it is not an actual material
+    // Return and do not add anything
+    QString category = dataInterface->FetchMaterialCategory(matName);
+    if(category == "") { return false; }
+
+    ui->materialCatagoryComboBox->setCurrentText(category);
+    ui->materialTypesComboBox->setCurrentText(matName);
+    SetSpinBoxCurrentAmount(matName);
+    ui->goalAmountSpinBox->setValue(goalAmount);
+    return true;
 }
 
 // Updates ui values for the materials
@@ -195,9 +214,12 @@ void Materials::SetSpinBoxGoalAmount(QString materialName)
 // Emits: TrackingStatusChanged
 void Materials::SetPercentComplete(QString materialName)
 {
+    // Retrieve the percent complete for the material
+    // Cap the percent to 100%
     double percentComplete = dataInterface->FetchPercentComplete(materialName, tabName);
+    if(percentComplete >= 100.0) { percentComplete = 100.0; }
 
-    ui->percentCompleteLabel->setText(QString("%1%").arg(QString::number(percentComplete, 'g', 2)));
+    ui->percentCompleteLabel->setText(QString("%1%").arg(QString::number(percentComplete, 'g', 3)));
 
     // Set the color for the percentage label
     // green = 100%, 50%-99.9% = orange, 0%-49.9% = red

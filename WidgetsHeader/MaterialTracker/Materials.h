@@ -29,7 +29,9 @@ public:
     int GetMaterialGoalAmt() const;
 
     void SetMaterialValuesByName(const QString materialName);
-    void SetMaterialValuesFromFile(const QString materialName, const int currentAmt, const int goalAmt);
+    void SetMaterialValuesFromSaveFile(const QString materialName, const int currentAmt, const int goalAmt);
+    bool SetMaterialValuesFromExcelFile(int goalAmount, QString matName);
+
     void UpdateUiMaterialValues();
 
 private slots:

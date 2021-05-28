@@ -322,6 +322,7 @@ QPushButton:pressed
     </property>
     <addaction name="actionSave"/>
     <addaction name="actionOpen"/>
+    <addaction name="actionImport_Excel_Sheet"/>
    </widget>
    <widget class="QMenu" name="menuNotes">
     <property name="title">
@@ -408,6 +409,14 @@ QPushButton:pressed
    </property>
    <property name="text">
     <string>Open</string>
+   </property>
+  </action>
+  <action name="actionImport_Excel_Sheet">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Import Excel Sheet</string>
    </property>
   </action>
  </widget>

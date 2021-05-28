@@ -32,6 +32,9 @@ public:
     QString LoadNotes(QWidget* parent);
     void SaveNotes(QWidget* parent, QString fileContent);
 
+    // Import excel sheet
+    QString LoadExcelSheet(QWidget* parent);
+
 private:
 
     QString fileName;

@@ -30,9 +30,9 @@ public:
     QVector<int> GetAllTrackedGoalAmounts() const;
 
     void UpdateTrackingStatus();
-    void AddMaterialFromFile(int amtOfMaterials, QVector<QString> matNames,
+    void AddMaterialFromSaveFile(int amtOfMaterials, QVector<QString> matNames,
                              QVector<int> currentAmts, QVector<int> goalAmts);
-
+    void AddMaterialFromExcelFile(int matCount, QString matName);
 
 public slots:
     // Adds a Material widget to the main window widget

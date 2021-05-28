@@ -101,14 +101,14 @@ void MaterialStatusBar::UpdateTrackingStatus()
 
 // Adds all the materials that were read in from file and adds them to
 // their corresponding tabs
-void MaterialStatusBar::AddMaterialFromFile(int amtOfMaterials, QVector<QString> matNames,
+void MaterialStatusBar::AddMaterialFromSaveFile(int amtOfMaterials, QVector<QString> matNames,
                                             QVector<int> currentAmts, QVector<int> goalAmts)
 {
     for(int i = 0; i < amtOfMaterials; i++)
     {
         Materials* material = new Materials;
         material->setTabName(GetTabName());
-        material->SetMaterialValuesFromFile(matNames[i], currentAmts[i], goalAmts[i]);
+        material->SetMaterialValuesFromSaveFile(matNames[i], currentAmts[i], goalAmts[i]);
 
         // Connect Material class's signals to the main window
         // These signal/slots will activate when they recieve the
@@ -122,6 +122,35 @@ void MaterialStatusBar::AddMaterialFromFile(int amtOfMaterials, QVector<QString>
         ui->matTrackerToolBarLayout->addWidget(material);
 
         UpdateTrackingStatus();
+    }
+}
+
+// Adds all the materials that were read in from the excel file
+// and adds them to the active tab
+void MaterialStatusBar::AddMaterialFromExcelFile(int matCount, QString matName)
+{
+    Materials* material = new Materials;
+    material->setTabName(GetTabName());
+    // Checks if the excel item being added is an actual
+    // valid material, if not, then delete this material object
+    if(material->SetMaterialValuesFromExcelFile(matCount, matName))
+    {
+        // Connect Material class's signals to the main window
+        // These signal/slots will activate when they recieve the
+        // emit signal from the Material class's functions
+        connect(material, &Materials::RemoveMaterial, this, &MaterialStatusBar::RemoveMaterial);
+        connect(material, &Materials::TrackingStatusChanged, this, &MaterialStatusBar::TrackingStatusChanged);
+
+        // Add the material to the vector and
+        // to the applications ui
+        trackedMaterials.append(material);
+        ui->matTrackerToolBarLayout->addWidget(material);
+
+        UpdateTrackingStatus();
+    }
+    else
+    {
+        delete material;
     }
 }
 

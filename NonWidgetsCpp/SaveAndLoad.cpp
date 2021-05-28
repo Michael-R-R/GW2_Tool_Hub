@@ -145,6 +145,18 @@ void SaveAndLoad::SaveNotes(QWidget* parent, QString fileContent)
     }
 }
 
+QString SaveAndLoad::LoadExcelSheet(QWidget *parent)
+{
+    fileName = QFileDialog::getOpenFileName(parent,
+                                            tr("Open Excel Sheet"), "",
+                                            tr("Excel Sheet (*.xls)"));
+    if(fileName.isEmpty()) { return ""; }
+    else
+    {
+        return fileName;
+    }
+}
+
 
 
 

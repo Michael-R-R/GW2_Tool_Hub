@@ -40,6 +40,8 @@ public:
     QString getTabName() const { return tabName; }
     void setTabName(const QString &value) { tabName = value; }
 
+    void ImportExcelSheet();
+
 private:
     Ui::MaterialTracker* ui;
     QDir iconDir;

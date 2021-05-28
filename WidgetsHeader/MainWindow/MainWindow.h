@@ -40,6 +40,7 @@ public slots:
     // Material Tracker:
     void SaveMaterialTracker();
     void LoadMaterialTracker();
+    void ImportExcelSheet();
 
     // --- Notes ---
     void ShowNotesWidget();

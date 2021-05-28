@@ -76,6 +76,87 @@ void DataInterface::DeleteTabDataTable(QString tabName)
     userDatabase.removeDatabase("DeleteTabTable");
 }
 
+/*************************************************************************
+ *                             EXCEL                                     *
+ *************************************************************************/
+
+QSqlDatabase DataInterface::CreateExcelDatabase(QString sheetPath)
+{
+    QSqlDatabase excelDB = QSqlDatabase::addDatabase("QODBC", "xlsx_connection");
+    excelDB.setDatabaseName("DRIVER={Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)};"
+                            "DBQ=" + sheetPath);
+    excelDB.open();
+    return excelDB;
+}
+
+QVector<int> DataInterface::FetchExcelCounts(QString sheetPath)
+{
+    QSqlDatabase excelDB = CreateExcelDatabase(sheetPath);
+
+    // Strip down the file path to the file name
+    // file name = table name
+    while(sheetPath.contains("/"))
+    {
+        int deleteChar = 0;
+        sheetPath.remove(deleteChar, 1);
+    }
+    if(sheetPath.contains("."))
+    {
+        int indexToDelete = sheetPath.indexOf(".");
+        sheetPath.remove(indexToDelete, sheetPath.size());
+    }
+    QString tableName = sheetPath;
+
+    // Select the material amounts
+    QVector<int> matCounts;
+    QSqlQuery query(excelDB);
+    query.exec("SELECT Count FROM [" + tableName + "$]");
+    while(query.next())
+    {
+        int result = query.value(0).toInt();
+        matCounts.append(result);
+    }
+
+    excelDB.close();
+    excelDB.removeDatabase("xlsx_connection");
+
+    return matCounts;
+}
+
+QVector<QString> DataInterface::FetchExcelNames(QString sheetPath)
+{
+    QSqlDatabase excelDB = CreateExcelDatabase(sheetPath);
+
+    // Strip down the file path to the file name
+    // file name = table name
+    while(sheetPath.contains("/"))
+    {
+        int deleteChar = 0;
+        sheetPath.remove(deleteChar, 1);
+    }
+    if(sheetPath.contains("."))
+    {
+        int indexToDelete = sheetPath.indexOf(".");
+        sheetPath.remove(indexToDelete, sheetPath.size());
+    }
+    QString tableName = sheetPath;
+
+    // Select the material name
+    QVector<QString> matNames;
+    QSqlQuery query1(excelDB);
+    query1.exec("SELECT Name FROM [" + tableName + "$]");
+    while(query1.next())
+    {
+        QString result = query1.value(0).toString();
+        matNames.append(result);
+    }
+
+    excelDB.close();
+    excelDB.removeDatabase("xlsx_connection");
+
+    return matNames;
+}
+
 
 /*************************************************************************
  *                             USER                                      *
