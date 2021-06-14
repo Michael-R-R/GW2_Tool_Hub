@@ -145,15 +145,22 @@ void SaveAndLoad::SaveNotes(QWidget* parent, QString fileContent)
     }
 }
 
-QString SaveAndLoad::LoadExcelSheet(QWidget *parent)
+QByteArray SaveAndLoad::LoadExcelSheet(QWidget *parent)
 {
     fileName = QFileDialog::getOpenFileName(parent,
                                             tr("Open Excel Sheet"), "",
-                                            tr("Excel Sheet (*.xls)"));
+                                            tr("Excel Sheet (*.csv)"));
     if(fileName.isEmpty()) { return ""; }
     else
     {
-        return fileName;
+        QFile in(fileName);
+        if(!in.open(QIODevice::ReadOnly))
+        {
+            QMessageBox::information(parent, tr("Unable to open file"), in.errorString());
+            return "";
+        }
+
+        return in.readAll();
     }
 }
 

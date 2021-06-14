@@ -347,28 +347,76 @@ QVector<QString> MaterialTracker::GetAllTabNames()
 
 void MaterialTracker::ImportExcelSheet()
 {
+    // Throw an error if there are no active tabs
     if(materialTabs.size() <= 0)
     {
         QMessageBox::information(this, "Error", "No Active Tabs");
         return;
     }
 
-    // Allow user to select the excel file
+    // Allow user to select the .csv excel file
     SaveAndLoad* loadExcel = new SaveAndLoad;
-    QString excelPath = loadExcel->LoadExcelSheet(this);
+    QByteArray inFile = loadExcel->LoadExcelSheet(this);
     delete loadExcel;
 
-    // Retrieve the material counts and material names
-    // from the excel sheet
-    DataInterface* dataInterface = new DataInterface;
-    QVector<int> matCounts = dataInterface->FetchExcelCounts(excelPath);
-    QVector<QString> matNames = dataInterface->FetchExcelNames(excelPath);
-    delete dataInterface;
+    // Parse the count and material name
+    QVector<int> matCounts;
+    QVector<QString> matNames;
+    bool isFirstLine = true;
 
-    int tabIndex = ui->materialsTabWidget->currentIndex();
+    QTextStream fileResult(&inFile);
+    while(!fileResult.atEnd())
+    {
+        QString line = fileResult.readLine();
+        if(isFirstLine)
+        {
+            // Do nothing
+            isFirstLine = false;
+        }
+        else
+        {
+            // PARSE THE COUNT INFO
+            // Remove the first comma
+            int tempIndex = line.indexOf(",");
+            line.remove(tempIndex, 1);
+
+            // Get the index of the second comma
+            // Tells us when to stop reading the count info
+            tempIndex = line.indexOf(",");
+            QString tempCount;
+            // Store the count info from the line
+            for(int i = 0; i < tempIndex; i++)
+            {
+                tempCount += line[i];
+            }
+            // Remove the count info from the line
+            for(int i = 0; i < tempCount.size(); i++)
+            {
+                line.remove(0, 1);
+            }
+            // Delete the left over comma
+            tempIndex = line.indexOf(",");
+            line.remove(tempIndex, 1);
+            // Add the count to the vector
+            matCounts.append(tempCount.toInt());
+
+            // PARSE THE MATERIAL NAME
+            tempIndex = line.indexOf(",");
+            QString tempName;
+            for(int i = 0; i < tempIndex; i++)
+            {
+                tempName += line[i];
+            }
+            // add the name to the vector
+            matNames.append(tempName);
+        }
+    }
+
+    // Add the material counts and names to the active tab
+    int currentActiveTab = ui->materialsTabWidget->currentIndex();
     for(int i = 0; i < matCounts.size(); i++)
     {
-        materialTabs[tabIndex]->AddMaterialFromExcelFile(matCounts[i], matNames[i]);
+        materialTabs[currentActiveTab]->AddMaterialFromExcelFile(matCounts[i], matNames[i]);
     }
 }
 
