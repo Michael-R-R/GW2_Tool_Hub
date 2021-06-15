@@ -34,6 +34,7 @@ public:
 
     // Import excel sheet
     QByteArray LoadExcelSheet(QWidget* parent);
+    bool CheckForValidImportSheet(QWidget* parent, QString sheetName);
 
 private:
 

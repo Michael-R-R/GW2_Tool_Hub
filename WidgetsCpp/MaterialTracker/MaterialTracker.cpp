@@ -354,26 +354,34 @@ void MaterialTracker::ImportExcelSheet()
         return;
     }
 
+    // Set status label
+    ui->fileStatusLabel->setText("Importing File...");
+
     // Allow user to select the .csv excel file
     SaveAndLoad* loadExcel = new SaveAndLoad;
     QByteArray inFile = loadExcel->LoadExcelSheet(this);
     delete loadExcel;
 
+    // Check if invalid file loaded and update status label
+    if(inFile == "invalid")
+    {
+        ui->fileStatusLabel->setText("Importing File Unsuccessful");
+        return;
+    }
+
+    // FILE IS VALID
     // Parse the count and material name
     QVector<int> matCounts;
     QVector<QString> matNames;
     bool isFirstLine = true;
 
+    // Parse each line for count info and material name
     QTextStream fileResult(&inFile);
     while(!fileResult.atEnd())
     {
+        // Don't read the first line
         QString line = fileResult.readLine();
-        if(isFirstLine)
-        {
-            // Do nothing
-            isFirstLine = false;
-        }
-        else
+        if(!isFirstLine)
         {
             // PARSE THE COUNT INFO
             // Remove the first comma
@@ -384,9 +392,9 @@ void MaterialTracker::ImportExcelSheet()
             // Tells us when to stop reading the count info
             tempIndex = line.indexOf(",");
             QString tempCount;
-            // Store the count info from the line
             for(int i = 0; i < tempIndex; i++)
             {
+                // Reads up until the comma = material count
                 tempCount += line[i];
             }
             // Remove the count info from the line
@@ -405,10 +413,16 @@ void MaterialTracker::ImportExcelSheet()
             QString tempName;
             for(int i = 0; i < tempIndex; i++)
             {
+                // Reads up until the comma = material name
                 tempName += line[i];
             }
             // add the name to the vector
             matNames.append(tempName);
+        }
+        else
+        {
+            // First line is junk, do nothing
+            isFirstLine = false;
         }
     }
 
@@ -418,6 +432,8 @@ void MaterialTracker::ImportExcelSheet()
     {
         materialTabs[currentActiveTab]->AddMaterialFromExcelFile(matCounts[i], matNames[i]);
     }
+
+    ui->fileStatusLabel->setText("Importing File Complete");
 }
 
 /*************************************************************************
@@ -494,7 +510,6 @@ bool MaterialTracker::CheckIfValidTabName(QString name)
     // Name is valid
     return true;
 }
-
 
 void MaterialTracker::CreateTabsFromFile(int tabAmt,
                                          QVector<QString> tabNames,

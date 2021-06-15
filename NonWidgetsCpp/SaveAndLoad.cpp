@@ -145,22 +145,55 @@ void SaveAndLoad::SaveNotes(QWidget* parent, QString fileContent)
     }
 }
 
+// Returns:
+// Invalid = No valid file able to be opened or read
+// in.readAll() = The entire .csv excel sheet data
 QByteArray SaveAndLoad::LoadExcelSheet(QWidget *parent)
 {
+    // Allow the user to select the file through file explorer
     fileName = QFileDialog::getOpenFileName(parent,
                                             tr("Open Excel Sheet"), "",
                                             tr("Excel Sheet (*.csv)"));
-    if(fileName.isEmpty()) { return ""; }
+
+    // Check if filename is empty or an invalid excel sheet
+    if(fileName.isEmpty() || !CheckForValidImportSheet(parent, fileName)) { return "invalid"; }
     else
     {
         QFile in(fileName);
+        // Check to make sure the file opens correctly, else throw an error
         if(!in.open(QIODevice::ReadOnly))
         {
             QMessageBox::information(parent, tr("Unable to open file"), in.errorString());
-            return "";
+            return "invalid";
         }
 
         return in.readAll();
+    }
+}
+
+// Checks to make sure that the user is importing the 'shopping-items' excel sheet
+bool SaveAndLoad::CheckForValidImportSheet(QWidget* parent, QString sheetName)
+{
+    QString wikiLink = "<a href='https://github.com/Michael-R-R/GW2_Tool_Hub/wiki/Material-Tracker-Tool#error-3000'>Wiki Page</a>";
+
+    // Correct excel sheet
+    if(sheetName.contains("shopping-items"))
+    {
+        return true;
+    }
+    // Incorrect excel sheet
+    else
+    {
+        // Create a message box with a hyperlink to the github wiki page error
+        QMessageBox msgbox(parent);
+        msgbox.setWindowTitle("ERROR 3000");
+        msgbox.setTextFormat(Qt::RichText);
+        msgbox.setText(QString("Invalid excel sheet: "
+                                   "<br>Attempted to import: %1 "
+                                   "<br>Imported file must be: 'shopping-items' excel sheet exported from GW2 Efficiency"
+                                   "<br><br>Refer to: %2 for more information").arg(sheetName).arg(wikiLink));
+        msgbox.exec();
+        return false;
     }
 }
 
