@@ -4,7 +4,8 @@
 
 *OPEN SOURCE*
 
-Download Here: <a href="https://www.dropbox.com/s/2cbs88b3kfnpm61/GW2ToolHub_Installer.zip?dl=1"> .zip Installer </a>
+6/15/21
+Download Here (v1.1.2): <a href="https://www.dropbox.com/s/d5fprslhglgqkac/GW2ToolHub_Installer_1_1_2.zip?dl=1"> .zip Installer </a>
 
 An application aimed at providing resourceful tools to compliment the Guild Wars 2 gaming experience 
 
@@ -19,6 +20,7 @@ An application aimed at providing resourceful tools to compliment the Guild Wars
 
 ### On Demand Material Tracker (with API functionality):
 - Search and add materials
+- Import excel sheets exported from GW2 Efficiency 
 - Set current amount by connecting an API key
 - Set the goal amount to reach
 - Tabs to keep all your collections organized and separate
