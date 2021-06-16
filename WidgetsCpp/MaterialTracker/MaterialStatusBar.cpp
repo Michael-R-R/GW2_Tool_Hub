@@ -101,8 +101,10 @@ void MaterialStatusBar::UpdateTrackingStatus()
 
 // Adds all the materials that were read in from file and adds them to
 // their corresponding tabs
-void MaterialStatusBar::AddMaterialFromSaveFile(int amtOfMaterials, QVector<QString> matNames,
-                                            QVector<int> currentAmts, QVector<int> goalAmts)
+void MaterialStatusBar::AddMaterialFromSaveFile(int amtOfMaterials,
+                                                const QVector<QString>& matNames,
+                                                const QVector<int>& currentAmts,
+                                                const QVector<int>& goalAmts)
 {
     for(int i = 0; i < amtOfMaterials; i++)
     {

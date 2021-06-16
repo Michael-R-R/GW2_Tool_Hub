@@ -2,6 +2,7 @@
 #define NOTES_H
 
 #include "NonWidgetsHeader/SaveAndLoad.h"
+#include "NonWidgetsHeader/ErrorHandling.h"
 #include <QWidget>
 #include <QFileSystemModel>
 #include <QDir>
@@ -52,6 +53,10 @@ private:
     QFileSystemModel *listModel;
     QMenu* menu;
 
+    // --- Error Handling ---
+    ErrorHandling error;
+
+    // --- Directory ---
     QDir dir;
     QString folderDir;
     QString lastFolderDir;

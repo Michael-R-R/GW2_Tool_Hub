@@ -151,7 +151,7 @@ void ApiAccess::GetMaterialsApiReply(QNetworkReply* reply, MaterialTracker* mate
     if(reply->error())
     {
         // Display the error to the user with a popup message
-        NonModalErrorMessage(reply->errorString());
+        error.NonModalErrorMessage(materialTracker, "Materials API Reply Error", reply->errorString());
         return;
     }
 
@@ -204,7 +204,7 @@ void ApiAccess::GetAccountNamesApiReply(QNetworkReply* reply, MaterialTracker* m
     if(reply->error())
     {
         // Display the error to the user with a popup message
-        NonModalErrorMessage(reply->errorString());
+        error.NonModalErrorMessage(materialTracker, "Account Names API Reply error", reply->errorString());
         return;
     }
 
@@ -244,7 +244,7 @@ void ApiAccess::GetInventoryApiReply(QNetworkReply *reply, MaterialTracker* mate
     if(reply->error())
     {
         // Display the error to the user with a popup message
-        NonModalErrorMessage(reply->errorString());
+        error.NonModalErrorMessage(materialTracker, "Inventory API Reply Error", reply->errorString());
         return;
     }
 
@@ -306,7 +306,7 @@ void ApiAccess::GetBankApiReply(QNetworkReply *reply, MaterialTracker* materialT
     // Error getting reply from query
     if(reply->error())
     {
-        NonModalErrorMessage(reply->errorString());
+        error.NonModalErrorMessage(materialTracker, "Bank API Reply Error", reply->errorString());
         return;
     }
 
@@ -395,18 +395,6 @@ void ApiAccess::delayMilliSeconds(int msecToWait)
         QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
     }
 }
-
-// A popup messagebox that is nonmodal
-// meaning it won't block the flow of code execution
-void ApiAccess::NonModalErrorMessage(QString errorMsg)
-{
-    QMessageBox* error = new QMessageBox;
-    error->setWindowTitle("Error");
-    error->setText(errorMsg);
-    error->setWindowModality(Qt::NonModal);
-    error->show();
-}
-
 
 
 

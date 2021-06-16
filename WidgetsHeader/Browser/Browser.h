@@ -1,11 +1,11 @@
 #ifndef BROWSER_H
 #define BROWSER_H
 
+#include "NonWidgetsHeader/ErrorHandling.h"
 #include <QWidget>
 #include <QString>
 #include <QVector>
 #include <QUrl>
-#include <QMessageBox>
 #include <QWebEngineProfile>
 #include <QWebEngineCookieStore>
 #include <QWebEngineHistory>
@@ -46,12 +46,11 @@ signals:
 private:
     Ui::Browser *ui;
 
+    // --- Error Handling ---
+    ErrorHandling error;
+
     // --- Variables ---
     QUrl lastPageVisited;
-
-    // --- Functions ---
-    void NonModalErrorMessage(QString title, QString text, bool isModal);
-    bool CheckForValidPage(const QUrl& url);
 
 };
 

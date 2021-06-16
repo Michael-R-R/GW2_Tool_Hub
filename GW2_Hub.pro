@@ -17,6 +17,7 @@ CONFIG += c++17
 
 SOURCES += \
     NonWidgetsCpp/DataInterface.cpp \
+    NonWidgetsCpp/ErrorHandling.cpp \
     WidgetsCpp/Notes/Notes.cpp \
     NonWidgetsCpp/SaveAndLoad.cpp \
     NonWidgetsCpp/ApiAccess.cpp \
@@ -31,6 +32,7 @@ SOURCES += \
 
 HEADERS += \
     NonWidgetsHeader/DataInterface.h \
+    NonWidgetsHeader/ErrorHandling.h \
     WidgetsHeader/Notes/Notes.h \
     NonWidgetsHeader/SaveAndLoad.h \
     NonWidgetsHeader/ApiAccess.h \

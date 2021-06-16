@@ -108,14 +108,14 @@ void Notes::DoubleClickItem(QModelIndex item)
     {
         htmlDir = tempDir;
 
-        QFile in(htmlDir);
-        if(!in.open(QIODevice::ReadOnly))
+        QFile inFile(htmlDir);
+        if(!inFile.open(QIODevice::ReadOnly))
         {
-            QMessageBox::information(this, tr("Unable to open file"), in.errorString());
+            error.NonModalErrorMessage(this, "Unable to open file", inFile.errorString());
             return;
         }
 
-        QString fileContent = in.readAll();
+        QString fileContent = inFile.readAll();
         ui->textEdit->setHtml(fileContent);
 
         // Set cursor back to the start
@@ -124,7 +124,7 @@ void Notes::DoubleClickItem(QModelIndex item)
         ui->textEdit->setTextCursor(cursor);
 
         // Close file
-        in.close();
+        inFile.close();
     }
     else
     {

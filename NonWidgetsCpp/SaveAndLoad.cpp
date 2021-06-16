@@ -29,15 +29,16 @@ QByteArray SaveAndLoad::LoadTrackedMaterialsFromFile(QWidget* parent)
     else
     {
         // Check if we can open the file
-        QFile in(fileName);
-        if(!in.open(QIODevice::ReadOnly))
+        QFile inFile(fileName);
+        if(!inFile.open(QIODevice::ReadOnly))
         {
-            QMessageBox::information(parent, tr("Unable to open file"), in.errorString());
+            // Throw an error
+            error.NonModalErrorMessage(parent, "Unable to open file", inFile.errorString());
             return "";
         }
 
         // Return all the information from the file read in
-        return in.readAll();
+        return inFile.readAll();
     }
 }
 
@@ -46,11 +47,11 @@ QByteArray SaveAndLoad::LoadTrackedMaterialsFromFile(QWidget* parent)
 // all material names in tab, the material current and goal amount
 // Returns: 1 = saved successfully, -1 = saved unsuccessfully, 0 = cancelled
 int SaveAndLoad::SaveTrackedMaterialsToFile(QWidget* parent, int tabAmt,
-                                             QVector<QString> tabNames,
-                                             QVector<int> amtOfMatsInTab,
-                                             QVector<QVector<QString>> namesInTab,
-                                             QVector<QVector<int>> currentAmtsInTab,
-                                             QVector<QVector<int>> goalAmtsInTab)
+                                            const QVector<QString>& tabNames,
+                                            const QVector<int>& amtOfMatsInTab,
+                                            const QVector<QVector<QString>>& namesInTab,
+                                            const QVector<QVector<int>>& currentAmtsInTab,
+                                            const QVector<QVector<int>>& goalAmtsInTab)
 {
     // Open the file explorer to allow user to pick place to save
     // file
@@ -63,16 +64,16 @@ int SaveAndLoad::SaveTrackedMaterialsToFile(QWidget* parent, int tabAmt,
     else
     {
         // Check if the file was opened successfully
-        QFile file(fileName);
-        if(!file.open(QIODevice::WriteOnly))
+        QFile inFile(fileName);
+        if(!inFile.open(QIODevice::WriteOnly))
         {
-            QMessageBox::information(parent, tr("Unable to open file"),
-                                             file.errorString());
+            // Throw an error
+            error.NonModalErrorMessage(parent, "Unable to open file", inFile.errorString());
             return -1;
         }
 
         // Start writing out the data
-        QTextStream outFile(&file);
+        QTextStream outFile(&inFile);
 
         outFile << "Amount of Tabs: " << tabAmt << "\n";
         for(int i = 0; i < tabAmt; i++)
@@ -87,7 +88,7 @@ int SaveAndLoad::SaveTrackedMaterialsToFile(QWidget* parent, int tabAmt,
                 outFile << "Material Goal Amt: " << goalAmtsInTab[i][j] << "\n";
             }
         }
-        file.close();
+        inFile.close();
         return 1;
     }
 }
@@ -104,17 +105,18 @@ QString SaveAndLoad::LoadNotes(QWidget* parent)
     else
     {
         // Check if the file was opened successfully
-        QFile in(fileName);
-        if(!in.open(QIODevice::ReadOnly))
+        QFile inFile(fileName);
+        if(!inFile.open(QIODevice::ReadOnly))
         {
-            QMessageBox::information(parent, tr("Unable to open file"), in.errorString());
+            // Throw an error
+            error.NonModalErrorMessage(parent, "Unable to open file", inFile.errorString());
             return "";
         }
 
         // Store the entire file contents
-        QString htmlText = in.readAll();
+        QString htmlText = inFile.readAll();
 
-        in.close();
+        inFile.close();
         return htmlText;
     }
 }
@@ -130,18 +132,18 @@ void SaveAndLoad::SaveNotes(QWidget* parent, QString fileContent)
     else
     {
         // Checks if the file opened successfully
-        QFile file(fileName);
-        if(!file.open(QIODevice::WriteOnly))
+        QFile inFile(fileName);
+        if(!inFile.open(QIODevice::WriteOnly))
         {
-            QMessageBox::information(parent, tr("Unable to open file"),
-                                             file.errorString());
+            // Throw an error
+            error.NonModalErrorMessage(parent, "Unable to open file", inFile.errorString());
             return;
         }
 
         // Write out the file contents
-        QTextStream outFile(&file);
+        QTextStream outFile(&inFile);
         outFile << fileContent;
-        file.close();
+        inFile.close();
     }
 }
 
@@ -156,46 +158,23 @@ QByteArray SaveAndLoad::LoadExcelSheet(QWidget *parent)
                                             tr("Excel Sheet (*.csv)"));
 
     // Check if filename is empty or an invalid excel sheet
-    if(fileName.isEmpty() || !CheckForValidImportSheet(parent, fileName)) { return "invalid"; }
+    if(fileName.isEmpty() || !error.CheckForValidImportSheet(parent, fileName)) { return "invalid"; }
     else
     {
-        QFile in(fileName);
+        QFile inFile(fileName);
         // Check to make sure the file opens correctly, else throw an error
-        if(!in.open(QIODevice::ReadOnly))
+        if(!inFile.open(QIODevice::ReadOnly))
         {
-            QMessageBox::information(parent, tr("Unable to open file"), in.errorString());
+            // Throw an error
+            error.NonModalErrorMessage(parent, "Unable to open file", inFile.errorString());
             return "invalid";
         }
 
-        return in.readAll();
+        return inFile.readAll();
     }
 }
 
-// Checks to make sure that the user is importing the 'shopping-items' excel sheet
-bool SaveAndLoad::CheckForValidImportSheet(QWidget* parent, QString sheetName)
-{
-    QString wikiLink = "<a href='https://github.com/Michael-R-R/GW2_Tool_Hub/wiki/Material-Tracker-Tool#error-3000'>Wiki Page</a>";
 
-    // Correct excel sheet
-    if(sheetName.contains("shopping-items"))
-    {
-        return true;
-    }
-    // Incorrect excel sheet
-    else
-    {
-        // Create a message box with a hyperlink to the github wiki page error
-        QMessageBox msgbox(parent);
-        msgbox.setWindowTitle("ERROR 3000");
-        msgbox.setTextFormat(Qt::RichText);
-        msgbox.setText(QString("Invalid excel sheet: "
-                                   "<br>Attempted to import: %1 "
-                                   "<br>Imported file must be: 'shopping-items' excel sheet exported from GW2 Efficiency"
-                                   "<br><br>Refer to: %2 for more information").arg(sheetName).arg(wikiLink));
-        msgbox.exec();
-        return false;
-    }
-}
 
 
 

@@ -63,7 +63,7 @@ int Materials::GetMaterialGoalAmt() const
 
 // Queries the database for the passed in material
 // and sets comboboxes data values
-void Materials::SetMaterialValuesByName(const QString materialName)
+void Materials::SetMaterialValuesByName(QString materialName)
 {
     QString category = dataInterface->FetchMaterialCategory(materialName);
     ui->materialCatagoryComboBox->setCurrentText(category);
@@ -72,7 +72,7 @@ void Materials::SetMaterialValuesByName(const QString materialName)
 
 // Takes all the information read in from file and sets all the values
 // for each material
-void Materials::SetMaterialValuesFromSaveFile(const QString materialName, const int currentAmt, const int goalAmt)
+void Materials::SetMaterialValuesFromSaveFile(QString materialName, int currentAmt, int goalAmt)
 {
     QString category = dataInterface->FetchMaterialCategory(materialName);
     ui->materialCatagoryComboBox->setCurrentText(category);
@@ -115,7 +115,7 @@ void Materials::UpdateUiMaterialValues()
  *************************************************************************/
 
 // SLOT Function: called when the material catagory combobox value is changed
-void Materials::MaterialCatagoryChanged(const QString text)
+void Materials::MaterialCatagoryChanged(QString text)
 {
     // Adds all the corresponding material types (material names) with that category
     AddMaterialCategoryTypes(text);
@@ -123,7 +123,7 @@ void Materials::MaterialCatagoryChanged(const QString text)
 
 // SLOT Function: called when the material type combobox is changed,
 // Changes the spinbox values to the correct material type
-void Materials::MaterialTypeChanged(const QString text)
+void Materials::MaterialTypeChanged(QString text)
 {
     // Fetches and sets the spinboxes and percent label for
     // the selected material
@@ -182,7 +182,7 @@ void Materials::SetupAllMaterialDefaults()
 
 // Adds all the material names to the combobox
 // for the current selected category combobox
-void Materials::AddMaterialCategoryTypes(const QString category)
+void Materials::AddMaterialCategoryTypes(QString category)
 {
     ui->materialTypesComboBox->clear();
 

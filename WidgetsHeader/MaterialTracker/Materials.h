@@ -28,8 +28,8 @@ public:
     int GetMaterialCurrentAmt() const;
     int GetMaterialGoalAmt() const;
 
-    void SetMaterialValuesByName(const QString materialName);
-    void SetMaterialValuesFromSaveFile(const QString materialName, const int currentAmt, const int goalAmt);
+    void SetMaterialValuesByName(QString materialName);
+    void SetMaterialValuesFromSaveFile(QString materialName, int currentAmt, int goalAmt);
     bool SetMaterialValuesFromExcelFile(int goalAmount, QString matName);
 
     void UpdateUiMaterialValues();
@@ -57,7 +57,7 @@ private:
 
     // --- Functions ---
     void SetupAllMaterialDefaults();
-    void AddMaterialCategoryTypes(const QString text); // I.E. Copper, Silver, ETC.
+    void AddMaterialCategoryTypes(QString text); // I.E. Copper, Silver, ETC.
     void SetSpinBoxCurrentAmount(QString materialName);
     void SetSpinBoxGoalAmount(QString materialName);
     void SetPercentComplete(QString materialName);

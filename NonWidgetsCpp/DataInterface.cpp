@@ -347,7 +347,8 @@ void DataInterface::UpdateTabDataTableName(QString currentTabName, QString newTa
 
 // Updates all the material count amounts inside each
 // tab database table.
-void DataInterface::UpdateAccountMaterialsFromAPI(QVector<QString> id, QVector<QString> count, QString tabName)
+void DataInterface::UpdateAccountMaterialsFromAPI(const QVector<QString>& id,
+                                                  const QVector<QString>& count, QString tabName)
 {
     // Replace any spaces with no spaces
     // this ensures that the naming conventions

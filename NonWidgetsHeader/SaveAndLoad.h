@@ -1,11 +1,11 @@
 #ifndef SAVEANDLOAD_H
 #define SAVEANDLOAD_H
 
+#include <NonWidgetsHeader/ErrorHandling.h>
 #include <QDebug>
 #include <QFileDialog>
 #include <QFile>
 #include <QTextStream>
-#include <QMessageBox>
 #include <QVector>
 #include <QString>
 
@@ -21,11 +21,11 @@ public:
     // Save/Load all tracked materials
     QByteArray LoadTrackedMaterialsFromFile(QWidget* parent);
     int SaveTrackedMaterialsToFile(QWidget* parent, int tabAmt,
-                                    QVector<QString> tabNames,
-                                    QVector<int> amtOfMatsInTab,
-                                    QVector<QVector<QString>> namesInTab,
-                                    QVector<QVector<int>> currentAmtsInTab,
-                                    QVector<QVector<int>> goalAmtsInTab);
+                                   const QVector<QString>& tabNames,
+                                   const QVector<int>& amtOfMatsInTab,
+                                   const QVector<QVector<QString>>& namesInTab,
+                                   const QVector<QVector<int>>& currentAmtsInTab,
+                                   const QVector<QVector<int>>& goalAmtsInTab);
 
 
     // Save/Load notes
@@ -34,9 +34,10 @@ public:
 
     // Import excel sheet
     QByteArray LoadExcelSheet(QWidget* parent);
-    bool CheckForValidImportSheet(QWidget* parent, QString sheetName);
 
 private:
+    // --- Error Handling ---
+    ErrorHandling error;
 
     QString fileName;
 

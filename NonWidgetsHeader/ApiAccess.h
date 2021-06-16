@@ -2,10 +2,10 @@
 #define APIACCESS_H
 
 #include "NonWidgetsHeader/DataInterface.h"
+#include "NonWidgetsHeader/ErrorHandling.h"
 #include "WidgetsHeader/MaterialTracker/MaterialTracker.h"
 #include <QCoreApplication>
 #include <QEventLoop>
-#include <QMessageBox>
 #include <QString>
 #include <QDebug>
 #include <QtNetwork/QNetworkAccessManager>
@@ -32,6 +32,9 @@ public:
     void GetBankApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
 
 private:
+    // --- Error Handling ---
+    ErrorHandling error;
+
     // --- Data Structures ---
     QVector<QString> vMasterID;
     QVector<QString> vMasterCount;
@@ -51,7 +54,7 @@ private:
     // --- Functions ---
     void delaySeconds(int secToWait);
     void delayMilliSeconds(int msecToWait);
-    void NonModalErrorMessage(QString errorMsg);
+
 };
 
 #endif // APIACCESS_H

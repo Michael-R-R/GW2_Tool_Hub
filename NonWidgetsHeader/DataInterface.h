@@ -41,7 +41,8 @@ public:
 
     // Database: Tab data tables
     void UpdateTabDataTableName(QString currentTabName, QString newTabName);
-    void UpdateAccountMaterialsFromAPI(QVector<QString> id, QVector<QString> count, QString tabName);
+    void UpdateAccountMaterialsFromAPI(const QVector<QString>& id,
+                                       const QVector<QString>& count, QString tabName);
     void UpdateCurrentMaterialsAmount(QString materialName, int amount, QString tabName);
     void UpdateGoalMaterialsAmount(QString materialName, int amount, QString tabName);
     void UpdatePercentComplete(QString materialName, QString tabName);

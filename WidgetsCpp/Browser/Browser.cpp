@@ -64,7 +64,7 @@ void Browser::SetLoadingPercent(int percent)
 void Browser::SetLastPageVisited(const QUrl &url)
 {
     // if not a valid page, load the last valid page
-    if(!CheckForValidPage(url))
+    if(!error.CheckForValidPage(this, url))
     {
         ui->webEngineView->page()->triggerAction(QWebEnginePage::Stop);
         ui->webEngineView->setUrl(lastPageVisited);
@@ -108,44 +108,6 @@ void Browser::RefreshPage()
 {
     ui->webEngineView->page()->triggerAction(QWebEnginePage::Reload);
 }
-
-/*************************************************************************
- *                             PRIVATE                                   *
- *************************************************************************/
-
-// Creates a non modal pop up message in case of an error
-// non-modal = does not block flow of execution
-void Browser::NonModalErrorMessage(QString title, QString text, bool isModal)
-{
-    QMessageBox* message = new QMessageBox(this);
-    message->setAttribute(Qt::WA_DeleteOnClose);
-    message->setStandardButtons(QMessageBox::Ok);
-    message->setWindowTitle(title);
-    message->setText(text);
-    message->setIcon(QMessageBox::Warning);
-    message->setModal(isModal);
-    message->open();
-}
-
-// Function to check if the user is going to a valid website address
-// Returns true if valid, false if not
-bool Browser::CheckForValidPage(const QUrl &url)
-{
-    // Check the url
-    QString urlString = url.toString();
-    if(urlString.contains("https://wiki.guildwars2.com")           ||
-       urlString.contains("https://www.youtube.com")               ||
-       urlString.contains("https://snowcrows.com")                 ||
-       urlString.contains("https://gw2efficiency.com"))
-    {
-        return true;
-    }
-
-    // Non modal pop-up message (does not block flow of execution)
-    NonModalErrorMessage("Error", "Invalid Page", false);
-    return false;
-}
-
 
 
 

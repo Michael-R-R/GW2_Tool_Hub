@@ -2,6 +2,7 @@
 #define MATERIALTRACKER_H
 
 #include "WidgetsHeader/MaterialTracker/MaterialStatusBar.h"
+#include "NonWidgetsHeader/ErrorHandling.h"
 #include "NonWidgetsHeader/SaveAndLoad.h"
 #include "NonWidgetsHeader/ApiAccess.h"
 #include "NonWidgetsHeader/DataInterface.h"
@@ -46,6 +47,9 @@ private:
     Ui::MaterialTracker* ui;
     QDir iconDir;
 
+    // --- Error Handling ---
+    ErrorHandling error;
+
     // --- Data Structures ---
     QVector<MaterialStatusBar*> materialTabs;
 
@@ -57,14 +61,12 @@ private:
     void DeleteTabDataTable(QString name);
     void DeleteAllTabDataTables();
 
-    bool CheckIfValidTabName(QString name);
-
     void CreateTabsFromFile(int tabAmt,
-                            QVector<QString> tabNames,
-                            QVector<int> amtOfMatsInTab,
-                            QVector<QVector<QString>> namesInTab,
-                            QVector<QVector<int>> currentAmtsInTab,
-                            QVector<QVector<int>> goalAmtsInTab);
+                            const QVector<QString>& tabNames,
+                            const QVector<int>& amtOfMatsInTab,
+                            const QVector<QVector<QString>>& namesInTab,
+                            const QVector<QVector<int>>& currentAmtsInTab,
+                            const QVector<QVector<int>>& goalAmtsInTab);
 
    void CheckSaveFileStatus(int result);
 

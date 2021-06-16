@@ -224,12 +224,12 @@ void MaterialTracker::AddTab()
                                          tr("New Tab"), &isOk);
 
     // Check if the tab name is valid
-    bool isValidName = CheckIfValidTabName(name);
-    if(!isValidName)
+    // Not valid name, return
+    if(!error.CheckForValidTabName(this, name, GetAllTabNames()))
     {
-        QMessageBox::warning(this, "Invalid Name", "Invalid Name");
         return;
     }
+    // Is a valid name, add the new tab
     else if(isOk && !name.isEmpty())
     {
         // Create the data table for the new tab
@@ -238,10 +238,10 @@ void MaterialTracker::AddTab()
         // Creates a new MaterialStatusBar widget,
         // adds it to the data structure, and
         // creates a new tab with the widget
-        MaterialStatusBar* material = new MaterialStatusBar;
-        material->SetTabName(name); // Set the tab name for that stores this widget
-        materialTabs.append(material);
-        ui->materialsTabWidget->addTab(material, name);
+        MaterialStatusBar* tab = new MaterialStatusBar;
+        tab->SetTabName(name); // Set the tab name for that stores this widget
+        materialTabs.append(tab);
+        ui->materialsTabWidget->addTab(tab, name);
     }
 }
 
@@ -264,12 +264,12 @@ void MaterialTracker::RenameTab(int index)
                                             tr("Tab Name"), QLineEdit::Normal,
                                             tr(""), &isOk);
     // Check if the new tab name is valid
-    bool isValidName = CheckIfValidTabName(name);
-    if(!isValidName)
+    // Not valid name, return
+    if(!error.CheckForValidTabName(this, name, GetAllTabNames()))
     {
-        QMessageBox::warning(this, "Invalid Name", "Invalid Name");
         return;
     }
+    // Is a valid name, rename the tab
     else if(isOk && !name.isEmpty())
     {
         // Update the database with the new tab name
@@ -304,7 +304,7 @@ void MaterialTracker::UpdateMaterials()
         ChangeMaterialUpdatingStatusLabel();
     }
 
-    ui->fileStatusLabel->setText(QString("Materials Updated Successfully"));
+    ui->fileStatusLabel->setText(QString("Materials Updated"));
 }
 
 /*************************************************************************
@@ -350,7 +350,7 @@ void MaterialTracker::ImportExcelSheet()
     // Throw an error if there are no active tabs
     if(materialTabs.size() <= 0)
     {
-        QMessageBox::information(this, "Error", "No Active Tabs");
+        error.NonModalErrorMessage(this, "Error", "No Active Tabs");
         return;
     }
 
@@ -468,55 +468,12 @@ void MaterialTracker::DeleteAllTabDataTables()
     delete dataInterface;
 }
 
-// Checks if the tab name that the user entered is valid
-// use. There are certain checks that must be made in order
-// for the user entered tab name to be reflected in the
-// SQLite database.
-bool MaterialTracker::CheckIfValidTabName(QString name)
-{
-    if(name.contains("-") || name.contains("."))
-    {
-        return false;
-    }
-
-    // Check if name starts with a number
-    QString numbers = "0123456789";
-    for(int i = 0; i < numbers.size(); i++)
-    {
-        if(name[0] == numbers[i])
-        {
-            return false;
-        }
-    }
-
-    // Check for existing tab names
-    for(int i = 0; i < materialTabs.size(); i++)
-    {
-        // Strip the new tab name and the current tab name
-        // down to what SQLite sees to make sure that
-        // there are no conflicting names
-        QString tempNewName = name.simplified();
-        tempNewName.replace(" ", "");
-
-        QString tempCurrentName = materialTabs[i]->GetTabName().simplified();
-        tempCurrentName.replace(" ", "");
-
-        if(tempNewName.toLower() == tempCurrentName.toLower())
-        {
-            return false;
-        }
-    }
-
-    // Name is valid
-    return true;
-}
-
 void MaterialTracker::CreateTabsFromFile(int tabAmt,
-                                         QVector<QString> tabNames,
-                                         QVector<int> amtOfMatsInTab,
-                                         QVector<QVector<QString>> namesInTab,
-                                         QVector<QVector<int>> currentAmtsInTab,
-                                         QVector<QVector<int>> goalAmtsInTab)
+                                         const QVector<QString>& tabNames,
+                                         const QVector<int>& amtOfMatsInTab,
+                                         const QVector<QVector<QString>>& namesInTab,
+                                         const QVector<QVector<int>>& currentAmtsInTab,
+                                         const QVector<QVector<int>>& goalAmtsInTab)
 {
     // Remove all active tabs before loading new tabs in
     DeleteAllTabDataTables();
@@ -537,7 +494,7 @@ void MaterialTracker::CreateTabsFromFile(int tabAmt,
         if(amtOfMatsInTab[i] > 0)
         {
             material->AddMaterialFromSaveFile(amtOfMatsInTab[i], namesInTab[i],
-                                          currentAmtsInTab[i], goalAmtsInTab[i]);
+                                              currentAmtsInTab[i], goalAmtsInTab[i]);
         }
         materialTabs.append(material);
         ui->materialsTabWidget->addTab(material, tabNames[i]);

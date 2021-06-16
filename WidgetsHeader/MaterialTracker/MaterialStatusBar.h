@@ -20,7 +20,7 @@ public:
     ~MaterialStatusBar();
 
     // --- Functions ---
-    void SetTabName(QString val) { tabName = val; }
+    void SetTabName(const QString& val) { tabName = val; }
     QString GetTabName() { return tabName; }
     void UpdateTabName(QString newTabName);
 
@@ -30,8 +30,10 @@ public:
     QVector<int> GetAllTrackedGoalAmounts() const;
 
     void UpdateTrackingStatus();
-    void AddMaterialFromSaveFile(int amtOfMaterials, QVector<QString> matNames,
-                             QVector<int> currentAmts, QVector<int> goalAmts);
+    void AddMaterialFromSaveFile(int amtOfMaterials,
+                                 const QVector<QString>& matNames,
+                                 const QVector<int>& currentAmts,
+                                 const QVector<int>& goalAmts);
     void AddMaterialFromExcelFile(int matCount, QString matName);
 
 public slots:
