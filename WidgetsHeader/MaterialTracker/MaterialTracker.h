@@ -25,32 +25,26 @@ public:
     ~MaterialTracker();
 
 public slots:
+    // I/O
     void SaveToFile();
     void LoadFromFile();
 
 private slots:
+    // Tabs
     void AddTab();
     void RemoveTab(int index);
     void RenameTab(int index);
+
+    // API
     void UpdateMaterials();
 
     // Sorting
+	void SortingConfig(int index);
     void SortByCategory();
     void SortByName();
     void SortByCurrent();
     void SortByGoal();
     void SortByPercent();
-
-public:
-    void ChangeWaitingForApiReplyStatusLabel();
-
-    // Tab names
-    QVector<QString> GetAllTabNames();
-    QString getTabName() const { return tabName; }
-    void setTabName(const QString &value) { tabName = value; }
-
-    // Importing
-    void ImportExcelSheet();
 
 private:
     Ui::MaterialTracker* ui;
@@ -65,7 +59,10 @@ private:
     // --- Variables ---
     QString tabName;
 
-    // --- Functions ---
+    // --- Sorting ---
+    void ResetSortingButtons();
+
+    // --- Tabs ---
     void CreateTabDataTable(QString name);
     void DeleteTabDataTable(QString name);
     void DeleteAllTabDataTables();
@@ -81,6 +78,18 @@ private:
    void CheckSaveFileStatus(int result); // TODO move to Error Handling
    void ChangeLoadingFileStatusLabel();
    void ChangeMaterialUpdatingStatusLabel();
+
+public:
+    // --- Change status label ---
+    void ChangeWaitingForApiReplyStatusLabel();
+
+	// --- Tab names ---
+	QVector<QString> GetAllTabNames();
+	QString getTabName() const { return tabName; }
+	void setTabName(const QString& value) { tabName = value; }
+
+	// --- Importing ---
+	void ImportExcelSheet();
 };
 
 #endif // MATERIALTRACKER_H

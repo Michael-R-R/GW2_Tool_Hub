@@ -5,7 +5,7 @@
 MaterialStatusBar::MaterialStatusBar(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MaterialStatusBar),
-    sortCategoryClicks(1), sortNameClicks(1), sortCurrentClicks(1), sortGoalClicks(1), sortPercentClicks(1),
+    currentSortState(SortingState::DEFAULT), nextSortState(SortingState::DEFAULT),
     tabName(), trackedMaterials(), originalTrackedMaterials(), sortedTrackedMaterials(),
     searchedMaterial(), materialList(), wordCompleter(new QCompleter(materialList, this))
 {
@@ -32,6 +32,24 @@ MaterialStatusBar::~MaterialStatusBar()
  *                          PUBLIC FUNCTIONS                             *
  *************************************************************************/
 
+ // Update the label for how many materials are being tracked
+ // (active / complete)
+void MaterialStatusBar::UpdateTrackingStatus()
+{
+	double completedCount = 0;
+	for (auto material : trackedMaterials)
+	{
+		if (material->GetIsCompleted()) { completedCount++; }
+	}
+
+	int activeAmount = trackedMaterials.size() - completedCount;
+	double percentComplete = (completedCount / trackedMaterials.size()) * 100.0;
+	ui->labelMatStatus->setText(QString("Status: %1 Active / %2 Complete / %3% Complete")
+		.arg(activeAmount)
+		.arg(completedCount)
+		.arg(percentComplete, 2, 'g', 4));
+}
+
 // Loops through each material and updates its corresponding tab name
 void MaterialStatusBar::UpdateTabName(QString newTabName)
 {
@@ -57,7 +75,7 @@ QVector<QString> MaterialStatusBar::GetAllTrackedMaterialNames() const
 }
 
 // Loops through all current trackedMaterials and retrieves the material
-// current amount from the material spinbox
+// current amount from the material spin box
 QVector<int> MaterialStatusBar::GetAllTrackedCurrentAmounts() const
 {
     QVector<int> materialCurrent;
@@ -70,7 +88,7 @@ QVector<int> MaterialStatusBar::GetAllTrackedCurrentAmounts() const
 }
 
 // Loops through all goal trackedMaterials and retrieves the material
-// goal amount from the material spinbox
+// goal amount from the material spin box
 QVector<int> MaterialStatusBar::GetAllTrackedGoalAmounts() const
 {
     QVector<int> materialGoal;
@@ -82,23 +100,6 @@ QVector<int> MaterialStatusBar::GetAllTrackedGoalAmounts() const
     return materialGoal;
 }
 
-// Update the label for how many materials are being tracked
-// (active / complete)
-void MaterialStatusBar::UpdateTrackingStatus()
-{
-    double completedCount = 0;
-    for(auto material : trackedMaterials)
-    {
-        if(material->GetIsCompleted()) { completedCount++; }
-    }
-
-    int activeAmount = trackedMaterials.size() - completedCount;
-    double percentComplete = (completedCount / trackedMaterials.size()) * 100.0;
-    ui->labelMatStatus->setText(QString("Status: %1 Active / %2 Complete / %3% Complete")
-                                     .arg(activeAmount)
-                                     .arg(completedCount)
-                                     .arg(percentComplete, 2, 'g', 4));
-}
 
 // Adds all the materials that were read in from file and adds them to
 // their corresponding tabs
@@ -123,6 +124,7 @@ void MaterialStatusBar::AddMaterialFromSaveFile(int amtOfMaterials,
         // to the applications ui
         trackedMaterials.append(material);
         ui->matTrackerToolBarLayout->addWidget(material);
+        MakeCopyOfTrackedMaterials();
 
         UpdateTrackingStatus();
     }
@@ -148,6 +150,7 @@ void MaterialStatusBar::AddMaterialFromExcelFile(int matCount, QString matName)
         // to the applications ui
         trackedMaterials.append(material);
         ui->matTrackerToolBarLayout->addWidget(material);
+        MakeCopyOfTrackedMaterials();
 
         UpdateTrackingStatus();
     }
@@ -161,11 +164,10 @@ void MaterialStatusBar::AddMaterialFromExcelFile(int matCount, QString matName)
  *                         SORTING FUNCTIONS                             *
  *************************************************************************/
 
+// Sorts the materials back into their original order 
+// before any sorting was done
 void MaterialStatusBar::SortNoFilter()
 {
-    // Make a copy of the original order before any sorting
-    if(originalTrackedMaterials.size() <= 0) { originalTrackedMaterials = trackedMaterials; }
-
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in original order
@@ -174,9 +176,6 @@ void MaterialStatusBar::SortNoFilter()
 
 void MaterialStatusBar::SortLowToHighCategory()
 {
-    // Make a copy of the original order before any sorting
-    if(originalTrackedMaterials.size() <= 0) { originalTrackedMaterials = trackedMaterials; }
-
     // Sort the materials
     sortedTrackedMaterials = materialSorting.SortLowToHighCategory(trackedMaterials);
     // Remove the materials from the UI and data structure
@@ -187,9 +186,6 @@ void MaterialStatusBar::SortLowToHighCategory()
 
 void MaterialStatusBar::SortHighToLowCategory()
 {
-    // Make a copy of the original order before any sorting
-    if(originalTrackedMaterials.size() <= 0) { originalTrackedMaterials = trackedMaterials; }
-
     // Sort the materials
     sortedTrackedMaterials = materialSorting.SortHighToLowCategory(trackedMaterials);
     // Remove the materials from the UI and data structure
@@ -200,8 +196,6 @@ void MaterialStatusBar::SortHighToLowCategory()
 
 void MaterialStatusBar::SortLowToHighName()
 {
-    // Make a copy of the original order before any sorting
-    if(originalTrackedMaterials.size() <= 0) { originalTrackedMaterials = trackedMaterials; }
 
     // Sort the materials
     sortedTrackedMaterials = materialSorting.SortLowToHighName(trackedMaterials);
@@ -213,9 +207,6 @@ void MaterialStatusBar::SortLowToHighName()
 
 void MaterialStatusBar::SortHighToLowName()
 {
-    // Make a copy of the original order before any sorting
-    if(originalTrackedMaterials.size() <= 0) { originalTrackedMaterials = trackedMaterials; }
-
     // Sort the materials
     sortedTrackedMaterials = materialSorting.SortHighToLowName(trackedMaterials);
     // Remove the materials from the UI and data structure
@@ -226,9 +217,6 @@ void MaterialStatusBar::SortHighToLowName()
 
 void MaterialStatusBar::SortLowToHighCurrent()
 {
-    // Make a copy of the original order before any sorting
-    if(originalTrackedMaterials.size() <= 0) { originalTrackedMaterials = trackedMaterials; }
-
     // Sort the materials
     sortedTrackedMaterials = materialSorting.SortLowToHighCurrent(trackedMaterials);
     // Remove the materials from the UI and data structure
@@ -239,9 +227,6 @@ void MaterialStatusBar::SortLowToHighCurrent()
 
 void MaterialStatusBar::SortHighToLowCurrent()
 {
-    // Make a copy of the original order before any sorting
-    if(originalTrackedMaterials.size() <= 0) { originalTrackedMaterials = trackedMaterials; }
-
     // Sort the materials
     sortedTrackedMaterials = materialSorting.SortHighToLowCurrent(trackedMaterials);
     // Remove the materials from the UI and data structure
@@ -252,9 +237,6 @@ void MaterialStatusBar::SortHighToLowCurrent()
 
 void MaterialStatusBar::SortLowToHighGoal()
 {
-    // Make a copy of the original order before any sorting
-    if(originalTrackedMaterials.size() <= 0) { originalTrackedMaterials = trackedMaterials; }
-
     // Sort the materials
     sortedTrackedMaterials = materialSorting.SortLowToHighGoal(trackedMaterials);
     // Remove the materials from the UI and data structure
@@ -265,9 +247,6 @@ void MaterialStatusBar::SortLowToHighGoal()
 
 void MaterialStatusBar::SortHighToLowGoal()
 {
-    // Make a copy of the original order before any sorting
-    if(originalTrackedMaterials.size() <= 0) { originalTrackedMaterials = trackedMaterials; }
-
     // Sort the materials
     sortedTrackedMaterials = materialSorting.SortHighToLowGoal(trackedMaterials);
     // Remove the materials from the UI and data structure
@@ -278,9 +257,6 @@ void MaterialStatusBar::SortHighToLowGoal()
 
 void MaterialStatusBar::SortLowToHighPercent()
 {
-    // Make a copy of the original order before any sorting
-    if(originalTrackedMaterials.size() <= 0) { originalTrackedMaterials = trackedMaterials; }
-
     // Sort the materials
     sortedTrackedMaterials = materialSorting.SortLowToHighPercent(trackedMaterials);
     // Remove the materials from the UI and data structure
@@ -291,9 +267,6 @@ void MaterialStatusBar::SortLowToHighPercent()
 
 void MaterialStatusBar::SortHighToLowPercent()
 {
-    // Make a copy of the original order before any sorting
-    if(originalTrackedMaterials.size() <= 0) { originalTrackedMaterials = trackedMaterials; }
-
     // Sort the materials
     sortedTrackedMaterials = materialSorting.SortHighToLowPercent(trackedMaterials);
     // Remove the materials from the UI and data structure
@@ -302,6 +275,7 @@ void MaterialStatusBar::SortHighToLowPercent()
     AddSortedMaterials(sortedTrackedMaterials);
 }
 
+// Removes all the materials from the UI display and data structure
 void MaterialStatusBar::RemoveAllMaterials()
 {
     // Remove all the materials from the last to first
@@ -313,6 +287,8 @@ void MaterialStatusBar::RemoveAllMaterials()
     }
 }
 
+// Re-adds all the now sorted materials back to the UI display and
+// data structure
 void MaterialStatusBar::AddSortedMaterials(QVector<Materials*>& materials)
 {
     for(int i = 0; i < materials.size(); i++)
@@ -320,7 +296,7 @@ void MaterialStatusBar::AddSortedMaterials(QVector<Materials*>& materials)
         materials[i]->setTabName(GetTabName());
 
         // Connect Material class's signals to the main window
-        // These signal/slots will activate when they recieve the
+        // These signal/slots will activate when they receive the
         // emit signal from the Material class's functions
         connect(materials[i], &Materials::RemoveMaterial, this, &MaterialStatusBar::RemoveMaterial);
         connect(materials[i], &Materials::TrackingStatusChanged, this, &MaterialStatusBar::TrackingStatusChanged);
@@ -330,6 +306,13 @@ void MaterialStatusBar::AddSortedMaterials(QVector<Materials*>& materials)
 
         UpdateTrackingStatus();
     }
+}
+
+// Makes a copy of the original material order in case the user 
+// wants to display the materials in unsorted order again
+void MaterialStatusBar::MakeCopyOfTrackedMaterials()
+{
+    originalTrackedMaterials = trackedMaterials;
 }
 
 /*************************************************************************
@@ -356,10 +339,11 @@ void MaterialStatusBar::AddMaterial()
     // emit signal from the Material class's functions
     connect(material, &Materials::RemoveMaterial, this, &MaterialStatusBar::RemoveMaterial);
     connect(material, &Materials::TrackingStatusChanged, this, &MaterialStatusBar::TrackingStatusChanged);
-    trackedMaterials.append(material);
 
-    // Add the material to the applications ui
+    // Add material to the vector and to the UI display
+    trackedMaterials.append(material);
     ui->matTrackerToolBarLayout->addWidget(material);
+    MakeCopyOfTrackedMaterials();
 
     UpdateTrackingStatus();
 }

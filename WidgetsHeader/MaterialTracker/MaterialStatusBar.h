@@ -20,17 +20,29 @@ public:
     MaterialStatusBar(QWidget *parent = nullptr);
     ~MaterialStatusBar();
 
+    // Enum class to keep track of all the sorting configurations
+    enum class SortingState { DEFAULT,
+                              CATEGORY_NONE, CATEGORY_ASCENDING, CATEGORY_DESCENDING,
+                              NAME_NONE, NAME_ASCENDING, NAME_DESCENDING,
+                              CURRENT_NONE, CURRENT_ASCENDING, CURRENT_DESCENDING,
+                              GOAL_NONE, GOAL_ASCENDING, GOAL_DESCENDING,
+                              PERCENT_NONE, PERCENT_ASCENDING, PERCENT_DESCENDING,};
+
     // --- Functions ---
-    void SetTabName(const QString& val) { tabName = val; }
+    void UpdateTrackingStatus();
+
+    // Tabs
     QString GetTabName() { return tabName; }
+    void SetTabName(const QString& val) { tabName = val; }
     void UpdateTabName(QString newTabName);
 
+    // Utility
     int GetNumOfTrackedMaterials() { return trackedMaterials.size(); }
     QVector<QString> GetAllTrackedMaterialNames() const;
     QVector<int> GetAllTrackedCurrentAmounts() const;
     QVector<int> GetAllTrackedGoalAmounts() const;
-
-    void UpdateTrackingStatus();
+    
+    // Adding materials
     void AddMaterialFromSaveFile(int amtOfMaterials,
                                  const QVector<QString>& matNames,
                                  const QVector<int>& currentAmts,
@@ -38,17 +50,11 @@ public:
     void AddMaterialFromExcelFile(int matCount, QString matName);
 
     // --- Sorting ---
-    // getters/setters
-    int GetSortCategoryClicks() const { return sortCategoryClicks; };
-    void SetSortCategoryClicks(int value) { sortCategoryClicks = value; }
-    int GetSortNameClicks() const { return sortNameClicks; };
-    void SetSortNameClicks(int value) { sortNameClicks = value; }
-    int GetSortCurrentClicks() const { return sortCurrentClicks; };
-    void SetSortCurrentClicks(int value) { sortCurrentClicks = value; }
-    int GetSortGoalClicks() const { return sortGoalClicks; };
-    void SetSortGoalClicks(int value) { sortGoalClicks = value; }
-    int GetSortPercentClicks() const { return sortPercentClicks; };
-    void SetSortPercentClicks(int value) { sortPercentClicks = value; }
+    // Enum get/set sorting state
+	MaterialStatusBar::SortingState GetCurrentSortState() const { return currentSortState; }
+	void SetCurrentSortState(MaterialStatusBar::SortingState val) { currentSortState = val; }
+	MaterialStatusBar::SortingState GetNextSortState() const { return nextSortState; }
+	void SetNextSortState(MaterialStatusBar::SortingState val) { nextSortState = val; }
     // no filter
     void SortNoFilter();
     // category
@@ -66,9 +72,10 @@ public:
     // percent
     void SortLowToHighPercent();
     void SortHighToLowPercent();
-    // remove/re-add materials
+    // Sorting Utility Functions
     void RemoveAllMaterials();
     void AddSortedMaterials(QVector<Materials*>& materials);
+    void MakeCopyOfTrackedMaterials();
 
 public slots:
     // Adds a Material widget to the main window widget
@@ -88,14 +95,11 @@ private:
     DataInterface* dataInterface;
 
     // --- Sorting ---
-    int sortCategoryClicks;
-    int sortNameClicks;
-    int sortCurrentClicks;
-    int sortGoalClicks;
-    int sortPercentClicks;
+    SortingState currentSortState;
+    SortingState nextSortState;
     MaterialSorting materialSorting;
 
-    // --- Variables: tabs ---
+    // --- Tabs ---
     QString tabName;
 
     // --- Data structures ---
@@ -104,12 +108,10 @@ private:
     QVector<Materials*> sortedTrackedMaterials;
 
 
-    // --- Variables: Search material ---
+    // --- Search Material Line Edit ---
     QString searchedMaterial;
     QStringList materialList;
     QCompleter* wordCompleter;
-
-    // --- Functions: Search material ---
     void SetupWordCompleter();
 
 public:

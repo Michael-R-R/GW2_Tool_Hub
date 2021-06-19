@@ -42,28 +42,28 @@ QVector<Materials*> MaterialSorting::SortHighToLowName(QVector<Materials *>& mat
     return materials;
 }
 
-QVector<Materials *> MaterialSorting::SortLowToHighCurrent(QVector<Materials *> &materials)
+QVector<Materials*> MaterialSorting::SortLowToHighCurrent(QVector<Materials *> &materials)
 {
     std::sort(materials.begin(), materials.end(), &MaterialSorting::CompareLessThanCurrent);
 
     return materials;
 }
 
-QVector<Materials *> MaterialSorting::SortHighToLowCurrent(QVector<Materials *> &materials)
+QVector<Materials*> MaterialSorting::SortHighToLowCurrent(QVector<Materials *> &materials)
 {
     std::sort(materials.begin(), materials.end(), &MaterialSorting::CompareGreaterThanCurrent);
 
     return materials;
 }
 
-QVector<Materials *> MaterialSorting::SortLowToHighGoal(QVector<Materials *> &materials)
+QVector<Materials*> MaterialSorting::SortLowToHighGoal(QVector<Materials *> &materials)
 {
     std::sort(materials.begin(), materials.end(), &MaterialSorting::CompareLessThanGoal);
 
     return materials;
 }
 
-QVector<Materials *> MaterialSorting::SortHighToLowGoal(QVector<Materials *> &materials)
+QVector<Materials*> MaterialSorting::SortHighToLowGoal(QVector<Materials *> &materials)
 {
     std::sort(materials.begin(), materials.end(), &MaterialSorting::CompareGreaterThanGoal);
 
