@@ -26,6 +26,7 @@ An application aimed at providing resourceful tools to compliment the Guild Wars
 
 ### On Demand Material Tracker (with API functionality):
 - Search and add materials
+- Sort materials by category, material name, current amount, goal amount, and percent complete
 - Import excel sheets exported from GW2 Efficiency 
 - Set current amount by connecting an API key
 - Set the goal amount to reach
