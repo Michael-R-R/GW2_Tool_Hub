@@ -1,2 +1,16 @@
 
 *.user
+/debug/
+/release/
+/.vs/
+GW2_Tool_Hub.sln
+GW2_Hub.vcxproj.filters
+GW2_Hub.vcxproj
+ui_Browser.h
+ui_MainWindow.h
+ui_Materials.h
+ui_MaterialStatusBar.h
+ui_MaterialTracker.h
+ui_Notes.h
+user.db
+.qmake.stash
