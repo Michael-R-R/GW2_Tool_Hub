@@ -754,6 +754,7 @@ void MaterialTracker::CreateTabsFromFile(int tabAmt,
 {
     // Remove all active tabs before loading new tabs in
     DeleteAllTabDataTables();
+    ResetSortingButtons();
     // Clear the widget tab and vector tab
     ui->materialsTabWidget->clear();
     materialTabs.clear();
