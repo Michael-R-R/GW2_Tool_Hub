@@ -266,11 +266,20 @@ void MaterialTracker::RemoveTab(int index)
 {
     // Reset the sorting buttons to default text
     ResetSortingButtons();
+    
     // Remove the data table from the database and then remove
     // the tab bar from the UI and vector
     DeleteTabDataTable(ui->materialsTabWidget->tabText(index));
     ui->materialsTabWidget->removeTab(index);
     materialTabs.remove(index);
+
+	// If there are still active tabs, reset the sorting
+	// config for the current tab to resume the sorting button
+	// config
+	if (materialTabs.size() > 0)
+	{
+		SortingConfig(ui->materialsTabWidget->currentIndex());
+	}
 }
 
 // SLOT Function:
