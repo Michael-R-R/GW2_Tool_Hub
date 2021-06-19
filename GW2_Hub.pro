@@ -16,6 +16,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    WidgetsCpp/MaterialTracker/MaterialSorting.cpp \
     NonWidgetsCpp/DataInterface.cpp \
     NonWidgetsCpp/ErrorHandling.cpp \
     WidgetsCpp/Notes/Notes.cpp \
@@ -31,6 +32,7 @@ SOURCES += \
 
 
 HEADERS += \
+    WidgetsHeader/MaterialTracker/MaterialSorting.h \
     NonWidgetsHeader/DataInterface.h \
     NonWidgetsHeader/ErrorHandling.h \
     WidgetsHeader/Notes/Notes.h \

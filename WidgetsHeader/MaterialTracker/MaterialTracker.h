@@ -34,13 +34,22 @@ private slots:
     void RenameTab(int index);
     void UpdateMaterials();
 
+    // Sorting
+    void SortByCategory();
+    void SortByName();
+    void SortByCurrent();
+    void SortByGoal();
+    void SortByPercent();
+
 public:
     void ChangeWaitingForApiReplyStatusLabel();
 
+    // Tab names
     QVector<QString> GetAllTabNames();
     QString getTabName() const { return tabName; }
     void setTabName(const QString &value) { tabName = value; }
 
+    // Importing
     void ImportExcelSheet();
 
 private:
@@ -68,8 +77,8 @@ private:
                             const QVector<QVector<int>>& currentAmtsInTab,
                             const QVector<QVector<int>>& goalAmtsInTab);
 
-   void CheckSaveFileStatus(int result);
-
+   // --- Change status label ---
+   void CheckSaveFileStatus(int result); // TODO move to Error Handling
    void ChangeLoadingFileStatusLabel();
    void ChangeMaterialUpdatingStatusLabel();
 };

@@ -36,6 +36,11 @@ Materials::~Materials()
     delete dataInterface;
 }
 
+QString Materials::GetMaterialCategory() const
+{
+    return ui->materialCatagoryComboBox->currentText();
+}
+
 /*************************************************************************
  *                          PUBLIC FUNCTIONS                             *
  *************************************************************************/
@@ -59,6 +64,14 @@ int Materials::GetMaterialCurrentAmt() const
 int Materials::GetMaterialGoalAmt() const
 {
     return ui->goalAmountSpinBox->value();
+}
+
+double Materials::GetMaterialPercentComplete() const
+{
+    QString percent = ui->percentCompleteLabel->text();
+    percent = percent.remove(percent.size() - 1, 1);
+
+    return percent.toDouble();
 }
 
 // Queries the database for the passed in material

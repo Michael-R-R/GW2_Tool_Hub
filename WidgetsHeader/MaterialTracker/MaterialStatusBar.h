@@ -2,6 +2,7 @@
 #define MATERIALSTATUSBAR_H
 
 #include "WidgetsHeader/MaterialTracker/Materials.h"
+#include "WidgetsHeader/MaterialTracker/MaterialSorting.h"
 #include "NonWidgetsHeader/DataInterface.h"
 #include <QWidget>
 #include <QListWidgetItem>
@@ -36,6 +37,39 @@ public:
                                  const QVector<int>& goalAmts);
     void AddMaterialFromExcelFile(int matCount, QString matName);
 
+    // --- Sorting ---
+    // getters/setters
+    int GetSortCategoryClicks() const { return sortCategoryClicks; };
+    void SetSortCategoryClicks(int value) { sortCategoryClicks = value; }
+    int GetSortNameClicks() const { return sortNameClicks; };
+    void SetSortNameClicks(int value) { sortNameClicks = value; }
+    int GetSortCurrentClicks() const { return sortCurrentClicks; };
+    void SetSortCurrentClicks(int value) { sortCurrentClicks = value; }
+    int GetSortGoalClicks() const { return sortGoalClicks; };
+    void SetSortGoalClicks(int value) { sortGoalClicks = value; }
+    int GetSortPercentClicks() const { return sortPercentClicks; };
+    void SetSortPercentClicks(int value) { sortPercentClicks = value; }
+    // no filter
+    void SortNoFilter();
+    // category
+    void SortLowToHighCategory();
+    void SortHighToLowCategory();
+    // name
+    void SortLowToHighName();
+    void SortHighToLowName();
+    // current
+    void SortLowToHighCurrent();
+    void SortHighToLowCurrent();
+    // goal
+    void SortLowToHighGoal();
+    void SortHighToLowGoal();
+    // percent
+    void SortLowToHighPercent();
+    void SortHighToLowPercent();
+    // remove/re-add materials
+    void RemoveAllMaterials();
+    void AddSortedMaterials(QVector<Materials*>& materials);
+
 public slots:
     // Adds a Material widget to the main window widget
     // and saves it inside a vector data structure
@@ -49,17 +83,26 @@ public slots:
     // while the user types in the lineEdit
     void SearchBarUpdated(const QString& text);
 
-signals:
-
 private:
     Ui::MaterialStatusBar *ui;
     DataInterface* dataInterface;
+
+    // --- Sorting ---
+    int sortCategoryClicks;
+    int sortNameClicks;
+    int sortCurrentClicks;
+    int sortGoalClicks;
+    int sortPercentClicks;
+    MaterialSorting materialSorting;
 
     // --- Variables: tabs ---
     QString tabName;
 
     // --- Data structures ---
     QVector<Materials*> trackedMaterials;
+    QVector<Materials*> originalTrackedMaterials;
+    QVector<Materials*> sortedTrackedMaterials;
+
 
     // --- Variables: Search material ---
     QString searchedMaterial;
@@ -73,7 +116,6 @@ public:
 
     // --- Inline Functions ---
     inline void UpdateAllMaterials() { for(auto material : trackedMaterials) material->UpdateUiMaterialValues(); }
-
 };
 
 #endif // MATERIALSTATUSBAR_H

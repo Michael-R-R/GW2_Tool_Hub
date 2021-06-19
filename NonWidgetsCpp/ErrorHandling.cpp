@@ -121,7 +121,7 @@ bool ErrorHandling::CheckForValidImportSheet(QWidget* parent, QString sheetName)
         QString title = "Error 3000";
         QString text = QString("Invalid excel sheet: "
                                "<br>Attempted to import: %1 "
-                               "<br>Imported file must be: 'shopping-items' excel sheet exported from GW2 Efficiency"
+                               "<br>Imported file must be: 'shopping-items.csv' excel sheet exported from GW2 Efficiency"
                                "<br><br>Refer to: %2 for more information").arg(sheetName, wikiLink);
 
         HyperlinkErrorMessage(parent, title, text);

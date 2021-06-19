@@ -14,6 +14,7 @@ MaterialTracker::MaterialTracker(QWidget *parent) :
                                           .arg(iconDir.currentPath()));
 
     // Signals/Slots
+    // Materials
     connect(ui->addTabPushButton, &QPushButton::clicked, this, &MaterialTracker::AddTab);
     connect(ui->materialsTabWidget->tabBar(), SIGNAL(tabCloseRequested(int)), this, SLOT(RemoveTab(int)));
     connect(ui->materialsTabWidget->tabBar(), SIGNAL(tabBarDoubleClicked(int)), this, SLOT(RenameTab(int)));
@@ -21,6 +22,12 @@ MaterialTracker::MaterialTracker(QWidget *parent) :
     // Save n Load
     connect(ui->savePushButton, &QPushButton::clicked, this, &MaterialTracker::SaveToFile);
     connect(ui->loadPushButton, &QPushButton::clicked, this, &MaterialTracker::LoadFromFile);
+    // SORTING
+    connect(ui->sortCategoryPushButton, &QPushButton::clicked, this, &MaterialTracker::SortByCategory);
+    connect(ui->sortNamePushButton, &QPushButton::clicked, this, &MaterialTracker::SortByName);
+    connect(ui->sortCurrentPushButton, &QPushButton::clicked, this, &MaterialTracker::SortByCurrent);
+    connect(ui->sortGoalPushButton, &QPushButton::clicked, this, &MaterialTracker::SortByGoal);
+    connect(ui->sortPercentPushButton, &QPushButton::clicked, this, &MaterialTracker::SortByPercent);
 }
 
 MaterialTracker::~MaterialTracker()
@@ -93,6 +100,13 @@ void MaterialTracker::LoadFromFile()
     SaveAndLoad* loadFile = new SaveAndLoad;
     QByteArray inFile = loadFile->LoadTrackedMaterialsFromFile(this);
     QTextStream fileResult(&inFile);
+
+    // Check if there isn't anything to load
+    if(inFile == "invalid")
+    {
+        ui->fileStatusLabel->setText("Loading Cancelled");
+        return;
+    }
 
     // Temp variables
     int tempAmtOfMatInTab = 0;
@@ -295,7 +309,7 @@ void MaterialTracker::UpdateMaterials()
     api->QueryForMaterialsAPI(this);
 
     // After retrieving the API data
-    // up all the values for the ui
+    // update all the values for the ui
     for(auto tab : materialTabs)
     {
         tab->UpdateAllMaterials();
@@ -305,6 +319,196 @@ void MaterialTracker::UpdateMaterials()
     }
 
     ui->fileStatusLabel->setText(QString("Materials Updated"));
+}
+
+void MaterialTracker::SortByCategory()
+{
+    // Throw an error if there are no active tabs
+    if(materialTabs.size() <= 0)
+    {
+        error.NonModalErrorMessage(this, "Error", "No Active Tabs");
+        return;
+    }
+
+    int currentTab = ui->materialsTabWidget->currentIndex();
+
+    // 3 possible cases for each time the user clicks
+    // the sort category button
+    switch(materialTabs[currentTab]->GetSortCategoryClicks())
+    {
+    case 0:
+        // No filter
+        materialTabs[currentTab]->SortNoFilter();
+        ui->sortCategoryPushButton->setText("Sort Category");
+        materialTabs[currentTab]->SetSortCategoryClicks(1);
+        break;
+
+    case 1:
+        // Lowest-Highest
+        materialTabs[currentTab]->SortLowToHighCategory();
+        ui->sortCategoryPushButton->setText("Sort Category - Ascending");
+        materialTabs[currentTab]->SetSortCategoryClicks(2);
+        break;
+
+    case 2:
+        // Highest-Lowest
+        materialTabs[currentTab]->SortHighToLowCategory();
+        ui->sortCategoryPushButton->setText("Sort Category - Descending");
+        materialTabs[currentTab]->SetSortCategoryClicks(0);
+        break;
+    }
+}
+
+void MaterialTracker::SortByName()
+{
+    // Throw an error if there are no active tabs
+    if(materialTabs.size() <= 0)
+    {
+        error.NonModalErrorMessage(this, "Error", "No Active Tabs");
+        return;
+    }
+
+    int currentTab = ui->materialsTabWidget->currentIndex();
+
+    // 3 possible cases for each time the user clicks
+    // the sort name button
+    switch(materialTabs[currentTab]->GetSortNameClicks())
+    {
+    case 0:
+        // No filter
+        materialTabs[currentTab]->SortNoFilter();
+        ui->sortNamePushButton->setText("Sort Name");
+        materialTabs[currentTab]->SetSortNameClicks(1);
+        break;
+
+    case 1:
+        // Lowest-Highest
+        materialTabs[currentTab]->SortLowToHighName();
+        ui->sortNamePushButton->setText("Sort Name - Ascending");
+        materialTabs[currentTab]->SetSortNameClicks(2);
+        break;
+
+    case 2:
+        // Highest-Lowest
+        materialTabs[currentTab]->SortHighToLowName();
+        ui->sortNamePushButton->setText("Sort Name - Descending");
+        materialTabs[currentTab]->SetSortNameClicks(0);
+        break;
+    }
+}
+
+void MaterialTracker::SortByCurrent()
+{
+    // Throw an error if there are no active tabs
+    if(materialTabs.size() <= 0)
+    {
+        error.NonModalErrorMessage(this, "Error", "No Active Tabs");
+        return;
+    }
+
+    int currentTab = ui->materialsTabWidget->currentIndex();
+
+    // 3 possible cases for each time the user clicks
+    // the sort current button
+    switch(materialTabs[currentTab]->GetSortCurrentClicks())
+    {
+    case 0:
+        // No filter
+        materialTabs[currentTab]->SortNoFilter();
+        ui->sortCurrentPushButton->setText("Sort Current");
+        materialTabs[currentTab]->SetSortCurrentClicks(1);
+        break;
+
+    case 1:
+        // Lowest-Highest
+        materialTabs[currentTab]->SortLowToHighCurrent();
+        ui->sortCurrentPushButton->setText("Sort Current - Ascending");
+        materialTabs[currentTab]->SetSortCurrentClicks(2);
+        break;
+
+    case 2:
+        // Highest-Lowest
+        materialTabs[currentTab]->SortHighToLowCurrent();
+        ui->sortCurrentPushButton->setText("Sort Current - Descending");
+        materialTabs[currentTab]->SetSortCurrentClicks(0);
+        break;
+    }
+}
+
+void MaterialTracker::SortByGoal()
+{
+    // Throw an error if there are no active tabs
+    if(materialTabs.size() <= 0)
+    {
+        error.NonModalErrorMessage(this, "Error", "No Active Tabs");
+        return;
+    }
+
+    int currentTab = ui->materialsTabWidget->currentIndex();
+
+    // 3 possible cases for each time the user clicks
+    // the sort goal button
+    switch(materialTabs[currentTab]->GetSortGoalClicks())
+    {
+    case 0:
+        // No filter
+        materialTabs[currentTab]->SortNoFilter();
+        ui->sortGoalPushButton->setText("Sort Goal");
+        materialTabs[currentTab]->SetSortGoalClicks(1);
+        break;
+
+    case 1:
+        // Lowest-Highest
+        materialTabs[currentTab]->SortLowToHighGoal();
+        ui->sortGoalPushButton->setText("Sort Goal - Ascending");
+        materialTabs[currentTab]->SetSortGoalClicks(2);
+        break;
+
+    case 2:
+        // Highest-Lowest
+        materialTabs[currentTab]->SortHighToLowGoal();
+        ui->sortGoalPushButton->setText("Sort Goal - Descending");
+        materialTabs[currentTab]->SetSortGoalClicks(0);
+        break;
+    }
+}
+
+void MaterialTracker::SortByPercent()
+{
+    // Throw an error if there are no active tabs
+    if(materialTabs.size() <= 0)
+    {
+        error.NonModalErrorMessage(this, "Error", "No Active Tabs");
+        return;
+    }
+
+    int currentTab = ui->materialsTabWidget->currentIndex();
+
+    // 3 possible cases for each time the user clicks
+    // the sort percent button
+    switch(materialTabs[currentTab]->GetSortPercentClicks())
+    {
+    case 0:
+        // No filter
+        materialTabs[currentTab]->SortNoFilter();
+        ui->sortPercentPushButton->setText("Sort Percent");
+        materialTabs[currentTab]->SetSortPercentClicks(1);
+        break;
+
+    case 1:
+        // Lowest-Highest Percentage
+        materialTabs[currentTab]->SortLowToHighPercent();
+        ui->sortPercentPushButton->setText("Sort Percent - Ascending");
+        materialTabs[currentTab]->SetSortPercentClicks(2);
+        break;
+
+    case 2:
+        // Highest-Lowest Percentage
+        materialTabs[currentTab]->SortHighToLowPercent();
+        ui->sortPercentPushButton->setText("Sort Percent - Descending");
+        materialTabs[currentTab]->SetSortPercentClicks(0);
+        break;
+    }
 }
 
 /*************************************************************************

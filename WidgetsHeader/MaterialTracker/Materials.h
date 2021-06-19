@@ -24,9 +24,11 @@ public:
     bool GetIsCompleted() const { return isCompleted; }
     void SetIsCompleted(const bool &val) { isCompleted = val; }
 
+    QString GetMaterialCategory() const;
     QString GetMaterialName() const;
     int GetMaterialCurrentAmt() const;
     int GetMaterialGoalAmt() const;
+    double GetMaterialPercentComplete() const;
 
     void SetMaterialValuesByName(QString materialName);
     void SetMaterialValuesFromSaveFile(QString materialName, int currentAmt, int goalAmt);

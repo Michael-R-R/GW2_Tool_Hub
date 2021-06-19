@@ -25,7 +25,7 @@ QByteArray SaveAndLoad::LoadTrackedMaterialsFromFile(QWidget* parent)
                                             tr("Open Tracked Materials"), "",
                                             tr("Tracked Materials (*.txt)"));
     // Open file if there is a valid file selected
-    if(fileName.isEmpty()) { return ""; }
+    if(fileName.isEmpty()) { return "invalid"; }
     else
     {
         // Check if we can open the file
@@ -34,7 +34,7 @@ QByteArray SaveAndLoad::LoadTrackedMaterialsFromFile(QWidget* parent)
         {
             // Throw an error
             error.NonModalErrorMessage(parent, "Unable to open file", inFile.errorString());
-            return "";
+            return "invalid";
         }
 
         // Return all the information from the file read in
