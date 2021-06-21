@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>563</width>
+    <width>546</width>
     <height>176</height>
    </rect>
   </property>
@@ -17,7 +17,81 @@
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">QScrollBar:horizontal
+{
+    border: 1px solid #222222;
+    background-color: #3d3d3d;
+    height: 15px;
+    margin: 0px 16px 0 16px;
+}
+
+QScrollBar::handle:horizontal
+{
+	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(97, 97, 97, 255),stop:1 rgba(90, 90, 90, 255));
+	border: 1px solid #2d2d2d;
+    min-height: 20px;
+}
+
+QScrollBar::add-line:horizontal
+{
+	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(97, 97, 97, 255),stop:1 rgba(90, 90, 90, 255));
+	border: 1px solid #2d2d2d;
+    width: 15px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal
+{
+	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(97, 97, 97, 255),stop:1 rgba(90, 90, 90, 255));
+	border: 1px solid #2d2d2d;
+    width: 15px;
+    subcontrol-position: left;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal
+{
+    background: none;
+}
+
+QScrollBar:vertical
+{
+    background-color: #3d3d3d;
+    width: 16px;
+	border: 1px solid #2d2d2d;
+    margin: 16px 0px 16px 0px;
+}
+
+QScrollBar::handle:vertical
+{
+    background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(97, 97, 97, 255),stop:1 rgba(90, 90, 90, 255));
+	border: 1px solid #2d2d2d;
+    min-height: 20px;
+}
+
+QScrollBar::add-line:vertical
+{
+	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(97, 97, 97, 255),stop:1 rgba(90, 90, 90, 255));
+	border: 1px solid #2d2d2d;
+    height: 15px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical
+{
+	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1,     			stop:0 rgba(97, 97, 97, 255),stop:1 rgba(90, 90, 90, 255));
+	border: 1px solid #2d2d2d;
+    height: 15px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
+{
+    background: none;
+}</string>
      </property>
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAsNeeded</enum>
@@ -30,7 +104,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>543</width>
+        <width>526</width>
         <height>156</height>
        </rect>
       </property>
@@ -58,10 +132,28 @@
 
 QPushButton
 {
-	background-color: rgb(136, 136, 136);
+	background-color: rgba(136, 136, 136, 30%);
 	color: white;
+	min-width: 80px;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 2px;
+	border-color: black;
+	padding: 1px;
+}
+
+QPushButton::flat
+{
+	background-color: transparent;
+	border: none;
+	color: #fff;
+}
+
+QPushButton::hover
+{
+	background-color: rgba(0, 39, 255, 20%);
 	border: 1px solid black;
-    padding: 4px;
+
 }
 
 QPushButton:pressed 
@@ -72,6 +164,14 @@ QPushButton:pressed
 QLabel
 {
 	color: white;
+}
+
+QLineEdit
+{
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 3px;
+	border-color: black;
 }</string>
          </property>
          <property name="frameShape">
@@ -112,7 +212,7 @@ QLabel
                <string notr="true">border: 0px solid black;</string>
               </property>
               <property name="text">
-               <string>Status: 0 Active / 0 Completed / 0% Complete</string>
+               <string>Stats: 0 Active / 0 Completed / 0% Complete</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>

@@ -8,10 +8,7 @@ MaterialTracker::MaterialTracker(QWidget *parent) :
 {
     // Setup
     ui->setupUi(this);
-
-    // Set icons
-    ui->materialsTabWidget->setStyleSheet(QString("QTabBar::close-button { image: url(%1/icons/close_tab_512.png) }")
-                                          .arg(iconDir.currentPath()));
+    SetIcons();
 
     // Signals/Slots
     // Materials
@@ -705,6 +702,15 @@ void MaterialTracker::SortByPercent()
 /*************************************************************************
  *                            PRIVATE FUNCTIONS                          *
  *************************************************************************/
+
+void MaterialTracker::SetIcons()
+{
+    QDir iconDir;
+
+	// Set icons
+	ui->materialsTabWidget->setStyleSheet(QString("QTabBar::close-button { image: url(%1/icons/close_tab_512.png) }")
+		                                  .arg(iconDir.currentPath()));
+}
 
 // Function that resets all the sorting push buttons to their
 // default text

@@ -6,6 +6,8 @@
 #include <QVector>
 #include <QString>
 #include <QEvent>
+#include <QDir>
+#include <QDebug>
 
 namespace Ui { class Materials; }
 
@@ -49,7 +51,6 @@ signals:
     void TrackingStatusChanged(Materials* material);
 
 private:
-    // --- Pointers ---
     Ui::Materials *ui;
     DataInterface* dataInterface;
 

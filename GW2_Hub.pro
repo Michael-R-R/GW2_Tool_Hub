@@ -4,7 +4,6 @@ QT       += sql
 QT       += webenginewidgets
 QT       += widgets
 
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -17,33 +16,34 @@ CONFIG += c++17
 
 SOURCES += \
     WidgetsCpp/MaterialTracker/MaterialSorting.cpp \
-    NonWidgetsCpp/DataInterface.cpp \
-    NonWidgetsCpp/ErrorHandling.cpp \
     WidgetsCpp/Notes/Notes.cpp \
-    NonWidgetsCpp/SaveAndLoad.cpp \
-    NonWidgetsCpp/ApiAccess.cpp \
     WidgetsCpp/MaterialTracker/MaterialStatusBar.cpp \
     WidgetsCpp/MainWindow/MainWindow.cpp \
     WidgetsCpp/Browser/Browser.cpp \
-    NonWidgetsCpp/main.cpp \
     WidgetsCpp/MaterialTracker/MaterialTracker.cpp \
-    WidgetsCpp/MaterialTracker/Materials.cpp
+    WidgetsCpp/MaterialTracker/Materials.cpp \
+    NonWidgetsCpp/DataInterface.cpp \
+    NonWidgetsCpp/ErrorHandling.cpp \
+    NonWidgetsCpp/SaveAndLoad.cpp \
+    NonWidgetsCpp/ApiAccess.cpp \
+    NonWidgetsCpp/main.cpp 
+    
 
 
 
 HEADERS += \
     WidgetsHeader/MaterialTracker/MaterialSorting.h \
-    NonWidgetsHeader/DataInterface.h \
-    NonWidgetsHeader/ErrorHandling.h \
     WidgetsHeader/Notes/Notes.h \
-    NonWidgetsHeader/SaveAndLoad.h \
-    NonWidgetsHeader/ApiAccess.h \
     WidgetsHeader/MaterialTracker/MaterialStatusBar.h \
     WidgetsHeader/MainWindow/MainWindow.h \
     WidgetsHeader/Browser/Browser.h \
     WidgetsHeader/MaterialTracker/MaterialTracker.h \
-    WidgetsHeader/MaterialTracker/Materials.h
-
+    WidgetsHeader/MaterialTracker/Materials.h \  
+    NonWidgetsHeader/DataInterface.h \
+    NonWidgetsHeader/ErrorHandling.h \    
+    NonWidgetsHeader/SaveAndLoad.h \
+    NonWidgetsHeader/ApiAccess.h 
+    
 
 FORMS += \
     Forms/Browser.ui \

@@ -40,12 +40,29 @@
 
 QPushButton
 {
-	background-color: rgb(136, 136, 136);
+	background-color: rgba(136, 136, 136, 30%);
 	color: white;
-	border: 1px solid black;
-	padding: 2px;
+	min-width: 80px;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 2px;
+	border-color: black;
+	padding: 1px;
 }
 
+QPushButton::flat
+{
+	background-color: transparent;
+	border: none;
+	color: #fff;
+}
+
+QPushButton::hover
+{
+	background-color: rgba(0, 39, 255, 20%);
+	border: 1px solid black;
+
+}
 
 QPushButton:pressed 
 {

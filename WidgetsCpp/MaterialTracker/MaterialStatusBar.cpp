@@ -44,7 +44,7 @@ void MaterialStatusBar::UpdateTrackingStatus()
 
 	int activeAmount = trackedMaterials.size() - completedCount;
 	double percentComplete = (completedCount / trackedMaterials.size()) * 100.0;
-	ui->labelMatStatus->setText(QString("Status: %1 Active / %2 Complete / %3% Complete")
+	ui->labelMatStatus->setText(QString("Stats: %1 Active / %2 Complete / %3% Complete")
 		.arg(activeAmount)
 		.arg(completedCount)
 		.arg(percentComplete, 2, 'g', 4));

@@ -1,7 +1,6 @@
 #include "WidgetsHeader/MaterialTracker/Materials.h"
 #include "ui_Materials.h"
-#include <QDebug>
-#include <QStyleOption>
+
 
 Materials::Materials(QWidget *parent) :
     QWidget(parent),
@@ -13,7 +12,7 @@ Materials::Materials(QWidget *parent) :
     ui->setupUi(this);
     SetupAllMaterialDefaults();
 
-    // Event Filter: disables combobox and spinbox scrolling
+    // Event Filter: disables combobox and spin box scrolling
     // unless selected and focused on
     ui->goalAmountSpinBox->installEventFilter(this);
     ui->materialCatagoryComboBox->installEventFilter(this);
@@ -127,7 +126,7 @@ void Materials::UpdateUiMaterialValues()
  *                          PRIVATE SLOTS                                *
  *************************************************************************/
 
-// SLOT Function: called when the material catagory combobox value is changed
+// SLOT Function: called when the material category combobox value is changed
 void Materials::MaterialCatagoryChanged(QString text)
 {
     // Adds all the corresponding material types (material names) with that category
@@ -240,21 +239,30 @@ void Materials::SetPercentComplete(QString materialName)
     {
         // Green
         ui->percentCompleteLabel->setStyleSheet(QString("background-color: rgb(100, 255, 98);"
-                                                        "border: 1px solid black;"));
+                                                        "border: 1px solid black;"
+                                                        "color: black;"));
+
+        // Trigger that the tracked material has reached 100%
         SetIsCompleted(true);
     }
     else if(percentComplete >= 50.0)
     {
         // Orange
         ui->percentCompleteLabel->setStyleSheet(QString("background-color: rgb(255, 143, 63);"
-                                                        "border: 1px solid black;"));
+			                                            "border: 1px solid black;"
+			                                            "color: black;"));
+
+        // Trigger that the tracked material has not reached 100%
         SetIsCompleted(false);
     }
     else
     {
         // Red
         ui->percentCompleteLabel->setStyleSheet(QString("background-color: rgb(247, 20, 0);"
-                                                        "border: 1px solid black;"));
+			                                            "border: 1px solid black;"
+			                                            "color: black;"));
+
+        // Trigger that the tracked material has not reached 100%
         SetIsCompleted(false);
     }
 

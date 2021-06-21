@@ -48,7 +48,9 @@ private slots:
 
 private:
     Ui::MaterialTracker* ui;
-    QDir iconDir;
+
+    // --- Styling ---
+    void SetIcons();
 
     // --- Error Handling ---
     ErrorHandling error;

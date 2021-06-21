@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>413</width>
+    <width>416</width>
     <height>408</height>
    </rect>
   </property>
@@ -40,12 +40,29 @@
 
 QPushButton
 {
-	background-color: rgb(136, 136, 136);
+	background-color: rgba(136, 136, 136, 30%);
 	color: white;
-	border: 1px solid black;
-	padding: 2px;
+	min-width: 80px;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 2px;
+	border-color: black;
+	padding: 1px;
 }
 
+QPushButton::flat
+{
+	background-color: transparent;
+	border: none;
+	color: #fff;
+}
+
+QPushButton::hover
+{
+	background-color: rgba(0, 39, 255, 20%);
+	border: 1px solid black;
+
+}
 
 QPushButton:pressed 
 {
@@ -212,59 +229,49 @@ QLabel
     border: 1px solid black;
 }
 
-QTabWidget::pane { /* The tab widget frame */
-    border-top: 2px solid #C2C7CB;
+QTabBar::tab 
+{
+    background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1,   			stop:0 rgba(84, 84, 84, 255),stop:1 rgba(59, 59, 59, 255));
+	color: #ffffff;
+	border-style: solid;
+	border-radius: 2px;
+	border-width: 1px;
+	border-color: black;
+	border-bottom: none;
+	padding: 5px;
+	padding-left: 15px;
+	padding-right: 15px;
 }
 
-QTabWidget::tab-bar {
-    left: 5px; /* move to the right by 5px */
+QTabWidget::pane 
+{
+	background-color: rgba(0,0,0, 20%);
+	border: 1px solid #666;
+	top: 1px;
 }
 
-QTabBar::tab {
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
-                                stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
-    border: 2px solid #C4C4C3;
-    border-bottom-color: #C2C7CB; /* same as the pane color */
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    min-width: 8ex;
-    padding: 2px;
+QTabBar::tab:last
+{
+	margin-right: 0; 
 }
 
-QTabBar::tab:selected, QTabBar::tab:hover {
-    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                stop: 0 #fafafa, stop: 0.4 #f4f4f4,
-                                stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);
+QTabBar::tab:!selected
+{
+	color: #b1b1b1;
+	border-bottom-style: solid;
+	background-color: rgb(32, 32, 32);
 }
 
-QTabBar::tab:selected {
-    border-color: #9B9B9B;
-    border-bottom-color: #C2C7CB; /* same as pane color */
+QTabBar::tab:selected
+{
+	margin-bottom: 0px;
 }
 
-QTabBar::tab:!selected {
-    margin-top: 2px; /* make non-selected tabs look smaller */
+QTabBar::tab:!selected:hover
+{
+	border-top-color: rgba(0, 39, 255, 20%);
 }
 
-/* make use of negative margins for overlapping tabs */
-QTabBar::tab:selected {
-    /* expand/overlap to the left and right by 4px */
-    margin-left: -4px;
-    margin-right: -4px;
-}
-
-QTabBar::tab:first:selected {
-    margin-left: 0; /* the first selected tab has nothing to overlap with on the left */
-}
-
-QTabBar::tab:last:selected {
-    margin-right: 0; /* the last selected tab has nothing to overlap with on the right */
-}
-
-QTabBar::tab:only-one {
-    margin: 0; /* if there is only one tab, we don't want overlapping margins */
-}
 
  </string>
      </property>

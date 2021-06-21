@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>581</width>
-    <height>63</height>
+    <width>612</width>
+    <height>64</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,10 +25,28 @@
 
 QPushButton
 {
-	background-color: rgb(136, 136, 136);
+	background-color: rgba(136, 136, 136, 30%);
 	color: white;
+	min-width: 80px;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 2px;
+	border-color: black;
+	padding: 1px;
+}
+
+QPushButton::flat
+{
+	background-color: transparent;
+	border: none;
+	color: #fff;
+}
+
+QPushButton::hover
+{
+	background-color: rgba(0, 39, 255, 20%);
 	border: 1px solid black;
-    padding: 4px;
+
 }
 
 QPushButton:pressed 
@@ -36,10 +54,98 @@ QPushButton:pressed
     background-color: rgb(64, 64, 64);
 }
 
+QComboBox
+{
+    background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1,              	stop:0 rgba(84, 84, 84, 255),stop:1 rgba(59, 59, 59, 255));
+    border: 1px solid #000;
+    padding-left: 6px;
+    color: #ffffff;
+    height: 20px;
+}
+
+QComboBox::disabled
+{
+	background-color: #404040;
+	color: #656565;
+	border-color: #051a39;
+}
+
+QComboBox:on
+{
+    background-color: rgba(0, 39, 255, 20%);
+	color: #000;
+}
+
 QComboBox QAbstractItemView
 {
-	background-color: white;
-    selection-background-color: rgb(64, 64, 64);
+    background-color: #383838;
+    color: #ffffff;
+    border: 1px solid black;
+    selection-background-color: rgba(0, 39, 255, 20%);
+    outline: 0;
+}
+
+QComboBox::drop-down
+{
+	background-color: qlineargradient(spread:repeat, x1:1, y1:0, x2:1, y2:1,   	        	stop:0 rgba(57, 57, 57, 255),stop:1 rgba(50, 50, 50, 255));
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 15px;
+    border-left-width: 1px;
+    border-left-color: black;
+    border-left-style: solid; 
+}
+
+QSpinBox
+{
+    background-color: #131313;
+	color : #eee;
+	border: 1px solid #343434;
+	padding: 3px;
+	padding-left: 5px;
+    border-radius : 2px;
+}
+
+QSpinBox::up-button
+{
+	border-top-right-radius:2px;
+	background-color: #777777;
+    width: 16px; 
+    border-width: 1px;
+    border: 1px solid black;
+}
+
+QSpinBox::up-button:hover
+{
+	background-color: #585858;
+}
+
+QSpinBox::up-button:pressed
+{
+	background-color: #252525;
+    width: 16px; 
+    border-width: 1px;
+}
+
+QSpinBox::down-button
+{
+	border-bottom-right-radius:2px;
+	background-color: #777777;
+    width: 16px; 
+    border-width: 1px;
+    border: 1px solid black;
+}
+
+QSpinBox::down-button:hover
+{
+	background-color: #585858;
+}
+
+QSpinBox::down-button:pressed
+{
+	background-color: #252525;
+    width: 16px; 
+    border-width: 1px;
 }</string>
      </property>
      <property name="frameShape">
@@ -49,6 +155,18 @@ QComboBox QAbstractItemView
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>4</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>4</number>
+      </property>
+      <property name="bottomMargin">
+       <number>4</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="materialsWidgetLayout">
         <item>
@@ -140,7 +258,11 @@ QComboBox QAbstractItemView
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">border: 0px solid black;</string>
+           <string notr="true">QLabel
+{
+	color: black;
+	border: 0px solid black;
+}</string>
           </property>
           <property name="lineWidth">
            <number>1</number>
