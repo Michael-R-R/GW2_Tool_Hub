@@ -290,7 +290,7 @@ void Materials::SetMaterialIcon(QString MaterialName)
  *                          EVENT FILTERS                                *
  *************************************************************************/
 
-// Disables combobox and spinbox contents scrolling
+// Disables combobox and spin box contents scrolling
 // unless selected and focused on
 bool Materials::eventFilter(QObject *object, QEvent *event)
 {
