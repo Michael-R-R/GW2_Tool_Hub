@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>612</width>
-    <height>64</height>
+    <width>596</width>
+    <height>54</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,6 @@ QPushButton
 {
 	background-color: rgba(136, 136, 136, 30%);
 	color: white;
-	min-width: 80px;
 	border-style: solid;
 	border-width: 1px;
 	border-radius: 2px;
@@ -170,6 +169,28 @@ QSpinBox::down-button:pressed
       <item>
        <layout class="QHBoxLayout" name="materialsWidgetLayout">
         <item>
+         <widget class="QLabel" name="iconLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Icon</string>
+          </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QComboBox" name="materialCatagoryComboBox">
           <property name="enabled">
            <bool>true</bool>
@@ -182,7 +203,7 @@ QSpinBox::down-button:pressed
           </property>
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>100</width>
             <height>0</height>
            </size>
           </property>
@@ -207,7 +228,7 @@ QSpinBox::down-button:pressed
           </property>
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>100</width>
             <height>0</height>
            </size>
           </property>
@@ -332,10 +353,22 @@ border: 1px solid black;</string>
         <item>
          <widget class="QPushButton" name="removePushButton">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>50</width>
+            <height>16777215</height>
+           </size>
           </property>
           <property name="text">
            <string>Remove</string>

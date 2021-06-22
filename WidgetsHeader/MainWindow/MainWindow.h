@@ -66,7 +66,7 @@ private:
     int winHeightClose = 50;
 
     // --- Events ---
-    // Move window by clicking and dragging Menubar
+    // Move window by clicking and dragging Menu bar
     QPoint dragPosition;
     bool eventFilter(QObject *watched, QEvent *event);
 
@@ -91,11 +91,14 @@ private:
     QUrl lastPageVisited;
     Browser* BrowserWidget;
 
-private:
-
     // --- Functions ---
     void SetWindowConfigs();
     void SetupStackedWidget();
+
+private slots:
+
+	// --- Developer Functions ---
+    void FetchAllMaterialIcons();
 
 };
 #endif // MAINWINDOW_H

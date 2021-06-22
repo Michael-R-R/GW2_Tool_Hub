@@ -32,6 +32,7 @@ public:
     int GetMaterialGoalAmt() const;
     double GetMaterialPercentComplete() const;
 
+
     void SetMaterialValuesByName(QString materialName);
     void SetMaterialValuesFromSaveFile(QString materialName, int currentAmt, int goalAmt);
     bool SetMaterialValuesFromExcelFile(int goalAmount, QString matName);
@@ -64,6 +65,7 @@ private:
     void SetSpinBoxCurrentAmount(QString materialName);
     void SetSpinBoxGoalAmount(QString materialName);
     void SetPercentComplete(QString materialName);
+    void SetMaterialIcon(QString MaterialName);
 
     // --- Events ---
     bool eventFilter(QObject* object, QEvent* event);

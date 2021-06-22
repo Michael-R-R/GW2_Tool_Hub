@@ -851,6 +851,11 @@ QPushButton:pressed
     <string>Import Excel Sheet</string>
    </property>
   </action>
+  <action name="actionFetchMaterialIcons">
+   <property name="text">
+    <string>Fetch Material Icons</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

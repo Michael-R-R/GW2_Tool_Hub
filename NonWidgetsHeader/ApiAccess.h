@@ -13,10 +13,11 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QUrl>
 #include <QTime>
+#include <QFile>
 
 class MaterialTracker;
 
-class ApiAccess : public QObject
+class ApiAccess : public QObject 
 {
 
 public:
@@ -26,10 +27,9 @@ public:
     // Query API: Account Materials
     void QueryForMaterialsAPI(MaterialTracker* materialTracker);
 
-    void GetMaterialsApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
-    void GetAccountNamesApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
-    void GetInventoryApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
-    void GetBankApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
+    // Query API: Icons
+    QPixmap icon;
+    QPixmap QueryForMaterialIcon(QString id);
 
 private:
     // --- Error Handling ---
@@ -52,6 +52,14 @@ private:
     QNetworkAccessManager* managerAccountMaterials;
 
     // --- Functions ---
+	void GetMaterialsApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
+	void GetAccountNamesApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
+	void GetInventoryApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
+	void GetBankApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
+
+	QString QueryForMaterialURL(QString id);
+	QString GetMaterialUrlReply(QNetworkReply* reply);
+
     void delaySeconds(int secToWait);
     void delayMilliSeconds(int msecToWait);
 

@@ -140,9 +140,10 @@ bool ErrorHandling::CheckForValidPage(QWidget* parent, const QUrl &url)
     // Check the url
     QString urlString = url.toString();
     if(urlString.contains("https://wiki.guildwars2.com")           ||
-       urlString.contains("https://www.youtube.com")               ||
        urlString.contains("https://snowcrows.com")                 ||
-       urlString.contains("https://gw2efficiency.com"))
+       urlString.contains("https://gw2efficiency.com")             ||
+       urlString.contains("https://gw2crafts.net/")                ||
+       urlString.contains("https://www.youtube.com"))
     {
         return true;
     }

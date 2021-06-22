@@ -25,6 +25,7 @@ public:
     ~MaterialTracker();
 
 public slots:
+
     // I/O
     void SaveToFile();
     void LoadFromFile();

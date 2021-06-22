@@ -143,226 +143,303 @@ void ApiAccess::QueryForMaterialsAPI(MaterialTracker* materialTracker)
     }
 }
 
-// Recieves reply from API
-// Parses the id and count information and stores inside master vectors
-void ApiAccess::GetMaterialsApiReply(QNetworkReply* reply, MaterialTracker* materialTracker)
+QPixmap ApiAccess::QueryForMaterialIcon(QString id)
 {
-    // Error getting reply from query
-    if(reply->error())
-    {
-        // Display the error to the user with a popup message
-        error.NonModalErrorMessage(materialTracker, "Materials API Reply Error", reply->errorString());
-        return;
-    }
+    QUrl url = QUrl(QueryForMaterialURL(id));
+    QNetworkAccessManager manager;
+	QEventLoop loop;
+	connect(&manager, &QNetworkAccessManager::finished, &loop, &QEventLoop::quit);
+	QNetworkReply* reply = manager.get(QNetworkRequest(url));
+	loop.exec();
+	reply->deleteLater();
 
-    // API answer
-    QString answer = reply->readAll();
-
-    // Parse the reply and add the information to
-    // each corresponding vector
-    QString id;
-    QString count;
-    QTextStream text(&answer);
-    while(!text.atEnd())
-    {
-        // Update the ui material tracker status label
-        materialTracker->ChangeWaitingForApiReplyStatusLabel();
-
-        QString line = text.readLine();
-
-        // Parse the material id
-        if(line.contains("\"id\":"))
-        {
-            for(int i = line.indexOf(":") + 2; i < line.size() - 1; i++)
-            {
-                id += line[i];
-            }
-        }
-        // Parse the material count
-        if(line.contains("\"count\":"))
-        {
-            for(int i = line.indexOf(":") + 2; i < line.size(); i++)
-            {
-                count += line[i];
-            }
-            // Append ID and count at same time to avoid appending
-            // the wrong ID, since there can be multiple in the reply
-            vMasterID.append(id);
-            vMasterCount.append(count);
-            // clear the strings for the next values
-            id.clear();
-            count.clear();
-        }
-    }
-}
-
-// Recieves reply from API
-// Parses the account names and stores inside vector
-void ApiAccess::GetAccountNamesApiReply(QNetworkReply* reply, MaterialTracker* materialTracker)
-{
-    // Error getting reply from query
-    if(reply->error())
-    {
-        // Display the error to the user with a popup message
-        error.NonModalErrorMessage(materialTracker, "Account Names API Reply error", reply->errorString());
-        return;
-    }
-
-    // API answer
-    QString answer = reply->readAll();
-
-    // Parse the reply for the account names
-    // and add them to a vector
-    QTextStream text(&answer);
-    while(!text.atEnd())
-    {
-        // Update the ui material tracker status label
-        materialTracker->ChangeWaitingForApiReplyStatusLabel();
-
-        // Read one line at a time from the reply
-        QString line = text.readLine();
-        // Parse for all names
-        // check if line contains a quotation mark
-        if(line.contains("\""))
-        {
-            QString name;
-            for(int i = line.indexOf("\"") + 1; i < line.lastIndexOf("\""); i++)
-            {
-                name += line[i];
-            }
-            vAccountNames.append(name);
-        }
-    }
-}
-
-// Recieves reply from API
-// Parses characters inventory for
-// material id and count amount
-void ApiAccess::GetInventoryApiReply(QNetworkReply *reply, MaterialTracker* materialTracker)
-{
-    // Error getting reply from query
-    if(reply->error())
-    {
-        // Display the error to the user with a popup message
-        error.NonModalErrorMessage(materialTracker, "Inventory API Reply Error", reply->errorString());
-        return;
-    }
-
-    // API answer
-    QString answer = reply->readAll();
-
-    // Parse the reply
-    QString tempCount;
-    QString tempID;
-    QTextStream text(&answer);
-    while(!text.atEnd())
-    {
-        // Update the ui material tracker status label
-        materialTracker->ChangeWaitingForApiReplyStatusLabel();
-
-        // Read one line at a time
-        QString line = text.readLine();
-
-        // Parse the material id
-        if(line.contains("\"id\":"))
-        {
-            // Clear the ID string before reading
-            // a new one because there can be multiple IDs
-            // in the reply and we only want the material IDs
-            tempID.clear();
-            for(int i = line.indexOf(":") + 2; i < line.size() - 1; i++)
-            {
-                tempID += line[i];
-            }
-        }
-        // Parse the material count
-        if(line.contains("\"count\":"))
-        {
-            if(line.contains(","))
-            {
-                for(int i = line.indexOf(":") + 2; i < line.size() - 1; i++)
-                {
-                    tempCount += line[i];
-                }
-            }
-            else
-            {
-                for(int i = line.indexOf(":") + 2; i < line.size(); i++)
-                {
-                    tempCount += line[i];
-                }
-            }
-            // Append ID and count at same time to avoid appending
-            // the wrong ID, since there can be multiple in the reply
-            vInvID.append(tempID);
-            vInvCount.append(tempCount);
-            tempCount.clear();
-        }
-    }
-}
-
-void ApiAccess::GetBankApiReply(QNetworkReply *reply, MaterialTracker* materialTracker)
-{
-    // Error getting reply from query
-    if(reply->error())
-    {
-        error.NonModalErrorMessage(materialTracker, "Bank API Reply Error", reply->errorString());
-        return;
-    }
-
-    // API answer
-    QString answer = reply->readAll();
-
-    // Parse the reply and add the information to the database
-    // ID is used to match against the database to update the correct
-    // material
-    QString count;
-    QString id;
-    QTextStream text(&answer);
-    while(!text.atEnd())
-    {
-        // Update the material tracker status label
-        materialTracker->ChangeWaitingForApiReplyStatusLabel();
-
-        QString line = text.readLine();
-
-        // Parse the material id
-        if(line.contains("\"id\":"))
-        {
-            id.clear();
-            for(int i = line.indexOf(":") + 2; i < line.size() - 1; i++)
-            {
-                id += line[i];
-            }
-        }
-        // Parse the material count
-        if(line.contains("\"count\":"))
-        {
-            if(line.contains(","))
-            {
-                for(int i = line.indexOf(":") + 2; i < line.size() - 1; i++)
-                {
-                    count += line[i];
-                }
-            }
-            else
-            {
-                for(int i = line.indexOf(":") + 2; i < line.size(); i++)
-                {
-                    count += line[i];
-                }
-            }
-
-            vBankID.append(id);
-            vBankCount.append(count);
-            count.clear();
-        }
-    }
+	icon.loadFromData(reply->readAll());
+	return icon;
 }
 
 /*************************************************************************
  *                         PRIVATE FUNCTIONS                             *
  *************************************************************************/
+
+ // Receives reply from API
+ // Parses the id and count information and stores inside master vectors
+void ApiAccess::GetMaterialsApiReply(QNetworkReply* reply, MaterialTracker* materialTracker)
+{
+	// Error getting reply from query
+	if (reply->error())
+	{
+		// Display the error to the user with a popup message
+		error.NonModalErrorMessage(materialTracker, "Materials API Reply Error", reply->errorString());
+		return;
+	}
+
+	// API answer
+	QString answer = reply->readAll();
+
+	// Parse the reply and add the information to
+	// each corresponding vector
+	QString id;
+	QString count;
+	QTextStream text(&answer);
+	while (!text.atEnd())
+	{
+		// Update the ui material tracker status label
+		materialTracker->ChangeWaitingForApiReplyStatusLabel();
+
+		QString line = text.readLine();
+
+		// Parse the material id
+		if (line.contains("\"id\":"))
+		{
+			for (int i = line.indexOf(":") + 2; i < line.size() - 1; i++)
+			{
+				id += line[i];
+			}
+		}
+		// Parse the material count
+		if (line.contains("\"count\":"))
+		{
+			for (int i = line.indexOf(":") + 2; i < line.size(); i++)
+			{
+				count += line[i];
+			}
+			// Append ID and count at same time to avoid appending
+			// the wrong ID, since there can be multiple in the reply
+			vMasterID.append(id);
+			vMasterCount.append(count);
+			// clear the strings for the next values
+			id.clear();
+			count.clear();
+		}
+	}
+}
+
+// Receives reply from API
+// Parses the account names and stores inside vector
+void ApiAccess::GetAccountNamesApiReply(QNetworkReply* reply, MaterialTracker* materialTracker)
+{
+	// Error getting reply from query
+	if (reply->error())
+	{
+		// Display the error to the user with a popup message
+		error.NonModalErrorMessage(materialTracker, "Account Names API Reply error", reply->errorString());
+		return;
+	}
+
+	// API answer
+	QString answer = reply->readAll();
+
+	// Parse the reply for the account names
+	// and add them to a vector
+	QTextStream text(&answer);
+	while (!text.atEnd())
+	{
+		// Update the ui material tracker status label
+		materialTracker->ChangeWaitingForApiReplyStatusLabel();
+
+		// Read one line at a time from the reply
+		QString line = text.readLine();
+		// Parse for all names
+		// check if line contains a quotation mark
+		if (line.contains("\""))
+		{
+			QString name;
+			for (int i = line.indexOf("\"") + 1; i < line.lastIndexOf("\""); i++)
+			{
+				name += line[i];
+			}
+			vAccountNames.append(name);
+		}
+	}
+}
+
+// Receives reply from API
+// Parses characters inventory for
+// material id and count amount
+void ApiAccess::GetInventoryApiReply(QNetworkReply* reply, MaterialTracker* materialTracker)
+{
+	// Error getting reply from query
+	if (reply->error())
+	{
+		// Display the error to the user with a popup message
+		error.NonModalErrorMessage(materialTracker, "Inventory API Reply Error", reply->errorString());
+		return;
+	}
+
+	// API answer
+	QString answer = reply->readAll();
+
+	// Parse the reply
+	QString tempCount;
+	QString tempID;
+	QTextStream text(&answer);
+	while (!text.atEnd())
+	{
+		// Update the ui material tracker status label
+		materialTracker->ChangeWaitingForApiReplyStatusLabel();
+
+		// Read one line at a time
+		QString line = text.readLine();
+
+		// Parse the material id
+		if (line.contains("\"id\":"))
+		{
+			// Clear the ID string before reading
+			// a new one because there can be multiple IDs
+			// in the reply and we only want the material IDs
+			tempID.clear();
+			for (int i = line.indexOf(":") + 2; i < line.size() - 1; i++)
+			{
+				tempID += line[i];
+			}
+		}
+		// Parse the material count
+		if (line.contains("\"count\":"))
+		{
+			if (line.contains(","))
+			{
+				for (int i = line.indexOf(":") + 2; i < line.size() - 1; i++)
+				{
+					tempCount += line[i];
+				}
+			}
+			else
+			{
+				for (int i = line.indexOf(":") + 2; i < line.size(); i++)
+				{
+					tempCount += line[i];
+				}
+			}
+			// Append ID and count at same time to avoid appending
+			// the wrong ID, since there can be multiple in the reply
+			vInvID.append(tempID);
+			vInvCount.append(tempCount);
+			tempCount.clear();
+		}
+	}
+}
+
+void ApiAccess::GetBankApiReply(QNetworkReply* reply, MaterialTracker* materialTracker)
+{
+	// Error getting reply from query
+	if (reply->error())
+	{
+		error.NonModalErrorMessage(materialTracker, "Bank API Reply Error", reply->errorString());
+		return;
+	}
+
+	// API answer
+	QString answer = reply->readAll();
+
+	// Parse the reply and add the information to the database
+	// ID is used to match against the database to update the correct
+	// material
+	QString count;
+	QString id;
+	QTextStream text(&answer);
+	while (!text.atEnd())
+	{
+		// Update the material tracker status label
+		materialTracker->ChangeWaitingForApiReplyStatusLabel();
+
+		QString line = text.readLine();
+
+		// Parse the material id
+		if (line.contains("\"id\":"))
+		{
+			id.clear();
+			for (int i = line.indexOf(":") + 2; i < line.size() - 1; i++)
+			{
+				id += line[i];
+			}
+		}
+		// Parse the material count
+		if (line.contains("\"count\":"))
+		{
+			if (line.contains(","))
+			{
+				for (int i = line.indexOf(":") + 2; i < line.size() - 1; i++)
+				{
+					count += line[i];
+				}
+			}
+			else
+			{
+				for (int i = line.indexOf(":") + 2; i < line.size(); i++)
+				{
+					count += line[i];
+				}
+			}
+
+			vBankID.append(id);
+			vBankCount.append(count);
+			count.clear();
+		}
+	}
+}
+
+QString ApiAccess::QueryForMaterialURL(QString id)
+{
+	QUrl url("https://api.guildwars2.com/v2/items/" + id);
+	QNetworkRequest request(url);
+	QNetworkReply* urlReply = managerAccountMaterials->get(request);
+
+	// Loop until we get the reply back
+	// Ensures the application doesn't freeze while waiting
+	QEventLoop loop;
+	connect(urlReply, SIGNAL(finished()), &loop, SLOT(quit()));
+	loop.exec();
+
+	// Process the reply and retrieve the url
+	QString iconURL = GetMaterialUrlReply(urlReply);
+	urlReply->deleteLater();
+
+	return iconURL;
+}
+
+QString ApiAccess::GetMaterialUrlReply(QNetworkReply* reply)
+{
+	// Error getting reply from query
+	if (reply->error())
+	{
+		qDebug() << reply->errorString();
+		return reply->errorString();
+	}
+
+	// API answer
+	QString answer = reply->readAll();
+
+	// Parse the reply
+	QString url;
+	QTextStream text(&answer);
+	while (!text.atEnd())
+	{
+		QString line = text.readLine();
+
+		// Parse the icon url
+		if (line.contains("icon"))
+		{
+			if (line.contains(","))
+			{
+				for (int i = line.indexOf(":") + 3; i < line.size() - 2; i++)
+				{
+					url += line[i];
+				}
+				break;
+			}
+			else
+			{
+				for (int i = line.indexOf(":") + 3; i < line.size() - 1; i++)
+				{
+					url += line[i];
+				}
+			}
+		}
+	}
+
+	qDebug() << "URL: " << url;
+	return url;
+}
 
 // Delays the program for a given amount of seconds
 // Used to stall queries to the API network so that

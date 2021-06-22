@@ -35,6 +35,7 @@ private slots:
     void LoadWikiHomePage();
     void LoadSnowCrowsPage();
     void LoadGW2EfficiencyPage();
+    void LoadGW2CraftsPage();
     void LoadYoutubePage();
     void LoadPreviousPages();
     void LoadForwardPage();

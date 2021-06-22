@@ -48,7 +48,7 @@ void DataInterface::CreateDataTableForNewTab(QString tabName)
     QSqlQuery query(userDatabase);
 
     // CREATE THE NEW TABLE
-    query.exec("CREATE TABLE IF NOT EXISTS " + tabName + " (id varchar primary key, count integer, goal integer, percentComplete double);");
+    query.exec("CREATE TABLE IF NOT EXISTS " + tabName + " (id varchar primary key, count integer, goal integer, percentComplete double, icon BLOB);");
 
     // Copy the values for MaterialsPlayer (think of MaterialsPlayer as a template)
     // and create a new table with those values
@@ -198,6 +198,33 @@ QString DataInterface::FetchApiKey()
  *                         MATERIALS CATALOG                             *
  *************************************************************************/
 
+QVector<QString> DataInterface::FetchAllMaterialIds()
+{
+	userDatabase = CreateDatabase("MaterialIds", "user.db", userDatabase);
+
+    QVector<QString> ids;
+    QString result;
+    QSqlQuery query(userDatabase);
+    for (int i = 1; i <= MaterialsCatalogSize; i++)
+    {
+        QCoreApplication::processEvents();
+
+        query.prepare("SELECT id FROM MaterialsCatalog WHERE rowid = ?");
+        query.bindValue(0, i);
+        query.exec();
+        query.next();
+
+        // Add id to vector
+        result = query.value(0).toString();
+        ids.append(result);
+    }
+
+	// Close connection after finish
+	userDatabase.removeDatabase("MaterialCategories");
+
+	return ids;
+}
+
 // Retrieves all the material category's names and returns
 // a vector of all the category names
 QVector<QString> DataInterface::FetchAllMaterialCategories()
@@ -301,7 +328,7 @@ QString DataInterface::FetchMaterialCategory(QString materialName)
     return result;
 }
 
-// Retreieves the material ID of the passed in material name
+// Retrieves the material ID of the passed in material name
 // from the MaterialsCatalog
 QString DataInterface::FetchMaterialID(QString name)
 {
@@ -317,6 +344,25 @@ QString DataInterface::FetchMaterialID(QString name)
     userDatabase.removeDatabase("MaterialsCatalogID");
 
     return result;
+}
+
+void DataInterface::UpdateMaterialIcons(int id, QPixmap icon)
+{
+    userDatabase = CreateDatabase("UpdateMaterialsIcon", "user.db", userDatabase);
+
+    // Write QPixmap into QByteArray in .png format
+    QByteArray inByteArray;
+    QBuffer inBuffer(&inByteArray);
+    inBuffer.open(QIODevice::WriteOnly); 
+    icon.save(&inBuffer, "PNG");
+
+    QSqlQuery query(userDatabase);
+    query.prepare("UPDATE MaterialsCatalog SET icon =:icon WHERE id =:id");
+    query.bindValue(":icon", inByteArray);
+    query.bindValue(":id", id);
+    query.exec();
+
+    userDatabase.removeDatabase("UpdateMaterialsIcon");
 }
 
 /*************************************************************************
@@ -523,6 +569,31 @@ double DataInterface::FetchPercentComplete(QString materialName, QString tabName
     return result;
 }
 
+// Retrieves the material icon for the given passed in material
+QByteArray DataInterface::FetchMaterialIcon(QString materialName, QString tabName)
+{
+	// Replace any spaces with no spaces
+	// this ensures that the naming conventions
+	// are okay for SQLite
+	tabName.simplified();
+	tabName.replace(" ", "");
+
+    QString materialID = FetchMaterialID(materialName);
+
+    // Fetch the material icon
+    userDatabase = CreateDatabase("FetchMaterialIcon", "user.db", userDatabase);
+    QSqlQuery query(userDatabase);
+    query.prepare("SELECT icon FROM " + tabName + " WHERE id = ?");
+    query.bindValue(0, materialID);
+    query.exec();
+    query.next();
+    QByteArray outByteArray = query.value(0).toByteArray();
+	userDatabase.removeDatabase("FetchMaterialIcon");
+
+	return outByteArray;
+    
+}
+
 /*************************************************************************
  *                          RECIPE CATALOG                               *
  *************************************************************************/
@@ -614,6 +685,27 @@ QString DataInterface::FetchRecipeOutputID(QString recipeName)
     userDatabase.removeDatabase("FetchOutputID");
 
     return result;
+}
+
+/*************************************************************************
+ *                         DEVELOPER FUNCTIONS                           *
+ *************************************************************************/
+
+void DataInterface::CopyMasterMaterialsCatalog()
+{
+	userDatabase = CreateDatabase("CopyMasterCatalog", "user.db", userDatabase);
+	QSqlQuery query(userDatabase);
+
+	// Copy the values from MaterialsCatalog to MaterialsPlayer
+	// Think of MaterialsPlayer as a template data table
+    for (int i = 1; i < MaterialsCatalogSize; i++)
+    {
+        query.exec("UPDATE MaterialsPlayer SET icon=(SELECT icon FROM MaterialsCatalog WHERE MaterialsCatalog.id = MaterialsPlayer.id)");
+        query.next();
+        qDebug() << "Inserting icon";
+    }
+
+	userDatabase.removeDatabase("CopyMasterCatalog");
 }
 
 

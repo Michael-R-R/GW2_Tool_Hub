@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">
     <number>0</number>
@@ -129,6 +132,13 @@ QLabel
          <widget class="QPushButton" name="gw2efficiencyPushButton">
           <property name="text">
            <string>GW2 Efficiency</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="gw2CraftsPushButton">
+          <property name="text">
+           <string>GW2 Crafts</string>
           </property>
          </widget>
         </item>

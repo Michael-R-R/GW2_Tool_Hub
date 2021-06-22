@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     SetWindowConfigs();
 
-    // Allow moving window around by clicking&dragging menubar
+    // Allow moving window around by clicking&dragging menu bar
     ui->menuBar->installEventFilter(this);
 
     // Setup stacked widget
@@ -218,7 +218,7 @@ void MainWindow::DeleteHistory()
  *                      PRIVATE FUNCTIONS                                *
  *************************************************************************/
 
-// Allows clicking and draging the application by the menu bar
+// Allows clicking and dragging the application by the menu bar
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == ui->menuBar)
@@ -291,7 +291,7 @@ void MainWindow::SetNotesMenuItemStatus(bool state)
     }
 }
 
-// Set the options for the window: I.E. Always on top, frameless, etc.
+// Set the options for the window: I.E. Always on top, frame less, etc.
 // Set the windows icons
 void MainWindow::SetWindowConfigs()
 {
@@ -311,7 +311,29 @@ void MainWindow::SetupStackedWidget()
     ui->stackedWidget->addWidget(BrowserWidget);
 }
 
+/*************************************************************************
+ *                        DEVELOPER FUNCTIONS                            *
+ *************************************************************************/
 
+// Queries for each material in the materialCatalog, retrieves
+// the icon url, saves the .png, and stores it in the database
+void MainWindow::FetchAllMaterialIcons()
+{
+	// Fetches all the material id #s
+	QVector<QString> ids = dataInterface->FetchAllMaterialIds();
+
+	// Fetches the material icon and stores in pixmap
+	ApiAccess* api = new ApiAccess;
+	// Add material icon to the database
+	for (int i = 0; i < ids.size(); i++)
+	{
+		QPixmap icon = api->QueryForMaterialIcon(ids[i]);
+		dataInterface->UpdateMaterialIcons(ids[i].toInt(), icon);
+		qDebug() << "Row ID: " << i;
+	}
+
+	api->deleteLater();
+}
 
 
 

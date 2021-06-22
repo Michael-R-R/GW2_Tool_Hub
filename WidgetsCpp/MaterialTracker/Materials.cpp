@@ -143,6 +143,7 @@ void Materials::MaterialTypeChanged(QString text)
     SetSpinBoxCurrentAmount(text);
     SetSpinBoxGoalAmount(text);
     SetPercentComplete(text);
+    SetMaterialIcon(text);
 }
 
 // SLOT Function: called when the value is changed inside the spinbox
@@ -185,11 +186,12 @@ void Materials::SetupAllMaterialDefaults()
     // Add all the material names of the passed in category name
     AddMaterialCategoryTypes(ui->materialCatagoryComboBox->currentText());
 
-    // Set the spinboxes and percent values
+    // Set the spin boxes and percent values
     QString currentMaterialName = ui->materialTypesComboBox->currentText();
     SetSpinBoxCurrentAmount(currentMaterialName);
     SetSpinBoxGoalAmount(currentMaterialName);
     SetPercentComplete(currentMaterialName);
+    SetMaterialIcon(currentMaterialName);
 }
 
 // Adds all the material names to the combobox
@@ -268,6 +270,20 @@ void Materials::SetPercentComplete(QString materialName)
 
     // Emit signal whenever the percentage changes
     emit TrackingStatusChanged(this);
+}
+
+// Retrieves the material icon from the database and
+// adds it to the UI label to be displayed
+void Materials::SetMaterialIcon(QString MaterialName)
+{
+    // Fetch the .png QByteArray data and convert it to QPixmap
+    QByteArray outByteArray = dataInterface->FetchMaterialIcon(MaterialName, tabName);
+    QPixmap icon;
+    icon.loadFromData(outByteArray);
+
+    // Display the icon
+    ui->iconLabel->setPixmap(icon.scaled(ui->iconLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    qDebug() << "icon set";
 }
 
 /*************************************************************************

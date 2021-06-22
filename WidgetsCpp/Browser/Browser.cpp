@@ -19,6 +19,7 @@ Browser::Browser(QWidget *parent) :
     connect(ui->wikiPushButton, &QPushButton::clicked, this, &Browser::LoadWikiHomePage);
     connect(ui->snowcrowsPushButton, &QPushButton::clicked, this, &Browser::LoadSnowCrowsPage);
     connect(ui->gw2efficiencyPushButton, &QPushButton::clicked, this, &Browser::LoadGW2EfficiencyPage);
+    connect(ui->gw2CraftsPushButton, &QPushButton::clicked, this, &Browser::LoadGW2CraftsPage);
     connect(ui->youtubePushButton, &QPushButton::clicked, this, &Browser::LoadYoutubePage);
     // Back/Forward/Reload Buttons
     connect(ui->backPushButton, &QPushButton::clicked, this, &Browser::LoadPreviousPages);
@@ -87,6 +88,11 @@ void Browser::LoadSnowCrowsPage()
 void Browser::LoadGW2EfficiencyPage()
 {
     ui->webEngineView->setUrl(QUrl("https://gw2efficiency.com/"));
+}
+
+void Browser::LoadGW2CraftsPage()
+{
+    ui->webEngineView->setUrl(QUrl("https://gw2crafts.net/"));
 }
 
 void Browser::LoadYoutubePage()

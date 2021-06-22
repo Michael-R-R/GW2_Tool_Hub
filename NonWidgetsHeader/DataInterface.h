@@ -7,6 +7,8 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QDebug>
+#include <QPixmap>
+#include <QBuffer>
 
 class DataInterface
 {
@@ -33,12 +35,14 @@ public:
     QString FetchApiKey();
 
     // Database: MaterialsCatalog
+    QVector<QString> FetchAllMaterialIds();
     QVector<QString> FetchAllMaterialCategories();
     QVector<QString> FetchAllMaterialNamesByCategory(QString category);
     QVector<QString> FetchAllMaterialNames();
     QString FetchMaterialCategory(QString materialName);
     QString FetchMaterialID(QString name);
-
+    void UpdateMaterialIcons(int id, QPixmap icon);
+    
     // Database: Tab data tables
     void UpdateTabDataTableName(QString currentTabName, QString newTabName);
     void UpdateAccountMaterialsFromAPI(const QVector<QString>& id,
@@ -49,11 +53,15 @@ public:
     int FetchCurrentMaterialAmount(QString materialName, QString tabName);
     int FetchGoalMaterialAmount(QString materialName, QString tabName);
     double FetchPercentComplete(QString materialName, QString tabName);
+    QByteArray FetchMaterialIcon(QString materialName, QString tabName);
 
     // Database: Recipe Catalog
     QVector<QString> FetchIngredientsID(QString recipeName);
     QVector<QString> FetchIngredientsNames(QString recipeName);
     QString FetchRecipeOutputID(QString recipeName);
+
+    // Developer Functions
+	void CopyMasterMaterialsCatalog();
 
 
 private:
