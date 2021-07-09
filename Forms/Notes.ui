@@ -216,6 +216,21 @@ QListView
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QLabel" name="notesStatusBar">
+          <property name="font">
+           <font>
+            <family>Calibri</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>No File Loaded</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>

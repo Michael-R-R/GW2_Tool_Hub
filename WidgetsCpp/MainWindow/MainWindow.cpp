@@ -28,11 +28,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionRemove_API_Key, &QAction::triggered, this, &MainWindow::RemoveApiKey);
     // Notes:
     connect(ui->notesActionSave, &QAction::triggered, this, &MainWindow::SaveNotes);
+    connect(ui->notesActionSaveAs, &QAction::triggered, this, &MainWindow::SaveAsNotes);
     connect(ui->notesActionOpen, &QAction::triggered, this, &MainWindow::LoadNotes);
     // Material Tracker:
     connect(ui->actionSave, &QAction::triggered, this, &MainWindow::SaveMaterialTracker);
+    connect(ui->matTraActionSaveAs, &QAction::triggered, this, &MainWindow::SaveAsMaterialTracker);
     connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::LoadMaterialTracker);
-    connect(ui->actionImport_Excel_Sheet, &QAction::triggered, this, &MainWindow::ImportExcelSheet);
+    connect(ui->actionImportExcelSheet, &QAction::triggered, this, &MainWindow::ImportExcelSheet);
     // Browser:
     connect(ui->actionDelete_Cookies, &QAction::triggered, this, &MainWindow::DeleteCookies);
     connect(ui->actionClear_All_Visited_Links, &QAction::triggered, this, &MainWindow::DeleteVisitedLinks);
@@ -98,6 +100,11 @@ void MainWindow::SaveNotes()
     notesWidget->SaveNotes();
 }
 
+void MainWindow::SaveAsNotes()
+{
+    notesWidget->SaveAsNotes();
+}
+
 // Notes:
 void MainWindow::LoadNotes()
 {
@@ -108,14 +115,19 @@ void MainWindow::LoadNotes()
 // Saves all the tracked materials and their tabs to a .txt file
 void MainWindow::SaveMaterialTracker()
 {
-     materialTrackerWidget->SaveToFile();
+     materialTrackerWidget->SaveFile();
+}
+
+void MainWindow::SaveAsMaterialTracker()
+{
+    materialTrackerWidget->SaveAsFile();
 }
 
 // Material Tracker:
 // Loads in all tracked materials and their tabs
 void MainWindow::LoadMaterialTracker()
 {
-    materialTrackerWidget->LoadFromFile();
+    materialTrackerWidget->OpenFile();
 }
 
 void MainWindow::ImportExcelSheet()
@@ -264,14 +276,17 @@ void MainWindow::SetMaterialTrackerMenuItemsStatus(bool state)
     if(state == true)
     {
         ui->actionSave->setEnabled(true);
+        ui->matTraActionSaveAs->setEnabled(true);
         ui->actionOpen->setEnabled(true);
-        ui->actionImport_Excel_Sheet->setEnabled(true);
+        ui->actionImportExcelSheet->setEnabled(true);
+        
     }
     else
     {
         ui->actionSave->setDisabled(true);
+        ui->matTraActionSaveAs->setDisabled(true);
         ui->actionOpen->setDisabled(true);
-        ui->actionImport_Excel_Sheet->setDisabled(true);
+        ui->actionImportExcelSheet->setDisabled(true);
     }
 }
 
@@ -282,11 +297,13 @@ void MainWindow::SetNotesMenuItemStatus(bool state)
     if(state == true)
     {
         ui->notesActionSave->setEnabled(true);
+        ui->notesActionSaveAs->setEnabled(true);
         ui->notesActionOpen->setEnabled(true);
     }
     else
     {
         ui->notesActionSave->setDisabled(true);
+        ui->notesActionSaveAs->setDisabled(true);
         ui->notesActionOpen->setDisabled(true);
     }
 }

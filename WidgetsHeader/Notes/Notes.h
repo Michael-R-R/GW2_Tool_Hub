@@ -30,6 +30,7 @@ public:
 
 public slots:
     void SaveNotes();
+    void SaveAsNotes();
     void OpenNotes();
 
 private slots:
@@ -52,6 +53,7 @@ private:
     Ui::Notes *ui;
     QFileSystemModel *listModel;
     QMenu* menu;
+    SaveAndLoad* saveAndLoad;
 
     // --- Error Handling ---
     ErrorHandling error;

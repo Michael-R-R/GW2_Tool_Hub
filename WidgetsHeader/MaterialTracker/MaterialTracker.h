@@ -27,8 +27,9 @@ public:
 public slots:
 
     // I/O
-    void SaveToFile();
-    void LoadFromFile();
+    void SaveFile();
+    void SaveAsFile();
+    void OpenFile();
 
 private slots:
     // Tabs
@@ -55,6 +56,9 @@ private:
 
     // --- Error Handling ---
     ErrorHandling error;
+
+    // --- Save and Load ---
+    SaveAndLoad* saveAndLoad;
 
     // --- Data Structures ---
     QVector<MaterialStatusBar*> materialTabs;

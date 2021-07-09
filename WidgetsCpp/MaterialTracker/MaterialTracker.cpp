@@ -3,7 +3,7 @@
 
 MaterialTracker::MaterialTracker(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::MaterialTracker),
+    ui(new Ui::MaterialTracker), saveAndLoad(new SaveAndLoad),
     materialTabs(), tabName()
 {
     // Setup
@@ -18,9 +18,9 @@ MaterialTracker::MaterialTracker(QWidget *parent) :
     connect(ui->materialsTabWidget->tabBar(), SIGNAL(tabBarDoubleClicked(int)), this, SLOT(RenameTab(int)));
     connect(ui->updatePushButton, &QPushButton::clicked, this, &MaterialTracker::UpdateMaterials);
     // Save n Load
-    connect(ui->savePushButton, &QPushButton::clicked, this, &MaterialTracker::SaveToFile);
-    connect(ui->loadPushButton, &QPushButton::clicked, this, &MaterialTracker::LoadFromFile);
-    // SORTING
+    connect(ui->savePushButton, &QPushButton::clicked, this, &MaterialTracker::SaveFile);
+    connect(ui->loadPushButton, &QPushButton::clicked, this, &MaterialTracker::OpenFile);
+    // Sorting
     connect(ui->sortCategoryPushButton, &QPushButton::clicked, this, &MaterialTracker::SortByCategory);
     connect(ui->sortNamePushButton, &QPushButton::clicked, this, &MaterialTracker::SortByName);
     connect(ui->sortCurrentPushButton, &QPushButton::clicked, this, &MaterialTracker::SortByCurrent);
@@ -31,6 +31,7 @@ MaterialTracker::MaterialTracker(QWidget *parent) :
 MaterialTracker::~MaterialTracker()
 {
 	delete ui;
+    delete saveAndLoad;
 	DeleteAllTabDataTables();
 	foreach(auto x, materialTabs) { delete x; }
 }
@@ -42,7 +43,7 @@ MaterialTracker::~MaterialTracker()
 // SLOT Function:
 // Writes out all the current tabs and each material being tracked
 // to file
-void MaterialTracker::SaveToFile()
+void MaterialTracker::SaveFile()
 {
     ui->fileStatusLabel->setText("Saving File...");
 
@@ -75,10 +76,48 @@ void MaterialTracker::SaveToFile()
 
     // Pass all the gathered data to the save function
     // to be written out to file
-    SaveAndLoad* saveFile = new SaveAndLoad;
-    int successResult = saveFile->SaveTrackedMaterialsToFile(this, tabAmt, vTabNames, vAmtOfMatInTab,
-                                         vNamesInTab, vCurrentAmtsInTab,
-                                         vGoalAmtsInTab);
+    int successResult = saveAndLoad->SaveTrackedMaterials(this, tabAmt, vTabNames, vAmtOfMatInTab,
+                                                       vNamesInTab, vCurrentAmtsInTab, vGoalAmtsInTab);
+    // Updates the status label
+    // -1 = unsuccesful, 0 = cancelled, 1 = successful
+    CheckSaveFileStatus(successResult);
+}
+
+void MaterialTracker::SaveAsFile()
+{
+    ui->fileStatusLabel->setText("Saving As File...");
+
+    // GET AMT OF TABS
+    int tabAmt = materialTabs.size();
+
+    // GET AND STORE THE ALL INFORMATION ABOUT EACH TAB
+    QVector<QString> vTabNames;
+    QVector<int> vAmtOfMatInTab;
+    QVector<QVector<QString>> vNamesInTab;
+    QVector<QVector<int>> vCurrentAmtsInTab;
+    QVector<QVector<int>> vGoalAmtsInTab;
+    for (auto tab : materialTabs)
+    {
+        // GET EACH TAB NAME
+        vTabNames.append(tab->GetTabName());
+
+        // GET AMOUNT OF MATERIALS IN TAB
+        vAmtOfMatInTab.append(tab->GetNumOfTrackedMaterials());
+
+        // GET MATERIAL NAMES IN TAB
+        vNamesInTab.append(tab->GetAllTrackedMaterialNames());
+
+        // GET MATERIAL CURRENT AMT IN TAB
+        vCurrentAmtsInTab.append(tab->GetAllTrackedCurrentAmounts());
+
+        // GET MATERIAL GOAL AMT IN TAB
+        vGoalAmtsInTab.append(tab->GetAllTrackedGoalAmounts());
+    }
+
+    // Pass all the gathered data to the save function
+    // to be written out to file
+    int successResult = saveAndLoad->SaveAsTrackedMaterials(this, tabAmt, vTabNames, vAmtOfMatInTab,
+                                                       vNamesInTab, vCurrentAmtsInTab, vGoalAmtsInTab);
     // Updates the status label
     // -1 = unsuccesful, 0 = cancelled, 1 = successful
     CheckSaveFileStatus(successResult);
@@ -87,7 +126,7 @@ void MaterialTracker::SaveToFile()
 // SLOT Function:
 // Reads in all the current tabs and each material being tracked
 // to file
-void MaterialTracker::LoadFromFile()
+void MaterialTracker::OpenFile()
 {
     ui->fileStatusLabel->setText("Loading File...");
 
@@ -95,8 +134,7 @@ void MaterialTracker::LoadFromFile()
     // QByteArray data and then adds that data
     // to a QTextStream to be easily parsed through
     // line by line
-    SaveAndLoad* loadFile = new SaveAndLoad;
-    QByteArray inFile = loadFile->LoadTrackedMaterialsFromFile(this);
+    QByteArray inFile = saveAndLoad->OpenTrackedMaterialsFile(this);
     QTextStream fileResult(&inFile);
 
     // Check if there isn't anything to load
@@ -794,15 +832,15 @@ void MaterialTracker::CheckSaveFileStatus(int result)
     switch(result)
     {
     case 0:
-        ui->fileStatusLabel->setText("Saving Cancelled");
+        ui->fileStatusLabel->setText("Cancelled Saving File");
         break;
 
     case 1:
-        ui->fileStatusLabel->setText("Saving Successful");
+        ui->fileStatusLabel->setText("File Saved");
         break;
 
     case -1:
-        ui->fileStatusLabel->setText("Saving Failed");
+        ui->fileStatusLabel->setText("Error Saving File");
         break;
     }
 }

@@ -18,29 +18,44 @@ public:
     QString GetFileName() const { return fileName; }
     void SetFileName(QString val) { fileName = val; }
 
-    // Save/Load all tracked materials
-    QByteArray LoadTrackedMaterialsFromFile(QWidget* parent);
-    int SaveTrackedMaterialsToFile(QWidget* parent, int tabAmt,
+    // --- Save/Load all tracked materials ---
+    QByteArray OpenTrackedMaterialsFile(QWidget* parent);
+    int SaveTrackedMaterials(QWidget* parent, int tabAmt,
                                    const QVector<QString>& tabNames,
                                    const QVector<int>& amtOfMatsInTab,
                                    const QVector<QVector<QString>>& namesInTab,
                                    const QVector<QVector<int>>& currentAmtsInTab,
                                    const QVector<QVector<int>>& goalAmtsInTab);
+    int SaveAsTrackedMaterials(QWidget* parent, int tabAmt,
+                               const QVector<QString>& tabNames,
+                               const QVector<int>& amtOfMatsInTab,
+                               const QVector<QVector<QString>>& namesInTab,
+                               const QVector<QVector<int>>& currentAmtsInTab,
+                               const QVector<QVector<int>>& goalAmtsInTab);
 
 
-    // Save/Load notes
-    QString LoadNotes(QWidget* parent);
-    void SaveNotes(QWidget* parent, QString fileContent);
+    // --- Save/Load notes ---
+    QString OpenNotes(QWidget* parent);
+    QString SaveNotes(QWidget* parent, QString fileContent);
+    QString SaveAsNotes(QWidget* parent, QString fileContent);
 
-    // Import excel sheet
+    // --- Import excel sheet ---
     QByteArray LoadExcelSheet(QWidget* parent);
 
 private:
+    QString fileName;
+
     // --- Error Handling ---
     ErrorHandling error;
 
-    QString fileName;
+    // --- Notes ---
+    QString notesFileDir;
 
+    // --- Material Tracker
+    QString matTrackFileDir;
+
+private:
+    void NonModuleMessage(QWidget* parent, QString title, QString text);
 };
 
 #endif // SAVEANDLOAD_H

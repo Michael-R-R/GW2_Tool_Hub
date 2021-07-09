@@ -4,6 +4,7 @@
 Notes::Notes(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Notes), listModel(new QFileSystemModel), menu(new QMenu(this)),
+    saveAndLoad(new SaveAndLoad),
     dir(dir.currentPath()), folderDir(dir.path() + "/notes"),
     lastFolderDir(), htmlDir(), folderHistory(), folderName("")
 {
@@ -34,26 +35,49 @@ Notes::~Notes()
     delete ui;
     delete listModel;
     delete menu;
+    delete saveAndLoad;
 }
 
 // Saves the current text inside the textEdit
 void Notes::SaveNotes()
 {
-    SaveAndLoad* saveFile = new SaveAndLoad;
-    saveFile->SaveNotes(this, ui->textEdit->toHtml());
-    delete saveFile;
+    QString status;
+    status = saveAndLoad->SaveNotes(this, ui->textEdit->toHtml());
+    ui->notesStatusBar->setText(status);
+}
+
+void Notes::SaveAsNotes()
+{
+    QString status;
+    status = saveAndLoad->SaveAsNotes(this, ui->textEdit->toHtml());
+    ui->notesStatusBar->setText(status);
 }
 
 // Loads in html text
 void Notes::OpenNotes()
 {
-    SaveAndLoad* openFile = new SaveAndLoad;
-    QString fileContent = openFile->LoadNotes(this);
+    QString fileContent = saveAndLoad->OpenNotes(this);
 
     ui->textEdit->clear();
     ui->textEdit->setHtml(fileContent);
 
-    delete openFile;
+    // Set the notes status bar
+    QString status;
+    if (fileContent == "cancelled")
+    {
+        status = "Cancelled Loading File";
+        ui->notesStatusBar->setText(status);
+    }
+    else if (fileContent == "error")
+    {
+        status = "Error Loading File";
+        ui->notesStatusBar->setText(status);
+    }
+    else
+    {
+        status = "File Opened";
+        ui->notesStatusBar->setText(status);
+    }
 }
 
 // If user single clicks on an item in the listView

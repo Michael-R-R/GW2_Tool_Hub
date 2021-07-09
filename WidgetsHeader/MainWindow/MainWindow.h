@@ -36,9 +36,11 @@ public slots:
     void RemoveApiKey();
     // Notes:
     void SaveNotes();
+    void SaveAsNotes();
     void LoadNotes();
     // Material Tracker:
     void SaveMaterialTracker();
+    void SaveAsMaterialTracker();
     void LoadMaterialTracker();
     void ImportExcelSheet();
 
