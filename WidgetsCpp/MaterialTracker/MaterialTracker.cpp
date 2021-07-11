@@ -4,11 +4,14 @@
 MaterialTracker::MaterialTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MaterialTracker), saveAndLoad(new SaveAndLoad),
-    materialTabs(), tabName()
+    materialTabs(), tabName(),
+    resultName(), resultCount(),
+    searchedRecipe(), recipeList(), wordCompleter(nullptr)
 {
     // Setup
     ui->setupUi(this);
     SetIcons();
+    SetupRecipeWordCompleter();
 
     // Signals/Slots
     // Materials
@@ -34,6 +37,206 @@ MaterialTracker::~MaterialTracker()
     delete saveAndLoad;
 	DeleteAllTabDataTables();
 	foreach(auto x, materialTabs) { delete x; }
+    delete wordCompleter;
+}
+
+/*************************************************************************
+ *                           PUBLIC FUNCTIONS                            *
+ *************************************************************************/
+
+void MaterialTracker::ChangeWaitingForApiReplyStatusLabel()
+{
+    // Keep track of the amount of dots to add to the status label
+    static int numOfDots = 1;
+    switch (numOfDots)
+    {
+    case 1:
+        ui->fileStatusLabel->setText(QString("Loading API Reply."));
+        numOfDots++;
+        break;
+
+    case 2:
+        ui->fileStatusLabel->setText(QString("Loading API Reply.."));
+        numOfDots++;
+        break;
+
+    case 3:
+        ui->fileStatusLabel->setText(QString("Loading API Reply..."));
+        numOfDots = 1;
+        break;
+    }
+}
+
+QVector<QString> MaterialTracker::GetAllTabNames()
+{
+    QVector<QString> tabNames;
+    for (auto material : materialTabs)
+    {
+        tabNames.append(material->GetTabName());
+    }
+
+    return tabNames;
+}
+
+void MaterialTracker::SearchRecipe()
+{
+    QInputDialog *dialog = new QInputDialog(this);
+    dialog->setWindowTitle("Search Recipe");
+    dialog->setLabelText("Recipe Name");
+    dialog->setTextValue("");
+    QLineEdit *lineEdit = dialog->findChild<QLineEdit*>();
+    lineEdit->setCompleter(wordCompleter);
+    dialog->exec();
+
+    searchedRecipe = dialog->textValue();
+    RecursiveSearchRecipe(searchedRecipe);
+    for (int i = 0; i < resultName.size(); i++)
+    {
+        QString name = resultName[i];
+        int count = resultCount[i];
+        materialTabs[ui->materialsTabWidget->currentIndex()]->AddMaterialByCountAndName(count, name);
+    }
+    resultName.clear();
+    resultCount.clear();
+}
+
+void MaterialTracker::RecursiveSearchRecipe(QString recipeName)
+{
+    QApplication::processEvents();
+
+    // Query RecipesCatalog database with the recipe name
+    DataInterface dataInterface;
+    QVector<QString> ingredientNames = dataInterface.FetchIngredientsNames(recipeName);
+    QVector<QString> ingredientCounts = dataInterface.FetchIngredientsCount(recipeName);
+
+    // Check if ingredient names are a recipe
+    bool isRecipeValid = false;
+    foreach (QString item, ingredientNames)
+    {
+        // Check if there are any recipes that need further processing
+        isRecipeValid = dataInterface.CheckForValidRecipe(item);
+        if (isRecipeValid)
+        {
+            QString tempName = item;
+            int index = ingredientNames.indexOf(tempName);
+            int tempCount = ingredientCounts[index].toInt();
+            ingredientNames.removeAt(index);
+            ingredientCounts.removeAt(index);
+            for (int i = 0; i < tempCount; i++)
+            {
+                RecursiveSearchRecipe(tempName);
+            }
+        }
+        else
+        {
+            QString tempName = item;
+            int index = ingredientNames.indexOf(tempName);
+            int tempCount = ingredientCounts[index].toInt();
+
+            // Check if the material is already in the result vector
+            if (resultName.contains(tempName))
+            {
+                int index = resultName.indexOf(tempName);
+                resultCount[index] += tempCount;
+            }
+            else
+            {
+                resultName.append(tempName);
+                resultCount.append(tempCount);
+            }
+        }
+    }
+}
+
+void MaterialTracker::ImportExcelSheet()
+{
+    // Throw an error if there are no active tabs
+    if (materialTabs.size() <= 0)
+    {
+        error.NonModalErrorMessage(this, "Error", "No Active Tabs");
+        return;
+    }
+
+    // Set status label
+    ui->fileStatusLabel->setText("Importing File...");
+
+    // Allow user to select the .csv excel file
+    SaveAndLoad* loadExcel = new SaveAndLoad;
+    QByteArray inFile = loadExcel->LoadExcelSheet(this);
+    delete loadExcel;
+
+    // Check if invalid file loaded and update status label
+    if (inFile == "invalid")
+    {
+        ui->fileStatusLabel->setText("Importing File Unsuccessful");
+        return;
+    }
+
+    // FILE IS VALID
+    // Parse the count and material name
+    QVector<int> matCounts;
+    QVector<QString> matNames;
+    bool isFirstLine = true;
+
+    // Parse each line for count info and material name
+    QTextStream fileResult(&inFile);
+    while (!fileResult.atEnd())
+    {
+        // Don't read the first line
+        QString line = fileResult.readLine();
+        if (!isFirstLine)
+        {
+            // PARSE THE COUNT INFO
+            // Remove the first comma
+            int tempIndex = line.indexOf(",");
+            line.remove(tempIndex, 1);
+
+            // Get the index of the second comma
+            // Tells us when to stop reading the count info
+            tempIndex = line.indexOf(",");
+            QString tempCount;
+            for (int i = 0; i < tempIndex; i++)
+            {
+                // Reads up until the comma = material count
+                tempCount += line[i];
+            }
+            // Remove the count info from the line
+            for (int i = 0; i < tempCount.size(); i++)
+            {
+                line.remove(0, 1);
+            }
+            // Delete the left over comma
+            tempIndex = line.indexOf(",");
+            line.remove(tempIndex, 1);
+            // Add the count to the vector
+            matCounts.append(tempCount.toInt());
+
+            // PARSE THE MATERIAL NAME
+            tempIndex = line.indexOf(",");
+            QString tempName;
+            for (int i = 0; i < tempIndex; i++)
+            {
+                // Reads up until the comma = material name
+                tempName += line[i];
+            }
+            // add the name to the vector
+            matNames.append(tempName);
+        }
+        else
+        {
+            // First line is junk, do nothing
+            isFirstLine = false;
+        }
+    }
+
+    // Add the material counts and names to the active tab
+    int currentActiveTab = ui->materialsTabWidget->currentIndex();
+    for (int i = 0; i < matCounts.size(); i++)
+    {
+        materialTabs[currentActiveTab]->AddMaterialByCountAndName(matCounts[i], matNames[i]);
+    }
+
+    ui->fileStatusLabel->setText("Importing File Complete");
 }
 
 /*************************************************************************
@@ -893,131 +1096,16 @@ void MaterialTracker::ChangeMaterialUpdatingStatusLabel()
     }
 }
 
-/*************************************************************************
- *                           PUBLIC FUNCTIONS                            *
- *************************************************************************/
-
-void MaterialTracker::ChangeWaitingForApiReplyStatusLabel()
+void MaterialTracker::SetupRecipeWordCompleter()
 {
-	// Keep track of the amount of dots to add to the status label
-	static int numOfDots = 1;
-	switch (numOfDots)
-	{
-	case 1:
-		ui->fileStatusLabel->setText(QString("Loading API Reply."));
-		numOfDots++;
-		break;
-
-	case 2:
-		ui->fileStatusLabel->setText(QString("Loading API Reply.."));
-		numOfDots++;
-		break;
-
-	case 3:
-		ui->fileStatusLabel->setText(QString("Loading API Reply..."));
-		numOfDots = 1;
-		break;
-	}
-}
-
-QVector<QString> MaterialTracker::GetAllTabNames()
-{
-	QVector<QString> tabNames;
-	for (auto material : materialTabs)
-	{
-		tabNames.append(material->GetTabName());
-	}
-
-	return tabNames;
-}
-
-void MaterialTracker::ImportExcelSheet()
-{
-	// Throw an error if there are no active tabs
-	if (materialTabs.size() <= 0)
-	{
-		error.NonModalErrorMessage(this, "Error", "No Active Tabs");
-		return;
-	}
-
-	// Set status label
-	ui->fileStatusLabel->setText("Importing File...");
-
-	// Allow user to select the .csv excel file
-	SaveAndLoad* loadExcel = new SaveAndLoad;
-	QByteArray inFile = loadExcel->LoadExcelSheet(this);
-	delete loadExcel;
-
-	// Check if invalid file loaded and update status label
-	if (inFile == "invalid")
-	{
-		ui->fileStatusLabel->setText("Importing File Unsuccessful");
-		return;
-	}
-
-	// FILE IS VALID
-	// Parse the count and material name
-	QVector<int> matCounts;
-	QVector<QString> matNames;
-	bool isFirstLine = true;
-
-	// Parse each line for count info and material name
-	QTextStream fileResult(&inFile);
-	while (!fileResult.atEnd())
-	{
-		// Don't read the first line
-		QString line = fileResult.readLine();
-		if (!isFirstLine)
-		{
-			// PARSE THE COUNT INFO
-			// Remove the first comma
-			int tempIndex = line.indexOf(",");
-			line.remove(tempIndex, 1);
-
-			// Get the index of the second comma
-			// Tells us when to stop reading the count info
-			tempIndex = line.indexOf(",");
-			QString tempCount;
-			for (int i = 0; i < tempIndex; i++)
-			{
-				// Reads up until the comma = material count
-				tempCount += line[i];
-			}
-			// Remove the count info from the line
-			for (int i = 0; i < tempCount.size(); i++)
-			{
-				line.remove(0, 1);
-			}
-			// Delete the left over comma
-			tempIndex = line.indexOf(",");
-			line.remove(tempIndex, 1);
-			// Add the count to the vector
-			matCounts.append(tempCount.toInt());
-
-			// PARSE THE MATERIAL NAME
-			tempIndex = line.indexOf(",");
-			QString tempName;
-			for (int i = 0; i < tempIndex; i++)
-			{
-				// Reads up until the comma = material name
-				tempName += line[i];
-			}
-			// add the name to the vector
-			matNames.append(tempName);
-		}
-		else
-		{
-			// First line is junk, do nothing
-			isFirstLine = false;
-		}
-	}
-
-	// Add the material counts and names to the active tab
-	int currentActiveTab = ui->materialsTabWidget->currentIndex();
-	for (int i = 0; i < matCounts.size(); i++)
-	{
-		materialTabs[currentActiveTab]->AddMaterialFromExcelFile(matCounts[i], matNames[i]);
-	}
-
-	ui->fileStatusLabel->setText("Importing File Complete");
+    // Fetch all recipe names from the database
+    DataInterface dataInterface;
+    QVector<QString> recipeNames;
+    recipeNames = dataInterface.FetchAllRecipeNames();
+    for (QString recipe : recipeNames) { recipeList.append(recipe); }
+    
+    // Create the word completer
+    wordCompleter = new QCompleter(recipeList, this);
+    wordCompleter->setFilterMode(Qt::MatchContains);
+    wordCompleter->setCaseSensitivity(Qt::CaseInsensitive);
 }

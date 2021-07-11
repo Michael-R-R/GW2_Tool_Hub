@@ -13,6 +13,7 @@
 #include <QTabBar>
 #include <QWidget>
 #include <QVector>
+#include <QCompleter>
 
 namespace Ui { class MaterialTracker; }
 
@@ -23,6 +24,21 @@ class MaterialTracker : public QWidget
 public:
     MaterialTracker(QWidget *parent = nullptr);
     ~MaterialTracker();
+
+    // --- Change status label ---
+    void ChangeWaitingForApiReplyStatusLabel();
+
+    // --- Tab names ---
+    QVector<QString> GetAllTabNames();
+    QString getTabName() const { return tabName; }
+    void setTabName(const QString& value) { tabName = value; }
+
+    // --- Search Recipe ---
+    void SearchRecipe();
+    void RecursiveSearchRecipe(QString recipeName);
+
+    // --- Importing ---
+    void ImportExcelSheet();
 
 public slots:
 
@@ -66,6 +82,10 @@ private:
     // --- Variables ---
     QString tabName;
 
+    // --- Search Recipe ---
+    QVector<QString> resultName;
+    QVector<int> resultCount;
+
     // --- Sorting ---
     void ResetSortingButtons();
 
@@ -86,17 +106,11 @@ private:
    void ChangeLoadingFileStatusLabel();
    void ChangeMaterialUpdatingStatusLabel();
 
-public:
-    // --- Change status label ---
-    void ChangeWaitingForApiReplyStatusLabel();
-
-	// --- Tab names ---
-	QVector<QString> GetAllTabNames();
-	QString getTabName() const { return tabName; }
-	void setTabName(const QString& value) { tabName = value; }
-
-	// --- Importing ---
-	void ImportExcelSheet();
+   // --- Word Completer ---
+   QString searchedRecipe;
+   QStringList recipeList;
+   QCompleter* wordCompleter;
+   void SetupRecipeWordCompleter();
 };
 
 #endif // MATERIALTRACKER_H

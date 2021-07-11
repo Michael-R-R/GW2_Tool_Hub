@@ -37,11 +37,12 @@ public slots:
     // Notes:
     void SaveNotes();
     void SaveAsNotes();
-    void LoadNotes();
+    void OpenNotesFile();
     // Material Tracker:
     void SaveMaterialTracker();
     void SaveAsMaterialTracker();
-    void LoadMaterialTracker();
+    void OpenMaterialTrackerFile();
+    void SearchRecipe();
     void ImportExcelSheet();
 
     // --- Notes ---

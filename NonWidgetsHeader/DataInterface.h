@@ -58,7 +58,10 @@ public:
     // Database: Recipe Catalog
     QVector<QString> FetchIngredientsID(QString recipeName);
     QVector<QString> FetchIngredientsNames(QString recipeName);
+    QVector<QString> FetchIngredientsCount(QString recipeName);
     QString FetchRecipeOutputID(QString recipeName);
+    QVector<QString> FetchAllRecipeNames();
+    bool CheckForValidRecipe(QString recipeName);
 
     // Developer Functions
 	void CopyMasterMaterialsCatalog();

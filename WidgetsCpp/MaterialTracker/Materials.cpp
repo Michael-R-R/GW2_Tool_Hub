@@ -65,6 +65,12 @@ int Materials::GetMaterialGoalAmt() const
     return ui->goalAmountSpinBox->value();
 }
 
+void Materials::SetMaterialGoalAmt(int amount)
+{
+    int count = GetMaterialGoalAmt() + amount;
+    ui->goalAmountSpinBox->setValue(count);
+}
+
 double Materials::GetMaterialPercentComplete() const
 {
     QString percent = ui->percentCompleteLabel->text();
@@ -97,7 +103,7 @@ void Materials::SetMaterialValuesFromSaveFile(QString materialName, int currentA
 // and sets all the values for each material
 // Returns true if adding valid material, false if excel item
 // is not a valid material
-bool Materials::SetMaterialValuesFromExcelFile(int goalAmount, QString matName)
+bool Materials::SetMaterialValuesByNameAndCount(int goalAmount, QString matName)
 {
     // Checks if item is an actual material, if the category returns back
     // as an empty string then it is not an actual material

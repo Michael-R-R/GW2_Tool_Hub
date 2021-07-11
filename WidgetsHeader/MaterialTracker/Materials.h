@@ -30,12 +30,12 @@ public:
     QString GetMaterialName() const;
     int GetMaterialCurrentAmt() const;
     int GetMaterialGoalAmt() const;
+    void SetMaterialGoalAmt(int amount);
     double GetMaterialPercentComplete() const;
-
 
     void SetMaterialValuesByName(QString materialName);
     void SetMaterialValuesFromSaveFile(QString materialName, int currentAmt, int goalAmt);
-    bool SetMaterialValuesFromExcelFile(int goalAmount, QString matName);
+    bool SetMaterialValuesByNameAndCount(int goalAmount, QString matName);
 
     void UpdateUiMaterialValues();
 

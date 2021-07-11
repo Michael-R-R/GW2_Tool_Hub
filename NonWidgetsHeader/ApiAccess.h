@@ -57,8 +57,8 @@ private:
 	void GetInventoryApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
 	void GetBankApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
 
-	QString QueryForMaterialURL(QString id);
-	QString GetMaterialUrlReply(QNetworkReply* reply);
+	QString QueryForMaterialIconURL(QString id);
+	QString GetMaterialIconUrlReply(QNetworkReply* reply);
 
     void delaySeconds(int secToWait);
     void delayMilliSeconds(int msecToWait);

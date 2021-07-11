@@ -752,18 +752,19 @@ QPushButton:pressed
     <property name="title">
      <string>Material Tracker</string>
     </property>
+    <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="matTraActionSaveAs"/>
-    <addaction name="actionOpen"/>
+    <addaction name="actionSearchRecipe"/>
     <addaction name="actionImportExcelSheet"/>
    </widget>
    <widget class="QMenu" name="menuNotes">
     <property name="title">
      <string>Notes</string>
     </property>
+    <addaction name="notesActionOpen"/>
     <addaction name="notesActionSave"/>
     <addaction name="notesActionSaveAs"/>
-    <addaction name="notesActionOpen"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAPI"/>
@@ -872,6 +873,14 @@ QPushButton:pressed
    </property>
    <property name="text">
     <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionSearchRecipe">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Search Recipe</string>
    </property>
   </action>
  </widget>

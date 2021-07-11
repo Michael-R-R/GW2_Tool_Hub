@@ -21,33 +21,37 @@ public:
     ~MaterialStatusBar();
 
     // Enum class to keep track of all the sorting configurations
-    enum class SortingState { DEFAULT,
-                              CATEGORY_NONE, CATEGORY_ASCENDING, CATEGORY_DESCENDING,
-                              NAME_NONE, NAME_ASCENDING, NAME_DESCENDING,
-                              CURRENT_NONE, CURRENT_ASCENDING, CURRENT_DESCENDING,
-                              GOAL_NONE, GOAL_ASCENDING, GOAL_DESCENDING,
-                              PERCENT_NONE, PERCENT_ASCENDING, PERCENT_DESCENDING,};
+    enum class SortingState 
+    { 
+        DEFAULT,
+        CATEGORY_NONE, CATEGORY_ASCENDING, CATEGORY_DESCENDING,
+        NAME_NONE, NAME_ASCENDING, NAME_DESCENDING,
+        CURRENT_NONE, CURRENT_ASCENDING, CURRENT_DESCENDING,
+        GOAL_NONE, GOAL_ASCENDING, GOAL_DESCENDING,
+        PERCENT_NONE, PERCENT_ASCENDING, PERCENT_DESCENDING,
+    };
 
     // --- Functions ---
     void UpdateTrackingStatus();
 
-    // Tabs
+    // --- Tabs ---
     QString GetTabName() { return tabName; }
     void SetTabName(const QString& val) { tabName = val; }
     void UpdateTabName(QString newTabName);
 
-    // Utility
+    // --- Utility ---
     int GetNumOfTrackedMaterials() { return trackedMaterials.size(); }
     QVector<QString> GetAllTrackedMaterialNames() const;
     QVector<int> GetAllTrackedCurrentAmounts() const;
     QVector<int> GetAllTrackedGoalAmounts() const;
+    void AddMaterialGoalAmount(int index, int amount);
     
-    // Adding materials
+    // --- Adding materials ---
     void AddMaterialFromSaveFile(int amtOfMaterials,
                                  const QVector<QString>& matNames,
                                  const QVector<int>& currentAmts,
                                  const QVector<int>& goalAmts);
-    void AddMaterialFromExcelFile(int matCount, QString matName);
+    void AddMaterialByCountAndName(int matCount, QString matName);
 
     // --- Sorting ---
     // Enum get/set sorting state
@@ -92,6 +96,8 @@ public slots:
 
 private:
     Ui::MaterialStatusBar *ui;
+
+    // --- Database Interface ---
     DataInterface* dataInterface;
 
     // --- Sorting ---
@@ -106,7 +112,6 @@ private:
     QVector<Materials*> trackedMaterials;
     QVector<Materials*> originalTrackedMaterials;
     QVector<Materials*> sortedTrackedMaterials;
-
 
     // --- Search Material Line Edit ---
     QString searchedMaterial;

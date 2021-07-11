@@ -145,7 +145,7 @@ void ApiAccess::QueryForMaterialsAPI(MaterialTracker* materialTracker)
 
 QPixmap ApiAccess::QueryForMaterialIcon(QString id)
 {
-    QUrl url = QUrl(QueryForMaterialURL(id));
+    QUrl url = QUrl(QueryForMaterialIconURL(id));
     QNetworkAccessManager manager;
 	QEventLoop loop;
 	connect(&manager, &QNetworkAccessManager::finished, &loop, &QEventLoop::quit);
@@ -378,7 +378,7 @@ void ApiAccess::GetBankApiReply(QNetworkReply* reply, MaterialTracker* materialT
 	}
 }
 
-QString ApiAccess::QueryForMaterialURL(QString id)
+QString ApiAccess::QueryForMaterialIconURL(QString id)
 {
 	QUrl url("https://api.guildwars2.com/v2/items/" + id);
 	QNetworkRequest request(url);
@@ -391,13 +391,13 @@ QString ApiAccess::QueryForMaterialURL(QString id)
 	loop.exec();
 
 	// Process the reply and retrieve the url
-	QString iconURL = GetMaterialUrlReply(urlReply);
+	QString iconURL = GetMaterialIconUrlReply(urlReply);
 	urlReply->deleteLater();
 
 	return iconURL;
 }
 
-QString ApiAccess::GetMaterialUrlReply(QNetworkReply* reply)
+QString ApiAccess::GetMaterialIconUrlReply(QNetworkReply* reply)
 {
 	// Error getting reply from query
 	if (reply->error())

@@ -645,7 +645,6 @@ QVector<QString> DataInterface::FetchIngredientsNames(QString recipeName)
     query.exec();
     query.first();
     QString result = query.value(0).toString();
-    qDebug() << "RecipesCatalog Result: " << result;
 
     userDatabase.removeDatabase("FetchingIngredientsNames");
 
@@ -669,6 +668,39 @@ QVector<QString> DataInterface::FetchIngredientsNames(QString recipeName)
     return AllIngredientNames;
 }
 
+QVector<QString> DataInterface::FetchIngredientsCount(QString recipeName)
+{
+    userDatabase = CreateDatabase("FetchIngredientCounts", "user.db", userDatabase);
+
+    QSqlQuery query(userDatabase);
+    query.prepare("SELECT ingredientAmountRequired FROM RecipesCatalog WHERE recipeName = ?");
+    query.bindValue(0, recipeName);
+    query.exec();
+    query.first();
+    QString result = query.value(0).toString();
+
+    userDatabase.removeDatabase("FetchIngredientCounts");
+
+    // Removes the new line from the fetch result
+    // and adds the edited count to a vector in case there
+    // are multiple ingredients
+    QVector<QString> allIngredientCounts;
+    int newLineIndex = 0;
+    while (result.contains("\n"))
+    {
+        QString count;
+        newLineIndex = result.indexOf("\n");
+        for (int i = 0; i < newLineIndex; i++)
+        {
+            count += result[i];
+        }
+        allIngredientCounts.append(count);
+        result.remove(0, newLineIndex + 1);
+    }
+
+    return allIngredientCounts;
+}
+
 // Retrieves the recipe outputID for the request recipe
 // outputID = the recipe itself (I.E. 29169 = Dawn)
 QString DataInterface::FetchRecipeOutputID(QString recipeName)
@@ -685,6 +717,47 @@ QString DataInterface::FetchRecipeOutputID(QString recipeName)
     userDatabase.removeDatabase("FetchOutputID");
 
     return result;
+}
+
+QVector<QString> DataInterface::FetchAllRecipeNames()
+{
+    userDatabase = CreateDatabase("AllRecipeNames", "user.db", userDatabase);
+
+    QVector<QString> recipeNames;
+
+    QSqlQuery query(userDatabase);
+    query.prepare("SELECT recipeName FROM RecipesCatalog WHERE rowid > ?");
+    query.bindValue(0, 0);
+    query.exec();
+    while (query.next())
+    {
+        QCoreApplication::processEvents();
+
+        QString result = query.value(0).toString();
+        recipeNames.append(result);
+    }
+
+    // Close connection after finish
+    userDatabase.removeDatabase("AllRecipeNames");
+
+    return recipeNames;
+}
+
+bool DataInterface::CheckForValidRecipe(QString recipeName)
+{
+    userDatabase = CreateDatabase("CheckValidRecipeName", "user.db", userDatabase);
+
+    QSqlQuery query(userDatabase);
+    query.prepare("SELECT id FROM RecipesCatalog WHERE recipeName = ?");
+    query.bindValue(0, recipeName);
+    query.exec();
+    query.first();
+    QString result = query.value(0).toString();
+
+    userDatabase.removeDatabase("CheckValidRecipeName");
+
+    if (result.isEmpty()) return false;
+    else return true;
 }
 
 /*************************************************************************

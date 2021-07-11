@@ -187,16 +187,16 @@ QLabel
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="savePushButton">
+         <widget class="QPushButton" name="loadPushButton">
           <property name="text">
-           <string>Save</string>
+           <string>Open</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="loadPushButton">
+         <widget class="QPushButton" name="savePushButton">
           <property name="text">
-           <string>Open</string>
+           <string>Save</string>
           </property>
          </widget>
         </item>

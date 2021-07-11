@@ -100,6 +100,11 @@ QVector<int> MaterialStatusBar::GetAllTrackedGoalAmounts() const
     return materialGoal;
 }
 
+void MaterialStatusBar::AddMaterialGoalAmount(int index, int amount)
+{
+    trackedMaterials[index]->SetMaterialGoalAmt(amount);
+}
+
 
 // Adds all the materials that were read in from file and adds them to
 // their corresponding tabs
@@ -132,13 +137,13 @@ void MaterialStatusBar::AddMaterialFromSaveFile(int amtOfMaterials,
 
 // Adds all the materials that were read in from the excel file
 // and adds them to the active tab
-void MaterialStatusBar::AddMaterialFromExcelFile(int matCount, QString matName)
+void MaterialStatusBar::AddMaterialByCountAndName(int matCount, QString matName)
 {
     Materials* material = new Materials;
     material->setTabName(GetTabName());
     // Checks if the excel item being added is an actual
     // valid material, if not, then delete this material object
-    if(material->SetMaterialValuesFromExcelFile(matCount, matName))
+    if(material->SetMaterialValuesByNameAndCount(matCount, matName))
     {
         // Connect Material class's signals to the main window
         // These signal/slots will activate when they recieve the
@@ -383,10 +388,10 @@ void MaterialStatusBar::SetupWordCompleter()
     dataInterface = new DataInterface;
     QVector<QString> materialNames;
     materialNames = dataInterface->FetchAllMaterialNames();
-    for(auto x : materialNames) { materialList.append(x); }
+    for(auto material : materialNames) { materialList.append(material); }
 
-    // Connect the world completer to the line edit
-    wordCompleter = new QCompleter(materialList,this);
+    // Connect the word completer to the line edit
+    wordCompleter = new QCompleter(materialList, this);
     wordCompleter->setFilterMode(Qt::MatchContains);
     wordCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     ui->searchMaterialLineEdit->setCompleter(wordCompleter);
