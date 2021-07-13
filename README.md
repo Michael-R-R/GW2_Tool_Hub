@@ -4,14 +4,7 @@
 
 *OPEN SOURCE*
 
-6/22/21 (Newest Build)
-<br>Download Here (v1.2.2): <a href="https://www.dropbox.com/s/zscl0ivxhqh95kr/GW2ToolHub_Installer_1_2_2.zip?dl=1"> .zip Installer </a>
-
-6/20/21 (Old Build)
-<br>Download Here (v1.2.1): <a href="https://www.dropbox.com/s/2w0qx9safdr5zh9/GW2ToolHub_Installer_1_2_1.zip?dl=1"> .zip Installer </a>
-
-6/19/21 (Old Build)
-<br>Download Here (v1.2.0): <a href="https://www.dropbox.com/s/6ayh1hpn22c7mwh/GW2ToolHub_Installer_1_2_0.zip?dl=1"> .zip Installer </a>
+<br>Download Here (v1.2.4): <a href="https://www.dropbox.com/s/zscl0ivxhqh95kr/GW2ToolHub_Installer_1_2_2.zip?dl=1"> .zip Installer </a>
 
 An application aimed at providing resourceful tools to compliment the Guild Wars 2 gaming experience 
 
@@ -26,6 +19,7 @@ An application aimed at providing resourceful tools to compliment the Guild Wars
 
 ### On Demand Material Tracker (with API functionality):
 - Search and add materials
+- Search for recipes and add the required materials
 - Sort materials by category, material name, current amount, goal amount, and percent complete
 - Import excel sheets exported from GW2 Efficiency 
 - Set current amount by connecting an API key
