@@ -99,7 +99,9 @@ For the forseeable future I will be the sole reviewer of all Pull Requests and b
 
 ![variables](https://user-images.githubusercontent.com/54217603/119714225-9d32ec80-be30-11eb-887d-ac378ddc3e98.png)
 
-- Data Structures: Unless there is any reason not to, when using data structures your go to structure should be a QVector.
+- Data Structures: Unless there is any reason not to, when using data structures your go to structure should be a QVector. Vectors should also start with a lowercase 'v'.
+
+![vectors](https://user-images.githubusercontent.com/54217603/125505543-b447a9dd-4d75-4dd1-bd2b-657ef61a9d37.png)
 
 - Comment your code in English and make sure it is human readable and concise.
 
