@@ -15,8 +15,15 @@ public:
     SaveAndLoad();
     ~SaveAndLoad();
 
+    // Getters/Setters
     QString GetFileName() const { return fileName; }
     void SetFileName(QString val) { fileName = val; }
+
+    QString GetNotesFileDir() const { return notesFileDir; }
+    void SetNotesFileDir(QString val) { notesFileDir = val; }
+
+    QString GetMatTrackFileDir() const { return matTrackFileDir; }
+    void SetMatTrackFileDir(QString val) { matTrackFileDir = val; }
 
     // --- Save/Load all tracked materials ---
     QByteArray OpenTrackedMaterialsFile(QWidget* parent);

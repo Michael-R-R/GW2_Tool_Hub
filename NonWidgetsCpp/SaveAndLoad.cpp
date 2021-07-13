@@ -85,6 +85,9 @@ int SaveAndLoad::SaveTrackedMaterials(QWidget* parent, int tabAmt,
             return -1;
         }
 
+        // Store the current file directory
+        matTrackFileDir = fileName;
+
         // Start writing out the data
         QTextStream outFile(&inFile);
 
@@ -217,6 +220,9 @@ QString SaveAndLoad::SaveNotes(QWidget* parent, QString fileContent)
             return "Error Saving File";
         }
 
+        // Set the current path to the file
+        notesFileDir = fileName;
+
         // Write out the file contents
         QTextStream outFile(&inFile);
         outFile << fileContent;
@@ -247,6 +253,7 @@ QString SaveAndLoad::SaveAsNotes(QWidget* parent, QString fileContent)
             return "Error Saving File";
         }
 
+        // Set the current path to the file
         notesFileDir = fileName;
 
         // Write out the file contents

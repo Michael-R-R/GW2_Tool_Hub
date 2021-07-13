@@ -789,9 +789,6 @@ QPushButton:pressed
    <property name="text">
     <string>Save</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
   </action>
   <action name="actionOpen">
    <property name="enabled">
@@ -799,9 +796,6 @@ QPushButton:pressed
    </property>
    <property name="text">
     <string>Open</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
    </property>
    <property name="visible">
     <bool>true</bool>

@@ -310,6 +310,13 @@ void MaterialTracker::ImportExcelSheet()
 // to file
 void MaterialTracker::SaveFile()
 {
+    // Throw an error if there are no active tabs
+    if (materialTabs.size() <= 0)
+    {
+        error.NonModalErrorMessage(this, "Error", "No Active Tabs");
+        return;
+    }
+
     UpdateStatusBar("Saving File...");
 
     // GET AMT OF TABS
@@ -350,6 +357,13 @@ void MaterialTracker::SaveFile()
 
 void MaterialTracker::SaveAsFile()
 {
+    // Throw an error if there are no active tabs
+    if (materialTabs.size() <= 0)
+    {
+        error.NonModalErrorMessage(this, "Error", "No Active Tabs");
+        return;
+    }
+
     UpdateStatusBar("Saving As File...");
 
     // GET AMT OF TABS
@@ -566,6 +580,9 @@ void MaterialTracker::RemoveTab(int index)
 {
     // Reset the sorting buttons to default text
     ResetSortingButtons();
+
+    // Clear the save file path for quick saving
+    saveAndLoad->SetMatTrackFileDir("");
     
     // Remove the data table from the database and then remove
     // the tab bar from the UI and vector
