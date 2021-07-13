@@ -106,7 +106,6 @@ void MainWindow::SaveAsNotes()
     notesWidget->SaveAsNotes();
 }
 
-// Notes:
 void MainWindow::OpenNotesFile()
 {
     notesWidget->OpenNotes();
@@ -344,15 +343,15 @@ void MainWindow::SetupStackedWidget()
 void MainWindow::FetchAllMaterialIcons()
 {
 	// Fetches all the material id #s
-	QVector<QString> ids = dataInterface->FetchAllMaterialIds();
+	QVector<QString> vID = dataInterface->FetchAllMaterialIds();
 
 	// Fetches the material icon and stores in pixmap
 	ApiAccess* api = new ApiAccess;
 	// Add material icon to the database
-	for (int i = 0; i < ids.size(); i++)
+	for (int i = 0; i < vID.size(); i++)
 	{
-		QPixmap icon = api->QueryForMaterialIcon(ids[i]);
-		dataInterface->UpdateMaterialIcons(ids[i].toInt(), icon);
+		QPixmap icon = api->QueryForMaterialIcon(vID[i]);
+		dataInterface->UpdateMaterialIcons(vID[i].toInt(), icon);
 		qDebug() << "Row ID: " << i;
 	}
 

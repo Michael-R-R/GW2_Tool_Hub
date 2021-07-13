@@ -30,8 +30,8 @@ public:
 
     // --- Tab names ---
     QVector<QString> GetAllTabNames();
-    QString getTabName() const { return tabName; }
-    void setTabName(const QString& value) { tabName = value; }
+    QString GetTabName() const { return tabName; }
+    void SetTabName(const QString& value) { tabName = value; }
     
     // --- Search Recipe ---
     void SearchRecipe();
@@ -83,8 +83,8 @@ private:
     QString tabName;
 
     // --- Search Recipe ---
-    QVector<QString> vResultName;
-    QVector<int> vResultCount;
+    QVector<QString> vRecipeNames;
+    QVector<int> vRecipeCounts;
 
     // --- Sorting ---
     void ResetSortingButtons();

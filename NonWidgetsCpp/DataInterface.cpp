@@ -108,19 +108,19 @@ QVector<int> DataInterface::FetchExcelCounts(QString sheetPath)
     QString tableName = sheetPath;
 
     // Select the material amounts
-    QVector<int> matCounts;
+    QVector<int> vMatCounts;
     QSqlQuery query(excelDB);
     query.exec("SELECT Count FROM [" + tableName + "$]");
     while(query.next())
     {
         int result = query.value(0).toInt();
-        matCounts.append(result);
+        vMatCounts.append(result);
     }
 
     excelDB.close();
     excelDB.removeDatabase("xlsx_connection");
 
-    return matCounts;
+    return vMatCounts;
 }
 
 QVector<QString> DataInterface::FetchExcelNames(QString sheetPath)
@@ -142,19 +142,19 @@ QVector<QString> DataInterface::FetchExcelNames(QString sheetPath)
     QString tableName = sheetPath;
 
     // Select the material name
-    QVector<QString> matNames;
+    QVector<QString> vMatNames;
     QSqlQuery query1(excelDB);
     query1.exec("SELECT Name FROM [" + tableName + "$]");
     while(query1.next())
     {
         QString result = query1.value(0).toString();
-        matNames.append(result);
+        vMatNames.append(result);
     }
 
     excelDB.close();
     excelDB.removeDatabase("xlsx_connection");
 
-    return matNames;
+    return vMatNames;
 }
 
 
@@ -202,7 +202,7 @@ QVector<QString> DataInterface::FetchAllMaterialIds()
 {
 	userDatabase = CreateDatabase("MaterialIds", "user.db", userDatabase);
 
-    QVector<QString> ids;
+    QVector<QString> vID;
     QString result;
     QSqlQuery query(userDatabase);
     for (int i = 1; i <= MaterialsCatalogSize; i++)
@@ -216,13 +216,13 @@ QVector<QString> DataInterface::FetchAllMaterialIds()
 
         // Add id to vector
         result = query.value(0).toString();
-        ids.append(result);
+        vID.append(result);
     }
 
 	// Close connection after finish
 	userDatabase.removeDatabase("MaterialCategories");
 
-	return ids;
+	return vID;
 }
 
 // Retrieves all the material category's names and returns
@@ -231,7 +231,7 @@ QVector<QString> DataInterface::FetchAllMaterialCategories()
 {
     userDatabase = CreateDatabase("MaterialCategories", "user.db", userDatabase);
 
-    QVector<QString> AllCategories;
+    QVector<QString> vAllCategories;
     QString result;
     QSqlQuery query(userDatabase);
     for(int i = 0; i < MaterialsCatalogSize; i++)
@@ -249,14 +249,14 @@ QVector<QString> DataInterface::FetchAllMaterialCategories()
         result = query.value(0).toString();
         if(lastResult != result)
         {
-            AllCategories.append(result);
+            vAllCategories.append(result);
         }
     }
 
     // Close connection after finish
     userDatabase.removeDatabase("MaterialCategories");
 
-    return AllCategories;
+    return vAllCategories;
 }
 
 // Retrieves all the material names with their corresponding category name
@@ -265,7 +265,7 @@ QVector<QString> DataInterface::FetchAllMaterialNamesByCategory(QString category
 {
     userDatabase = CreateDatabase("MaterialNamesByCategory", "user.db", userDatabase);
 
-    QVector<QString> AllTypes;
+    QVector<QString> vAllTypes;
     QSqlQuery query(userDatabase);
     query.prepare("SELECT name FROM MaterialsCatalog WHERE categoryName = ?");
     query.bindValue(0, category);
@@ -275,13 +275,13 @@ QVector<QString> DataInterface::FetchAllMaterialNamesByCategory(QString category
         QCoreApplication::processEvents();
 
         QString result = query.value(0).toString();
-        AllTypes.append(result);
+        vAllTypes.append(result);
     }
 
     // Close connection after finish
     userDatabase.removeDatabase("MaterialNamesByCategory");
 
-    return AllTypes;
+    return vAllTypes;
 }
 
 // Retrieves all the material names in the MaterialsCatalog table
@@ -290,7 +290,7 @@ QVector<QString> DataInterface::FetchAllMaterialNames()
 {
     userDatabase = CreateDatabase("AllMaterialNames", "user.db", userDatabase);
 
-    QVector<QString> AllTypes;
+    QVector<QString> vAllNames;
     QSqlQuery query(userDatabase);
     query.prepare("SELECT name FROM MaterialsCatalog WHERE rowid > ?");
     query.bindValue(0, 0);
@@ -300,13 +300,13 @@ QVector<QString> DataInterface::FetchAllMaterialNames()
         QCoreApplication::processEvents();
 
         QString result = query.value(0).toString();
-        AllTypes.append(result);
+        vAllNames.append(result);
     }
 
     // Close connection after finish
     userDatabase.removeDatabase("AllMaterialNames");
 
-    return AllTypes;
+    return vAllNames;
 }
 
 // Searches for the category name from the passed in material name
@@ -642,16 +642,16 @@ QVector<QString> DataInterface::FetchIngredientsID(QString recipeName)
     // Removes the new line from the fetch result
     // and adds the edited ID to a vector in case there
     // are multiple ingredients
-    QVector<QString> AllIngredientsID;
+    QVector<QString> vAllIngredientsID;
     QTextStream text(&result);
     while (!text.atEnd())
     {
         QString line = text.readLine();
 
-        AllIngredientsID.append(line);
+        vAllIngredientsID.append(line);
     }
 
-    return AllIngredientsID;
+    return vAllIngredientsID;
 }
 
 // Retrieves all the ingredient's names for the requested recipe
@@ -669,16 +669,16 @@ QVector<QString> DataInterface::FetchIngredientsNames(QString recipeName)
 
     userDatabase.removeDatabase("FetchingIngredientsNames");
 
-    QVector<QString> AllIngredientNames;
+    QVector<QString> vAllIngredientNames;
     QTextStream text(&result);
     while(!text.atEnd())
     {
         QString line = text.readLine();
         
-        AllIngredientNames.append(line);
+        vAllIngredientNames.append(line);
     }
 
-    return AllIngredientNames;
+    return vAllIngredientNames;
 }
 
 QVector<QString> DataInterface::FetchIngredientsCount(QString recipeName)
@@ -694,16 +694,16 @@ QVector<QString> DataInterface::FetchIngredientsCount(QString recipeName)
 
     userDatabase.removeDatabase("FetchIngredientCounts");
 
-    QVector<QString> allIngredientCounts;
+    QVector<QString> vAllIngredientCounts;
     QTextStream text(&result);
     while (!text.atEnd())
     {
         QString line = text.readLine();
 
-        allIngredientCounts.append(line);
+        vAllIngredientCounts.append(line);
     }
 
-    return allIngredientCounts;
+    return vAllIngredientCounts;
 }
 
 // Retrieves the recipe outputID for the request recipe
@@ -728,7 +728,7 @@ QVector<QString> DataInterface::FetchAllRecipeNames()
 {
     userDatabase = CreateDatabase("AllRecipeNames", "user.db", userDatabase);
 
-    QVector<QString> recipeNames;
+    QVector<QString> vRecipeNames;
 
     QSqlQuery query(userDatabase);
     query.prepare("SELECT recipeName FROM RecipesCatalog WHERE rowid > ?");
@@ -739,13 +739,13 @@ QVector<QString> DataInterface::FetchAllRecipeNames()
         QCoreApplication::processEvents();
 
         QString result = query.value(0).toString();
-        recipeNames.append(result);
+        vRecipeNames.append(result);
     }
 
     // Close connection after finish
     userDatabase.removeDatabase("AllRecipeNames");
 
-    return recipeNames;
+    return vRecipeNames;
 }
 
 QVector<QString> DataInterface::FetchAllRecipeIDs()
@@ -808,9 +808,6 @@ void DataInterface::CopyMasterMaterialsCatalog()
 
 	userDatabase.removeDatabase("CopyMasterCatalog");
 }
-
-
-
 
 
 

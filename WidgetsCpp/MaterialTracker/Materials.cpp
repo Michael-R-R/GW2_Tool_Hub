@@ -183,8 +183,8 @@ void Materials::SetupAllMaterialDefaults()
 {
     // Fetch all the differenet material catagories and add them to
     // the combobox
-    QVector<QString> categories = dataInterface->FetchAllMaterialCategories();
-    for(auto item : categories)
+    QVector<QString> vCategories = dataInterface->FetchAllMaterialCategories();
+    for(auto item : vCategories)
     {
         ui->materialCatagoryComboBox->addItem(item);
     }
@@ -206,8 +206,8 @@ void Materials::AddMaterialCategoryTypes(QString category)
 {
     ui->materialTypesComboBox->clear();
 
-    QVector<QString> types = dataInterface->FetchAllMaterialNamesByCategory(category);
-    for(auto item : types)
+    QVector<QString> vTypes = dataInterface->FetchAllMaterialNamesByCategory(category);
+    for(auto item : vTypes)
     {
         ui->materialTypesComboBox->addItem(item);
     }

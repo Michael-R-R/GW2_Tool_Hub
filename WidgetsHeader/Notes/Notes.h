@@ -16,9 +16,7 @@
 #include <QMenu>
 #include <QDebug>
 
-namespace Ui {
-class Notes;
-}
+namespace Ui { class Notes; }
 
 class Notes : public QWidget
 {
@@ -63,7 +61,7 @@ private:
     QString folderDir;
     QString lastFolderDir;
     QString htmlDir;
-    QVector<QString> folderHistory;
+    QVector<QString> vFolderHistory;
 
     QString folderName;
 

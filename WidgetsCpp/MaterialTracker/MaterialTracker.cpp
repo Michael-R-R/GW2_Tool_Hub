@@ -5,7 +5,7 @@ MaterialTracker::MaterialTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MaterialTracker), saveAndLoad(new SaveAndLoad),
     materialTabs(), tabName(),
-    vResultName(), vResultCount(),
+    vRecipeNames(), vRecipeCounts(),
     searchedRecipe(), recipeList(), wordCompleter(nullptr)
 {
     // Setup
@@ -69,13 +69,13 @@ void MaterialTracker::ChangeWaitingForApiReplyStatusLabel()
 
 QVector<QString> MaterialTracker::GetAllTabNames()
 {
-    QVector<QString> tabNames;
+    QVector<QString> vTabNames;
     for (auto material : materialTabs)
     {
-        tabNames.append(material->GetTabName());
+        vTabNames.append(material->GetTabName());
     }
 
-    return tabNames;
+    return vTabNames;
 }
 
 void MaterialTracker::SearchRecipe()
@@ -138,16 +138,16 @@ void MaterialTracker::SearchRecipe()
     
     // Loop through the vector of all the materials needed
     // and add them to the current tab
-    for (int i = 0; i < vResultName.size(); i++)
+    for (int i = 0; i < vRecipeNames.size(); i++)
     {
         UpdateStatusBar("Adding required materials", true);
 
-        QString name = vResultName[i];
-        int count = vResultCount[i];
+        QString name = vRecipeNames[i];
+        int count = vRecipeCounts[i];
         materialTabs[ui->materialsTabWidget->currentIndex()]->AddMaterialByCountAndName(count, name);
     }
-    vResultName.clear();
-    vResultCount.clear();
+    vRecipeNames.clear();
+    vRecipeCounts.clear();
 
     UpdateStatusBar("Recipe Added");
 }
@@ -163,12 +163,12 @@ void MaterialTracker::RecursiveSearchRecipe(QString recipeName)
 
     // Query RecipesCatalog database with the recipe name
     DataInterface dataInterface;
-    QVector<QString> ingredientNames = dataInterface.FetchIngredientsNames(recipeName);
-    QVector<QString> ingredientCounts = dataInterface.FetchIngredientsCount(recipeName);
+    QVector<QString> vIngredientNames = dataInterface.FetchIngredientsNames(recipeName);
+    QVector<QString> vIngredientCounts = dataInterface.FetchIngredientsCount(recipeName);
 
     // Check if ingredient names are a recipe
     bool isRecipeValid = false;
-    foreach(QString item, ingredientNames)
+    foreach(QString item, vIngredientNames)
     {
         UpdateStatusBar("Searching for ingredients", true);
 
@@ -178,10 +178,10 @@ void MaterialTracker::RecursiveSearchRecipe(QString recipeName)
         if (isRecipeValid)
         {
             QString tempName = item;
-            int index = ingredientNames.indexOf(tempName);
-            int tempCount = ingredientCounts[index].toInt();
-            ingredientNames.removeAt(index);
-            ingredientCounts.removeAt(index);
+            int index = vIngredientNames.indexOf(tempName);
+            int tempCount = vIngredientCounts[index].toInt();
+            vIngredientNames.removeAt(index);
+            vIngredientCounts.removeAt(index);
             for (int i = 0; i < tempCount; i++)
             {
                 RecursiveSearchRecipe(tempName);
@@ -191,20 +191,20 @@ void MaterialTracker::RecursiveSearchRecipe(QString recipeName)
         else
         {
             QString tempName = item;
-            int index = ingredientNames.indexOf(tempName);
-            int tempCount = ingredientCounts[index].toInt();
+            int index = vIngredientNames.indexOf(tempName);
+            int tempCount = vIngredientCounts[index].toInt();
 
             // Check if the material is already in the result vector
             // if so, add the count amount to the existing material
-            if (vResultName.contains(tempName))
+            if (vRecipeNames.contains(tempName))
             {
-                int index = vResultName.indexOf(tempName);
-                vResultCount[index] += tempCount;
+                int index = vRecipeNames.indexOf(tempName);
+                vRecipeCounts[index] += tempCount;
             }
             else
             {
-                vResultName.append(tempName);
-                vResultCount.append(tempCount);
+                vRecipeNames.append(tempName);
+                vRecipeCounts.append(tempCount);
             }
         }
     }
@@ -236,8 +236,8 @@ void MaterialTracker::ImportExcelSheet()
 
     // FILE IS VALID
     // Parse the count and material name
-    QVector<int> matCounts;
-    QVector<QString> matNames;
+    QVector<int> vMatCounts;
+    QVector<QString> vMatNames;
     bool isFirstLine = true;
 
     // Parse each line for count info and material name
@@ -271,7 +271,7 @@ void MaterialTracker::ImportExcelSheet()
             tempIndex = line.indexOf(",");
             line.remove(tempIndex, 1);
             // Add the count to the vector
-            matCounts.append(tempCount.toInt());
+            vMatCounts.append(tempCount.toInt());
 
             // PARSE THE MATERIAL NAME
             tempIndex = line.indexOf(",");
@@ -282,7 +282,7 @@ void MaterialTracker::ImportExcelSheet()
                 tempName += line[i];
             }
             // add the name to the vector
-            matNames.append(tempName);
+            vMatNames.append(tempName);
         }
         else
         {
@@ -293,9 +293,9 @@ void MaterialTracker::ImportExcelSheet()
 
     // Add the material counts and names to the active tab
     int currentActiveTab = ui->materialsTabWidget->currentIndex();
-    for (int i = 0; i < matCounts.size(); i++)
+    for (int i = 0; i < vMatCounts.size(); i++)
     {
-        materialTabs[currentActiveTab]->AddMaterialByCountAndName(matCounts[i], matNames[i]);
+        materialTabs[currentActiveTab]->AddMaterialByCountAndName(vMatCounts[i], vMatNames[i]);
     }
 
     ui->fileStatusLabel->setText("Importing File Complete");
@@ -479,9 +479,9 @@ void MaterialTracker::OpenFile()
         // GET ALL MATERIALS NAMES, CURRENT AMT, AND GOAL AMT IN TAB
         else if(line.contains("Material Name:"))
         {
-            QVector<QString> tempMatNames;
-            QVector<int> tempCurrentAmt;
-            QVector<int> tempGoalAmt;
+            QVector<QString> vTempMatNames;
+            QVector<int> vTempCurrentAmt;
+            QVector<int> vTempGoalAmt;
             for(int i = 0; i < tempAmtOfMatInTab; i++)
             {
                 if(line.contains("Material Name:"))
@@ -491,7 +491,7 @@ void MaterialTracker::OpenFile()
                     {
                         temp += line[i];
                     }
-                    tempMatNames.append(temp);
+                    vTempMatNames.append(temp);
                     // Read next line
                     line = fileResult.readLine();
                 }
@@ -502,7 +502,7 @@ void MaterialTracker::OpenFile()
                     {
                         temp += line[i];
                     }
-                    tempCurrentAmt.append(temp.toInt());
+                    vTempCurrentAmt.append(temp.toInt());
                     // Read next line
                     line = fileResult.readLine();
                 }
@@ -513,7 +513,7 @@ void MaterialTracker::OpenFile()
                     {
                         temp += line[i];
                     }
-                    tempGoalAmt.append(temp.toInt());
+                    vTempGoalAmt.append(temp.toInt());
                 }
 
                 // Read next line, unless this is the last iteration
@@ -524,9 +524,9 @@ void MaterialTracker::OpenFile()
             }
             // Append all at same time to keep the indexing
             // for each materials data the same and in order
-            vNamesInTab.append(tempMatNames);
-            vCurrentAmtsInTab.append(tempCurrentAmt);
-            vGoalAmtsInTab.append(tempGoalAmt);
+            vNamesInTab.append(vTempMatNames);
+            vCurrentAmtsInTab.append(vTempCurrentAmt);
+            vGoalAmtsInTab.append(vTempGoalAmt);
         }
     }
 
@@ -1047,7 +1047,7 @@ void MaterialTracker::CreateTabDataTable(QString name)
     DataInterface* dataInterface = new DataInterface;
     dataInterface->CreateDataTableForNewTab(name);
     delete dataInterface;
-    setTabName(name);
+    SetTabName(name);
 }
 
 void MaterialTracker::DeleteTabDataTable(QString name)
@@ -1062,8 +1062,8 @@ void MaterialTracker::DeleteTabDataTable(QString name)
 void MaterialTracker::DeleteAllTabDataTables()
 {
     DataInterface* dataInterface = new DataInterface;
-    QVector<QString> names = GetAllTabNames();
-    for(auto tabName : names)
+    QVector<QString> vNames = GetAllTabNames();
+    for(auto tabName : vNames)
     {
         dataInterface->DeleteTabDataTable(tabName);
     }
@@ -1159,9 +1159,9 @@ void MaterialTracker::SetupRecipeWordCompleter()
 {
     // Fetch all recipe names from the database
     DataInterface dataInterface;
-    QVector<QString> recipeNames;
-    recipeNames = dataInterface.FetchAllRecipeNames();
-    for (QString recipe : recipeNames) { recipeList.append(recipe); }
+    QVector<QString> vNames;
+    vNames = dataInterface.FetchAllRecipeNames();
+    for (QString recipe : vNames) { recipeList.append(recipe); }
     
     // Create the word completer
     wordCompleter = new QCompleter(recipeList, this);

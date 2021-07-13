@@ -136,8 +136,8 @@ void ApiAccess::QueryForMaterialsAPI(MaterialTracker* materialTracker)
 
     // Fill in all active tab's table database
     // with the material API data
-    QVector<QString> tempName = materialTracker->GetAllTabNames();
-    for(auto tabName : tempName)
+    QVector<QString> vTempName = materialTracker->GetAllTabNames();
+    for(auto tabName : vTempName)
     {
         dataInterface->UpdateAccountMaterialsFromAPI(vMasterID, vMasterCount, tabName);
     }

@@ -6,7 +6,7 @@ MaterialStatusBar::MaterialStatusBar(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MaterialStatusBar),
     currentSortState(SortingState::DEFAULT), nextSortState(SortingState::DEFAULT),
-    tabName(), trackedMaterials(), originalTrackedMaterials(), sortedTrackedMaterials(),
+    tabName(), vTrackedMaterials(), vOriginalTrackedMaterials(), vSortedTrackedMaterials(),
     searchedMaterial(), materialList(), wordCompleter(new QCompleter(materialList, this))
 {
     // Setup
@@ -22,7 +22,7 @@ MaterialStatusBar::MaterialStatusBar(QWidget *parent) :
 MaterialStatusBar::~MaterialStatusBar()
 {
     delete ui;
-    foreach(auto x, trackedMaterials) {delete x;}
+    foreach(auto x, vTrackedMaterials) {delete x;}
     delete wordCompleter;
 
 }
@@ -37,13 +37,13 @@ MaterialStatusBar::~MaterialStatusBar()
 void MaterialStatusBar::UpdateTrackingStatus()
 {
 	double completedCount = 0;
-	for (auto material : trackedMaterials)
+	for (auto material : vTrackedMaterials)
 	{
 		if (material->GetIsCompleted()) { completedCount++; }
 	}
 
-	int activeAmount = trackedMaterials.size() - completedCount;
-	double percentComplete = (completedCount / trackedMaterials.size()) * 100.0;
+	int activeAmount = vTrackedMaterials.size() - completedCount;
+	double percentComplete = (completedCount / vTrackedMaterials.size()) * 100.0;
 	ui->labelMatStatus->setText(QString("Stats: %1 Active / %2 Complete / %3% Complete")
 		.arg(activeAmount)
 		.arg(completedCount)
@@ -55,7 +55,7 @@ void MaterialStatusBar::UpdateTabName(QString newTabName)
 {
     SetTabName(newTabName);
 
-    for(auto material : trackedMaterials)
+    for(auto material : vTrackedMaterials)
     {
         material->setTabName(newTabName);
     }
@@ -65,44 +65,44 @@ void MaterialStatusBar::UpdateTabName(QString newTabName)
 // name from the material type combobox
 QVector<QString> MaterialStatusBar::GetAllTrackedMaterialNames() const
 {
-    QVector<QString> materialNames;
-    for(auto material : trackedMaterials)
+    QVector<QString> vMaterialNames;
+    for(auto material : vTrackedMaterials)
     {
-        materialNames.append(material->GetMaterialName());
+        vMaterialNames.append(material->GetMaterialName());
     }
 
-    return materialNames;
+    return vMaterialNames;
 }
 
 // Loops through all current trackedMaterials and retrieves the material
 // current amount from the material spin box
 QVector<int> MaterialStatusBar::GetAllTrackedCurrentAmounts() const
 {
-    QVector<int> materialCurrent;
-    for(auto material : trackedMaterials)
+    QVector<int> vMaterialCurrent;
+    for(auto material : vTrackedMaterials)
     {
-        materialCurrent.append(material->GetMaterialCurrentAmt());
+        vMaterialCurrent.append(material->GetMaterialCurrentAmt());
     }
 
-    return materialCurrent;
+    return vMaterialCurrent;
 }
 
 // Loops through all goal trackedMaterials and retrieves the material
 // goal amount from the material spin box
 QVector<int> MaterialStatusBar::GetAllTrackedGoalAmounts() const
 {
-    QVector<int> materialGoal;
-    for(auto material : trackedMaterials)
+    QVector<int> vMaterialGoal;
+    for(auto material : vTrackedMaterials)
     {
-        materialGoal.append(material->GetMaterialGoalAmt());
+        vMaterialGoal.append(material->GetMaterialGoalAmt());
     }
 
-    return materialGoal;
+    return vMaterialGoal;
 }
 
 void MaterialStatusBar::AddMaterialGoalAmount(int index, int amount)
 {
-    trackedMaterials[index]->SetMaterialGoalAmt(amount);
+    vTrackedMaterials[index]->SetMaterialGoalAmt(amount);
 }
 
 
@@ -127,7 +127,7 @@ void MaterialStatusBar::AddMaterialFromSaveFile(int amtOfMaterials,
 
         // Add the material to the vector and
         // to the applications ui
-        trackedMaterials.append(material);
+        vTrackedMaterials.append(material);
         ui->matTrackerToolBarLayout->addWidget(material);
         MakeCopyOfTrackedMaterials();
 
@@ -153,7 +153,7 @@ void MaterialStatusBar::AddMaterialByCountAndName(int matCount, QString matName)
 
         // Add the material to the vector and
         // to the applications ui
-        trackedMaterials.append(material);
+        vTrackedMaterials.append(material);
         ui->matTrackerToolBarLayout->addWidget(material);
         MakeCopyOfTrackedMaterials();
 
@@ -176,118 +176,118 @@ void MaterialStatusBar::SortNoFilter()
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in original order
-    AddSortedMaterials(originalTrackedMaterials);
+    AddSortedMaterials(vOriginalTrackedMaterials);
 }
 
 void MaterialStatusBar::SortLowToHighCategory()
 {
     // Sort the materials
-    sortedTrackedMaterials = materialSorting.SortLowToHighCategory(trackedMaterials);
+    vSortedTrackedMaterials = materialSorting.SortLowToHighCategory(vTrackedMaterials);
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in sorted order
-    AddSortedMaterials(sortedTrackedMaterials);
+    AddSortedMaterials(vSortedTrackedMaterials);
 }
 
 void MaterialStatusBar::SortHighToLowCategory()
 {
     // Sort the materials
-    sortedTrackedMaterials = materialSorting.SortHighToLowCategory(trackedMaterials);
+    vSortedTrackedMaterials = materialSorting.SortHighToLowCategory(vTrackedMaterials);
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in sorted order
-    AddSortedMaterials(sortedTrackedMaterials);
+    AddSortedMaterials(vSortedTrackedMaterials);
 }
 
 void MaterialStatusBar::SortLowToHighName()
 {
 
     // Sort the materials
-    sortedTrackedMaterials = materialSorting.SortLowToHighName(trackedMaterials);
+    vSortedTrackedMaterials = materialSorting.SortLowToHighName(vTrackedMaterials);
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in sorted order
-    AddSortedMaterials(sortedTrackedMaterials);
+    AddSortedMaterials(vSortedTrackedMaterials);
 }
 
 void MaterialStatusBar::SortHighToLowName()
 {
     // Sort the materials
-    sortedTrackedMaterials = materialSorting.SortHighToLowName(trackedMaterials);
+    vSortedTrackedMaterials = materialSorting.SortHighToLowName(vTrackedMaterials);
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in sorted order
-    AddSortedMaterials(sortedTrackedMaterials);
+    AddSortedMaterials(vSortedTrackedMaterials);
 }
 
 void MaterialStatusBar::SortLowToHighCurrent()
 {
     // Sort the materials
-    sortedTrackedMaterials = materialSorting.SortLowToHighCurrent(trackedMaterials);
+    vSortedTrackedMaterials = materialSorting.SortLowToHighCurrent(vTrackedMaterials);
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in sorted order
-    AddSortedMaterials(sortedTrackedMaterials);
+    AddSortedMaterials(vSortedTrackedMaterials);
 }
 
 void MaterialStatusBar::SortHighToLowCurrent()
 {
     // Sort the materials
-    sortedTrackedMaterials = materialSorting.SortHighToLowCurrent(trackedMaterials);
+    vSortedTrackedMaterials = materialSorting.SortHighToLowCurrent(vTrackedMaterials);
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in sorted order
-    AddSortedMaterials(sortedTrackedMaterials);
+    AddSortedMaterials(vSortedTrackedMaterials);
 }
 
 void MaterialStatusBar::SortLowToHighGoal()
 {
     // Sort the materials
-    sortedTrackedMaterials = materialSorting.SortLowToHighGoal(trackedMaterials);
+    vSortedTrackedMaterials = materialSorting.SortLowToHighGoal(vTrackedMaterials);
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in sorted order
-    AddSortedMaterials(sortedTrackedMaterials);
+    AddSortedMaterials(vSortedTrackedMaterials);
 }
 
 void MaterialStatusBar::SortHighToLowGoal()
 {
     // Sort the materials
-    sortedTrackedMaterials = materialSorting.SortHighToLowGoal(trackedMaterials);
+    vSortedTrackedMaterials = materialSorting.SortHighToLowGoal(vTrackedMaterials);
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in sorted order
-    AddSortedMaterials(sortedTrackedMaterials);
+    AddSortedMaterials(vSortedTrackedMaterials);
 }
 
 void MaterialStatusBar::SortLowToHighPercent()
 {
     // Sort the materials
-    sortedTrackedMaterials = materialSorting.SortLowToHighPercent(trackedMaterials);
+    vSortedTrackedMaterials = materialSorting.SortLowToHighPercent(vTrackedMaterials);
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in sorted order
-    AddSortedMaterials(sortedTrackedMaterials);
+    AddSortedMaterials(vSortedTrackedMaterials);
 }
 
 void MaterialStatusBar::SortHighToLowPercent()
 {
     // Sort the materials
-    sortedTrackedMaterials = materialSorting.SortHighToLowPercent(trackedMaterials);
+    vSortedTrackedMaterials = materialSorting.SortHighToLowPercent(vTrackedMaterials);
     // Remove the materials from the UI and data structure
     RemoveAllMaterials();
     // Re-add the materials in sorted order
-    AddSortedMaterials(sortedTrackedMaterials);
+    AddSortedMaterials(vSortedTrackedMaterials);
 }
 
 // Removes all the materials from the UI display and data structure
 void MaterialStatusBar::RemoveAllMaterials()
 {
     // Remove all the materials from the last to first
-    while(trackedMaterials.size() > 0)
+    while(vTrackedMaterials.size() > 0)
     {
-        ui->matTrackerToolBarLayout->removeWidget(trackedMaterials.last());
-        trackedMaterials.removeOne(trackedMaterials.last());
+        ui->matTrackerToolBarLayout->removeWidget(vTrackedMaterials.last());
+        vTrackedMaterials.removeOne(vTrackedMaterials.last());
         UpdateTrackingStatus();
     }
 }
@@ -306,7 +306,7 @@ void MaterialStatusBar::AddSortedMaterials(QVector<Materials*>& materials)
         connect(materials[i], &Materials::RemoveMaterial, this, &MaterialStatusBar::RemoveMaterial);
         connect(materials[i], &Materials::TrackingStatusChanged, this, &MaterialStatusBar::TrackingStatusChanged);
 
-        trackedMaterials.append(materials[i]);
+        vTrackedMaterials.append(materials[i]);
         ui->matTrackerToolBarLayout->addWidget(materials[i]);
 
         UpdateTrackingStatus();
@@ -317,7 +317,7 @@ void MaterialStatusBar::AddSortedMaterials(QVector<Materials*>& materials)
 // wants to display the materials in unsorted order again
 void MaterialStatusBar::MakeCopyOfTrackedMaterials()
 {
-    originalTrackedMaterials = trackedMaterials;
+    vOriginalTrackedMaterials = vTrackedMaterials;
 }
 
 /*************************************************************************
@@ -346,7 +346,7 @@ void MaterialStatusBar::AddMaterial()
     connect(material, &Materials::TrackingStatusChanged, this, &MaterialStatusBar::TrackingStatusChanged);
 
     // Add material to the vector and to the UI display
-    trackedMaterials.append(material);
+    vTrackedMaterials.append(material);
     ui->matTrackerToolBarLayout->addWidget(material);
     MakeCopyOfTrackedMaterials();
 
@@ -357,7 +357,7 @@ void MaterialStatusBar::AddMaterial()
 // and from the data structure
 void MaterialStatusBar::RemoveMaterial(Materials* material)
 {
-    trackedMaterials.removeOne(material);
+    vTrackedMaterials.removeOne(material);
     ui->matTrackerToolBarLayout->removeWidget(material);
     delete material;
     UpdateTrackingStatus();
@@ -386,9 +386,9 @@ void MaterialStatusBar::SetupWordCompleter()
 {
     // Create the materialList by fetching all materials in the database
     dataInterface = new DataInterface;
-    QVector<QString> materialNames;
-    materialNames = dataInterface->FetchAllMaterialNames();
-    for(auto material : materialNames) { materialList.append(material); }
+    QVector<QString> vNames;
+    vNames = dataInterface->FetchAllMaterialNames();
+    for(auto material : vNames) { materialList.append(material); }
 
     // Connect the word completer to the line edit
     wordCompleter = new QCompleter(materialList, this);

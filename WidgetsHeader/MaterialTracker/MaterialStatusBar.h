@@ -40,7 +40,7 @@ public:
     void UpdateTabName(QString newTabName);
 
     // --- Utility ---
-    int GetNumOfTrackedMaterials() { return trackedMaterials.size(); }
+    int GetNumOfTrackedMaterials() { return vTrackedMaterials.size(); }
     QVector<QString> GetAllTrackedMaterialNames() const;
     QVector<int> GetAllTrackedCurrentAmounts() const;
     QVector<int> GetAllTrackedGoalAmounts() const;
@@ -109,9 +109,9 @@ private:
     QString tabName;
 
     // --- Data structures ---
-    QVector<Materials*> trackedMaterials;
-    QVector<Materials*> originalTrackedMaterials;
-    QVector<Materials*> sortedTrackedMaterials;
+    QVector<Materials*> vTrackedMaterials;
+    QVector<Materials*> vOriginalTrackedMaterials;
+    QVector<Materials*> vSortedTrackedMaterials;
 
     // --- Search Material Line Edit ---
     QString searchedMaterial;
@@ -122,7 +122,7 @@ private:
 public:
 
     // --- Inline Functions ---
-    inline void UpdateAllMaterials() { for(auto material : trackedMaterials) material->UpdateUiMaterialValues(); }
+    inline void UpdateAllMaterials() { for(auto material : vTrackedMaterials) material->UpdateUiMaterialValues(); }
 };
 
 #endif // MATERIALSTATUSBAR_H

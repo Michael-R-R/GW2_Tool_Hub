@@ -6,7 +6,7 @@ Notes::Notes(QWidget *parent) :
     ui(new Ui::Notes), listModel(new QFileSystemModel), menu(new QMenu(this)),
     saveAndLoad(new SaveAndLoad),
     dir(dir.currentPath()), folderDir(dir.path() + "/notes"),
-    lastFolderDir(), htmlDir(), folderHistory(), folderName("")
+    lastFolderDir(), htmlDir(), vFolderHistory(), folderName("")
 {
     // Setup
     ui->setupUi(this);
@@ -116,7 +116,7 @@ void Notes::DoubleClickItem(QModelIndex item)
         // Save the last folder directory
         // to allow user to go back to that directory
         lastFolderDir = folderDir;
-        folderHistory.append(lastFolderDir);
+        vFolderHistory.append(lastFolderDir);
 
         // Go to the selected directory
         folderDir = tempDir;
@@ -161,14 +161,14 @@ void Notes::DoubleClickItem(QModelIndex item)
 // Go back to the previous directory visited
 void Notes::BackDirectory()
 {
-    if(folderHistory.size() > 0)
+    if(vFolderHistory.size() > 0)
     {
-        int index = folderHistory.size() - 1;
+        int index = vFolderHistory.size() - 1;
 
-        ui->listView->setRootIndex(listModel->setRootPath(folderHistory[index]));
+        ui->listView->setRootIndex(listModel->setRootPath(vFolderHistory[index]));
         folderDir = listModel->rootPath();
         ui->dirStatusLabel->setText(folderDir);
-        folderHistory.removeLast();
+        vFolderHistory.removeLast();
     }
 }
 
