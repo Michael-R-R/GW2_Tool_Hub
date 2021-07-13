@@ -32,7 +32,7 @@ public:
     QVector<QString> GetAllTabNames();
     QString getTabName() const { return tabName; }
     void setTabName(const QString& value) { tabName = value; }
-
+    
     // --- Search Recipe ---
     void SearchRecipe();
     void RecursiveSearchRecipe(QString recipeName);
@@ -83,8 +83,8 @@ private:
     QString tabName;
 
     // --- Search Recipe ---
-    QVector<QString> resultName;
-    QVector<int> resultCount;
+    QVector<QString> vResultName;
+    QVector<int> vResultCount;
 
     // --- Sorting ---
     void ResetSortingButtons();
@@ -103,8 +103,7 @@ private:
 
    // --- Change status label ---
    void CheckSaveFileStatus(int result); // TODO move to Error Handling
-   void ChangeLoadingFileStatusLabel();
-   void ChangeMaterialUpdatingStatusLabel();
+   void UpdateStatusBar(QString text, bool isLooping = false);
 
    // --- Word Completer ---
    QString searchedRecipe;

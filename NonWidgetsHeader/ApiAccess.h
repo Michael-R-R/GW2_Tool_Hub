@@ -49,20 +49,36 @@ private:
 
     // --- Network Access ---
     DataInterface* dataInterface;
-    QNetworkAccessManager* managerAccountMaterials;
+    QNetworkAccessManager* manager;
 
-    // --- Functions ---
+    // --- Get Reply ---
 	void GetMaterialsApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
 	void GetAccountNamesApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
 	void GetInventoryApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
 	void GetBankApiReply(QNetworkReply* reply, MaterialTracker* materialTracker);
 
+    // --- Icons ---
 	QString QueryForMaterialIconURL(QString id);
 	QString GetMaterialIconUrlReply(QNetworkReply* reply);
 
+    // --- Utility ---
     void delaySeconds(int secToWait);
     void delayMilliSeconds(int msecToWait);
+    QString CombineParsedStrings(QVector<QString> strings);
+ 
+public:
+    // --- Developer Functions ---
+    // --- RecipeCatalog ---
+    void QueryForRecipesAPI();
 
+private:
+    QVector<QString> vRecipeItemID;
+    QVector<QString> vRecipeCount;
+    QVector<QString> vItemName;
+    
+    void GetRecipesApiReply(QNetworkReply* reply);
+    void QueryForItemIdAPI(QString id);
+    void GetItemIdApiReply(QNetworkReply* reply);
 };
 
 #endif // APIACCESS_H

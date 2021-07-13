@@ -359,6 +359,11 @@ void MainWindow::FetchAllMaterialIcons()
 	api->deleteLater();
 }
 
+void MainWindow::BuildRecipeCatalog()
+{
+    ApiAccess api;
+    api.QueryForRecipesAPI();
+}
 
 
 

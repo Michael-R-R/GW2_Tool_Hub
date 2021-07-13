@@ -883,6 +883,11 @@ QPushButton:pressed
     <string>Search Recipe</string>
    </property>
   </action>
+  <action name="actionBuildRecipeCatalog">
+   <property name="text">
+    <string>Build RecipeCatalog</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

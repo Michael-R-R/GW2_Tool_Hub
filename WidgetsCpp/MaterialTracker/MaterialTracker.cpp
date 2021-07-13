@@ -5,7 +5,7 @@ MaterialTracker::MaterialTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MaterialTracker), saveAndLoad(new SaveAndLoad),
     materialTabs(), tabName(),
-    resultName(), resultCount(),
+    vResultName(), vResultCount(),
     searchedRecipe(), recipeList(), wordCompleter(nullptr)
 {
     // Setup
@@ -80,26 +80,83 @@ QVector<QString> MaterialTracker::GetAllTabNames()
 
 void MaterialTracker::SearchRecipe()
 {
-    QInputDialog *dialog = new QInputDialog(this);
-    dialog->setWindowTitle("Search Recipe");
-    dialog->setLabelText("Recipe Name");
-    dialog->setTextValue("");
-    QLineEdit *lineEdit = dialog->findChild<QLineEdit*>();
-    lineEdit->setCompleter(wordCompleter);
-    dialog->exec();
-
-    searchedRecipe = dialog->textValue();
-    RecursiveSearchRecipe(searchedRecipe);
-    for (int i = 0; i < resultName.size(); i++)
+    // Throw an error if there are no active tabs
+    if (materialTabs.size() <= 0)
     {
-        QString name = resultName[i];
-        int count = resultCount[i];
+        error.NonModalErrorMessage(this, "Error", "No Active Tabs");
+        return;
+    }
+
+    UpdateStatusBar("Searching recipes...");
+
+    // Ask the user for the recipe they wish to search for
+    QInputDialog* dialogName = new QInputDialog(this);
+    dialogName->setWindowTitle("Search Recipe");
+    dialogName->setLabelText("Recipe Name");
+    dialogName->setTextValue("");
+    dialogName->setCancelButtonText("Cancel");
+
+    // Find the line edit in order to attach a word completer to it
+    QLineEdit *lineEdit = dialogName->findChild<QLineEdit*>();
+    lineEdit->setCompleter(wordCompleter);
+
+    // Find the 'ok' button in order to find out if the user hits
+    // 'ok' or 'cancel'
+    bool isOk = false;
+    QPushButton* okButton = dialogName->findChild<QPushButton*>();
+    connect(okButton, &QPushButton::clicked, [this, &isOk] { isOk = true; });
+
+    // Show the dialog box
+    dialogName->exec();
+    searchedRecipe = dialogName->textValue();
+
+    // Clean up
+    delete lineEdit;
+    delete okButton;
+
+    // Return if empty recipe search or user hit cancel
+    if (searchedRecipe.isEmpty() || !isOk) 
+    { 
+        UpdateStatusBar("Searching Cancelled"); 
+        return;
+    }
+
+    // Ask how many of that recipe they wish to make
+    QInputDialog* dialogAmount = new QInputDialog(this);
+    dialogAmount->setWindowTitle("Recipe Amount");
+    dialogAmount->setLabelText("Amount");
+    dialogAmount->setTextValue("1");
+    dialogAmount->exec();
+    int recipeAmount = dialogAmount->textValue().toInt();
+
+    // Retrieve all materials needed to make the 
+    // searched recipe
+    for (int i = 0; i < recipeAmount; i++)
+    {
+        RecursiveSearchRecipe(searchedRecipe);
+    }
+    
+    // Loop through the vector of all the materials needed
+    // and add them to the current tab
+    for (int i = 0; i < vResultName.size(); i++)
+    {
+        UpdateStatusBar("Adding required materials", true);
+
+        QString name = vResultName[i];
+        int count = vResultCount[i];
         materialTabs[ui->materialsTabWidget->currentIndex()]->AddMaterialByCountAndName(count, name);
     }
-    resultName.clear();
-    resultCount.clear();
+    vResultName.clear();
+    vResultCount.clear();
+
+    UpdateStatusBar("Recipe Added");
 }
 
+// Takes a recipe name and retrieves the ingredients needed to make it.
+// Checks if the ingredient is another recipe, if so
+// recursivly search for the ingredients to that recipe and
+// add each material to vResultName and vResultCount. 
+// Will keep recursivly searching if it finds recipes and not raw materials.
 void MaterialTracker::RecursiveSearchRecipe(QString recipeName)
 {
     QApplication::processEvents();
@@ -111,9 +168,12 @@ void MaterialTracker::RecursiveSearchRecipe(QString recipeName)
 
     // Check if ingredient names are a recipe
     bool isRecipeValid = false;
-    foreach (QString item, ingredientNames)
+    foreach(QString item, ingredientNames)
     {
-        // Check if there are any recipes that need further processing
+        UpdateStatusBar("Searching for ingredients", true);
+
+        // Check if there are any recipes that need further processing,
+        // if so, call this function with the recipe name
         isRecipeValid = dataInterface.CheckForValidRecipe(item);
         if (isRecipeValid)
         {
@@ -127,6 +187,7 @@ void MaterialTracker::RecursiveSearchRecipe(QString recipeName)
                 RecursiveSearchRecipe(tempName);
             }
         }
+        // Add the materials to the master vectors
         else
         {
             QString tempName = item;
@@ -134,15 +195,16 @@ void MaterialTracker::RecursiveSearchRecipe(QString recipeName)
             int tempCount = ingredientCounts[index].toInt();
 
             // Check if the material is already in the result vector
-            if (resultName.contains(tempName))
+            // if so, add the count amount to the existing material
+            if (vResultName.contains(tempName))
             {
-                int index = resultName.indexOf(tempName);
-                resultCount[index] += tempCount;
+                int index = vResultName.indexOf(tempName);
+                vResultCount[index] += tempCount;
             }
             else
             {
-                resultName.append(tempName);
-                resultCount.append(tempCount);
+                vResultName.append(tempName);
+                vResultCount.append(tempCount);
             }
         }
     }
@@ -248,7 +310,7 @@ void MaterialTracker::ImportExcelSheet()
 // to file
 void MaterialTracker::SaveFile()
 {
-    ui->fileStatusLabel->setText("Saving File...");
+    UpdateStatusBar("Saving File...");
 
     // GET AMT OF TABS
     int tabAmt = materialTabs.size();
@@ -288,7 +350,7 @@ void MaterialTracker::SaveFile()
 
 void MaterialTracker::SaveAsFile()
 {
-    ui->fileStatusLabel->setText("Saving As File...");
+    UpdateStatusBar("Saving As File...");
 
     // GET AMT OF TABS
     int tabAmt = materialTabs.size();
@@ -320,7 +382,7 @@ void MaterialTracker::SaveAsFile()
     // Pass all the gathered data to the save function
     // to be written out to file
     int successResult = saveAndLoad->SaveAsTrackedMaterials(this, tabAmt, vTabNames, vAmtOfMatInTab,
-                                                       vNamesInTab, vCurrentAmtsInTab, vGoalAmtsInTab);
+                                                            vNamesInTab, vCurrentAmtsInTab, vGoalAmtsInTab);
     // Updates the status label
     // -1 = unsuccesful, 0 = cancelled, 1 = successful
     CheckSaveFileStatus(successResult);
@@ -331,7 +393,7 @@ void MaterialTracker::SaveAsFile()
 // to file
 void MaterialTracker::OpenFile()
 {
-    ui->fileStatusLabel->setText("Loading File...");
+    UpdateStatusBar("Loading File...");
 
     // Loads in the file and retrieves the returned
     // QByteArray data and then adds that data
@@ -343,7 +405,7 @@ void MaterialTracker::OpenFile()
     // Check if there isn't anything to load
     if(inFile == "invalid")
     {
-        ui->fileStatusLabel->setText("Loading Canceled");
+        UpdateStatusBar("Loading Canceled");
         return;
     }
 
@@ -361,7 +423,7 @@ void MaterialTracker::OpenFile()
         // Process other events while loading files
         // and update status bar to show user the files are loading
         QCoreApplication::processEvents();
-        ChangeLoadingFileStatusLabel();
+        UpdateStatusBar("Loading File", true);
 
         // READ ONE LINE AT A TIME
         QString line = fileResult.readLine();
@@ -459,7 +521,7 @@ void MaterialTracker::OpenFile()
                        vNamesInTab, vCurrentAmtsInTab,
                        vGoalAmtsInTab);
 
-    ui->fileStatusLabel->setText("Loading Complete");
+    UpdateStatusBar("Loading Complete");
 }
 
 /*************************************************************************
@@ -572,12 +634,11 @@ void MaterialTracker::UpdateMaterials()
     for(auto tab : materialTabs)
     {
         tab->UpdateAllMaterials();
-        // Show that we are waiting for the
-        // API reply
-        ChangeMaterialUpdatingStatusLabel();
+        // Show that we are waiting for the API reply
+        UpdateStatusBar("Updating Materials", true);
     }
 
-    ui->fileStatusLabel->setText(QString("Materials Updated"));
+    UpdateStatusBar("Materials Updated");
 }
 
 // Function to keep track of all the tabs and their 
@@ -1008,9 +1069,8 @@ void MaterialTracker::CreateTabsFromFile(int tabAmt,
 
     for(int i = 0; i < tabAmt; i++)
     {
-        // Process other events while loading files
-        // and update status bar to show user the files are loading
-        ChangeLoadingFileStatusLabel();
+        // Update status bar to show user the files are loading
+        UpdateStatusBar("Loading File", true);
 
         // Create the corresponding data
         CreateTabDataTable(tabNames[i]);
@@ -1048,51 +1108,33 @@ void MaterialTracker::CheckSaveFileStatus(int result)
     }
 }
 
-// Changes the status label while loading in file
-void MaterialTracker::ChangeLoadingFileStatusLabel()
+void MaterialTracker::UpdateStatusBar(QString text, bool isLooping)
 {
     // Keep track of the amount of dots to add to the status label
-    static int numOfDots = 1;
-    switch(numOfDots)
+    if (isLooping)
     {
-    case 1:
-        ui->fileStatusLabel->setText(QString("Loading File."));
-        numOfDots++;
-        break;
+        static int numOfDots = 1;
+        switch (numOfDots)
+        {
+        case 1:
+            ui->fileStatusLabel->setText(text + ".");
+            numOfDots++;
+            break;
 
-    case 2:
-        ui->fileStatusLabel->setText(QString("Loading File.."));
-        numOfDots++;
-        break;
+        case 2:
+            ui->fileStatusLabel->setText(text + "..");
+            numOfDots++;
+            break;
 
-    case 3:
-        ui->fileStatusLabel->setText(QString("Loading File..."));
-        numOfDots = 1;
-        break;
+        case 3:
+            ui->fileStatusLabel->setText(text + "...");
+            numOfDots = 1;
+            break;
+        }
     }
-}
-
-// Changes the status label while updating materials
-void MaterialTracker::ChangeMaterialUpdatingStatusLabel()
-{
-    // Keep track of the amount of dots to add to the status label
-    static int numOfDots = 1;
-    switch(numOfDots)
+    else
     {
-    case 1:
-        ui->fileStatusLabel->setText(QString("Updating Materials."));
-        numOfDots++;
-        break;
-
-    case 2:
-        ui->fileStatusLabel->setText(QString("Updating Materials.."));
-        numOfDots++;
-        break;
-
-    case 3:
-        ui->fileStatusLabel->setText(QString("Updating Materials..."));
-        numOfDots = 1;
-        break;
+        ui->fileStatusLabel->setText(text);
     }
 }
 

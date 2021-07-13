@@ -102,6 +102,7 @@ private slots:
 
 	// --- Developer Functions ---
     void FetchAllMaterialIcons();
+    void BuildRecipeCatalog();
 
 };
 #endif // MAINWINDOW_H

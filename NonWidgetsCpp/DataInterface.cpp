@@ -418,7 +418,6 @@ void DataInterface::UpdateAccountMaterialsFromAPI(const QVector<QString>& id,
 
     // Close connection after finish
     userDatabase.removeDatabase("MaterialsUpdateCurrentAmount");
-    qDebug() << "Current amount updated";
 }
 
 // Updates the current amount in the database for the
@@ -508,12 +507,12 @@ int DataInterface::FetchCurrentMaterialAmount(QString materialName, QString tabN
 
     // Fetch the material amount from MaterialsPlayer with the material id
     userDatabase = CreateDatabase("MaterialsCurrentAmount", "user.db", userDatabase);
-    QSqlQuery query2(userDatabase);
-    query2.prepare("SELECT count FROM " + tabName + " WHERE id = ?");
-    query2.bindValue(0, materialID);
-    query2.exec();
-    query2.next();
-    int result = query2.value(0).toInt();
+    QSqlQuery query(userDatabase);
+    query.prepare("SELECT count FROM " + tabName + " WHERE id = ?");
+    query.bindValue(0, materialID);
+    query.exec();
+    query.next();
+    int result = query.value(0).toInt();
     userDatabase.removeDatabase("MaterialsCurrentAmount");
 
     return result;
@@ -533,12 +532,12 @@ int DataInterface::FetchGoalMaterialAmount(QString materialName, QString tabName
 
     // Fetch the material amount
     userDatabase = CreateDatabase("MaterialsGoalAmount", "user.db", userDatabase);
-    QSqlQuery query2(userDatabase);
-    query2.prepare("SELECT goal FROM " + tabName + " WHERE id = ?");
-    query2.bindValue(0, materialID);
-    query2.exec();
-    query2.next();
-    int result = query2.value(0).toInt();
+    QSqlQuery query(userDatabase);
+    query.prepare("SELECT goal FROM " + tabName + " WHERE id = ?");
+    query.bindValue(0, materialID);
+    query.exec();
+    query.next();
+    int result = query.value(0).toInt();
     userDatabase.removeDatabase("MaterialsGoalAmount");
 
     return result;
@@ -558,12 +557,12 @@ double DataInterface::FetchPercentComplete(QString materialName, QString tabName
 
     // Fetch the material amount
     userDatabase = CreateDatabase("MaterialsPercentComplete", "user.db", userDatabase);
-    QSqlQuery query2(userDatabase);
-    query2.prepare("SELECT percentComplete FROM " + tabName + " WHERE id = ?");
-    query2.bindValue(0, materialID);
-    query2.exec();
-    query2.next();
-    double result = query2.value(0).toDouble();
+    QSqlQuery query(userDatabase);
+    query.prepare("SELECT percentComplete FROM " + tabName + " WHERE id = ?");
+    query.bindValue(0, materialID);
+    query.exec();
+    query.next();
+    double result = query.value(0).toDouble();
     userDatabase.removeDatabase("MaterialsPercentComplete");
 
     return result;
@@ -598,6 +597,33 @@ QByteArray DataInterface::FetchMaterialIcon(QString materialName, QString tabNam
  *                          RECIPE CATALOG                               *
  *************************************************************************/
 
+void DataInterface::UpdateRecipeCatalogTable(QString recipeID, QString itemID,
+                                             QString ingredName, QString count)
+{
+    userDatabase = CreateDatabase("UpdateRecipeCatalogTable", "user.db", userDatabase);
+
+    QSqlQuery queryItemID(userDatabase);
+    queryItemID.prepare("UPDATE RecipesCatalog SET ingredientsID =:itemID WHERE id =:recipeID");
+    queryItemID.bindValue(":itemID", itemID);
+    queryItemID.bindValue(":recipeID", recipeID);
+    queryItemID.exec();
+
+    QSqlQuery queryIngredName(userDatabase);
+    queryIngredName.prepare("UPDATE RecipesCatalog SET ingredientsName =:ingredName WHERE id =:recipeID");
+    queryIngredName.bindValue(":ingredName", ingredName);
+    queryIngredName.bindValue(":recipeID", recipeID);
+    queryIngredName.exec();
+
+    QSqlQuery queryCount(userDatabase);
+    queryCount.prepare("UPDATE RecipesCatalog SET ingredientAmountRequired =:count WHERE id =:recipeID");
+    queryCount.bindValue(":count", count);
+    queryCount.bindValue(":recipeID", recipeID);
+    queryCount.exec();
+
+    userDatabase.removeDatabase("UpdateRecipeCatalogTable");
+}
+
+
 // Retrieves all the ingredient's IDs for the requested recipe
 // Returns: vector of all the IDs
 QVector<QString> DataInterface::FetchIngredientsID(QString recipeName)
@@ -617,17 +643,12 @@ QVector<QString> DataInterface::FetchIngredientsID(QString recipeName)
     // and adds the edited ID to a vector in case there
     // are multiple ingredients
     QVector<QString> AllIngredientsID;
-    int newLineIndex = 0;
-    while(result.contains("\n"))
+    QTextStream text(&result);
+    while (!text.atEnd())
     {
-        QString id;
-        newLineIndex = result.indexOf("\n");
-        for(int i = 0; i < newLineIndex; i++)
-        {
-            id += result[i];
-        }
-        AllIngredientsID.append(id);
-        result.remove(0, newLineIndex + 1);
+        QString line = text.readLine();
+
+        AllIngredientsID.append(line);
     }
 
     return AllIngredientsID;
@@ -648,21 +669,13 @@ QVector<QString> DataInterface::FetchIngredientsNames(QString recipeName)
 
     userDatabase.removeDatabase("FetchingIngredientsNames");
 
-    // Removes the new line from the fetch result
-    // and adds the edited name to a vector in case there
-    // are multiple ingredients
     QVector<QString> AllIngredientNames;
-    int newLineIndex = 0;
-    while(result.contains("\n"))
+    QTextStream text(&result);
+    while(!text.atEnd())
     {
-        QString name;
-        newLineIndex = result.indexOf("\n");
-        for(int i = 0; i < newLineIndex; i++)
-        {
-            name += result[i];
-        }
-        AllIngredientNames.append(name);
-        result.remove(0, newLineIndex + 1);
+        QString line = text.readLine();
+        
+        AllIngredientNames.append(line);
     }
 
     return AllIngredientNames;
@@ -681,21 +694,13 @@ QVector<QString> DataInterface::FetchIngredientsCount(QString recipeName)
 
     userDatabase.removeDatabase("FetchIngredientCounts");
 
-    // Removes the new line from the fetch result
-    // and adds the edited count to a vector in case there
-    // are multiple ingredients
     QVector<QString> allIngredientCounts;
-    int newLineIndex = 0;
-    while (result.contains("\n"))
+    QTextStream text(&result);
+    while (!text.atEnd())
     {
-        QString count;
-        newLineIndex = result.indexOf("\n");
-        for (int i = 0; i < newLineIndex; i++)
-        {
-            count += result[i];
-        }
-        allIngredientCounts.append(count);
-        result.remove(0, newLineIndex + 1);
+        QString line = text.readLine();
+
+        allIngredientCounts.append(line);
     }
 
     return allIngredientCounts;
@@ -741,6 +746,29 @@ QVector<QString> DataInterface::FetchAllRecipeNames()
     userDatabase.removeDatabase("AllRecipeNames");
 
     return recipeNames;
+}
+
+QVector<QString> DataInterface::FetchAllRecipeIDs()
+{
+    userDatabase = CreateDatabase("FetchAllRecipeIDs", "user.db", userDatabase);
+
+    QVector<QString> vAllRecipeNames;
+
+    QSqlQuery query(userDatabase);
+    query.prepare("SELECT id FROM RecipesCatalog WHERE rowid > ?");
+    query.bindValue(0, 0);
+    query.exec();
+    while (query.next())
+    {
+        QCoreApplication::processEvents();
+
+        QString result = query.value(0).toString();
+        vAllRecipeNames.append(result);
+    }
+
+    userDatabase.removeDatabase("FetchAllRecipeIDs");
+
+    return vAllRecipeNames;
 }
 
 bool DataInterface::CheckForValidRecipe(QString recipeName)

@@ -4,14 +4,14 @@ ApiAccess::ApiAccess() :
     vMasterID(), vMasterCount(), vAccountNames(),
     vInvID(), vInvCount(), vBankID(), vBankCount(),
     dataInterface(new DataInterface),
-    managerAccountMaterials(new QNetworkAccessManager)
+    manager(new QNetworkAccessManager)
 {
 
 }
 
 ApiAccess::~ApiAccess()
 {
-    delete managerAccountMaterials;
+    delete manager;
     delete dataInterface;
 }
 
@@ -28,7 +28,7 @@ void ApiAccess::QueryForMaterialsAPI(MaterialTracker* materialTracker)
         // Fetch the users API key from the database for authentication
         QUrl url("https://api.guildwars2.com/v2/account/materials?access_token=" + dataInterface->FetchApiKey());
         QNetworkRequest request(url);
-        QNetworkReply *storageReply = managerAccountMaterials->get(request);
+        QNetworkReply *storageReply = manager->get(request);
 
         // Loop until we get the reply back
         // Ensures the application doesn't freeze while waiting
@@ -44,7 +44,7 @@ void ApiAccess::QueryForMaterialsAPI(MaterialTracker* materialTracker)
     {
         QUrl url("https://api.guildwars2.com/v2/characters?access_token=" + dataInterface->FetchApiKey());
         QNetworkRequest request(url);
-        QNetworkReply *namesReply = managerAccountMaterials->get(request);
+        QNetworkReply *namesReply = manager->get(request);
 
         // Loop until we get the reply back
         // Ensures the application doesn't freeze while waiting
@@ -62,7 +62,7 @@ void ApiAccess::QueryForMaterialsAPI(MaterialTracker* materialTracker)
         {
             QUrl url("https://api.guildwars2.com/v2/characters/" + name + "/inventory?access_token=" + dataInterface->FetchApiKey());
             QNetworkRequest request(url);
-            QNetworkReply *invReply = managerAccountMaterials->get(request);
+            QNetworkReply *invReply = manager->get(request);
 
             // Loop until we get the reply back
             // Ensures the application doesn't freeze while waiting
@@ -79,7 +79,7 @@ void ApiAccess::QueryForMaterialsAPI(MaterialTracker* materialTracker)
     {
         QUrl url("https://api.guildwars2.com/v2/account/bank?access_token=" + dataInterface->FetchApiKey());
         QNetworkRequest request(url);
-        QNetworkReply *bankReply = managerAccountMaterials->get(request);
+        QNetworkReply *bankReply = manager->get(request);
 
         // Loop until we get the reply back
         // Ensures the application doesn't freeze while waiting
@@ -331,9 +331,7 @@ void ApiAccess::GetBankApiReply(QNetworkReply* reply, MaterialTracker* materialT
 	// API answer
 	QString answer = reply->readAll();
 
-	// Parse the reply and add the information to the database
-	// ID is used to match against the database to update the correct
-	// material
+	// Parse the reply
 	QString count;
 	QString id;
 	QTextStream text(&answer);
@@ -382,7 +380,7 @@ QString ApiAccess::QueryForMaterialIconURL(QString id)
 {
 	QUrl url("https://api.guildwars2.com/v2/items/" + id);
 	QNetworkRequest request(url);
-	QNetworkReply* urlReply = managerAccountMaterials->get(request);
+	QNetworkReply* urlReply = manager->get(request);
 
 	// Loop until we get the reply back
 	// Ensures the application doesn't freeze while waiting
@@ -441,6 +439,7 @@ QString ApiAccess::GetMaterialIconUrlReply(QNetworkReply* reply)
 	return url;
 }
 
+
 // Delays the program for a given amount of seconds
 // Used to stall queries to the API network so that
 // the server doesn't respond with an error
@@ -453,6 +452,7 @@ void ApiAccess::delaySeconds(int secToWait)
     while( QTime::currentTime() < dieTime )
     {
         QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
+		qDebug() << "Delaying by seconds";
     }
 }
 
@@ -473,6 +473,160 @@ void ApiAccess::delayMilliSeconds(int msecToWait)
     }
 }
 
+QString ApiAccess::CombineParsedStrings(QVector<QString> strings)
+{
+	QString result;
 
+	for (int i = 0; i < strings.size(); i++)
+	{
+		// Don't add newline to the end
+		if (i + 1 == strings.size())
+		{
+			result += strings[i];
 
+			return result;
+		}
 
+		result += (strings[i] + "\n");
+	}
+
+	return result;
+}
+
+/*************************************************************************
+ *                        DEVELOPER FUNCTIONS                            *
+ *************************************************************************/
+
+void ApiAccess::QueryForRecipesAPI()
+{
+	QVector<QString> vAllRecipeIDs = dataInterface->FetchAllRecipeIDs();
+
+	for (int i = 0; i < vAllRecipeIDs.size(); i++)
+	{
+		QUrl url("https://api.guildwars2.com/v2/recipes/" + vAllRecipeIDs[i]);
+		QNetworkRequest request(url);
+		QNetworkReply* urlReply = manager->get(request);
+
+		// Loop until we get the reply back
+		// Ensures the application doesn't freeze while waiting
+		QEventLoop loop;
+		connect(urlReply, SIGNAL(finished()), &loop, SLOT(quit()));
+		loop.exec();
+
+		// Process the reply and parse the item_id and count info
+		GetRecipesApiReply(urlReply);
+
+		// Query for the ingredient name
+		for (QString id : vRecipeItemID)
+		{
+			QueryForItemIdAPI(id);
+		}
+
+		// Add the parsed data to the database
+		QString recipeIDs = CombineParsedStrings(vRecipeItemID);
+		QString ingredientNames = CombineParsedStrings(vItemName);
+		QString recipeCounts = CombineParsedStrings(vRecipeCount);
+		
+		dataInterface->UpdateRecipeCatalogTable(vAllRecipeIDs[i], recipeIDs, ingredientNames, recipeCounts);
+
+		// Clear all vectors
+		vRecipeItemID.clear();
+		vRecipeCount.clear();
+		vItemName.clear();
+
+		qDebug() << "rowid: " << i;
+	}
+}
+
+void ApiAccess::GetRecipesApiReply(QNetworkReply* reply)
+{
+	// Error getting reply from query
+	if (reply->error())
+	{
+		qDebug() << reply->errorString();
+		delaySeconds(60);
+		return;
+	}
+
+	// API answer
+	QString answer = reply->readAll();
+
+	// Parse the reply
+	QString itemID;
+	QString count;
+	QTextStream text(&answer);
+	while (!text.atEnd())
+	{
+		QString line = text.readLine();
+
+		// Parse the material id
+		if (line.contains("\"item_id\":"))
+		{
+			for (int i = line.indexOf(":") + 2; i < line.size() - 1; i++)
+			{
+				itemID += line[i];
+			}
+			vRecipeItemID.append(itemID);
+			itemID.clear();
+		}
+		// Parse the material count
+		if (line.contains("\"count\":"))
+		{
+			for (int i = line.indexOf(":") + 2; i < line.size(); i++)
+			{
+				count += line[i];
+			}
+			vRecipeCount.append(count);
+			count.clear();
+		}
+	}
+}
+
+void ApiAccess::QueryForItemIdAPI(QString id)
+{
+	QUrl url("https://api.guildwars2.com/v2/items/" + id);
+	QNetworkRequest request(url);
+	QNetworkReply* urlReply = manager->get(request);
+
+	// Loop until we get the reply back
+	// Ensures the application doesn't freeze while waiting
+	QEventLoop loop;
+	connect(urlReply, SIGNAL(finished()), &loop, SLOT(quit()));
+	loop.exec();
+
+	// Process the reply and parse the name
+	GetItemIdApiReply(urlReply);
+}
+
+void ApiAccess::GetItemIdApiReply(QNetworkReply* reply)
+{
+	// Error getting reply from query
+	if (reply->error())
+	{
+		qDebug() << reply->errorString();
+		delaySeconds(60);
+		return;
+	}
+
+	// API answer
+	QString answer = reply->readAll();
+
+	// Parse the reply
+	QString itemName;
+	QTextStream text(&answer);
+	while (!text.atEnd())
+	{
+		QString line = text.readLine();
+
+		// Parse the item name
+		if (line.contains("\"name\":"))
+		{
+			for (int i = line.indexOf(":") + 3; i < line.size() - 2; i++)
+			{
+				itemName += line[i];
+			}
+			vItemName.append(itemName);
+			return;
+		}
+	}
+}
