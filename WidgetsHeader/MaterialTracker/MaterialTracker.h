@@ -77,7 +77,7 @@ private:
     SaveAndLoad* saveAndLoad;
 
     // --- Data Structures ---
-    QVector<MaterialStatusBar*> materialTabs;
+    QVector<MaterialStatusBar*> vMaterialTabs;
 
     // --- Variables ---
     QString tabName;

@@ -4,7 +4,7 @@
 MaterialTracker::MaterialTracker(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MaterialTracker), saveAndLoad(new SaveAndLoad),
-    materialTabs(), tabName(),
+    vMaterialTabs(), tabName(),
     vRecipeNames(), vRecipeCounts(),
     searchedRecipe(), recipeList(), wordCompleter(nullptr)
 {
@@ -36,7 +36,7 @@ MaterialTracker::~MaterialTracker()
 	delete ui;
     delete saveAndLoad;
 	DeleteAllTabDataTables();
-	foreach(auto x, materialTabs) { delete x; }
+	foreach(auto x, vMaterialTabs) { delete x; }
     delete wordCompleter;
 }
 
@@ -70,7 +70,7 @@ void MaterialTracker::ChangeWaitingForApiReplyStatusLabel()
 QVector<QString> MaterialTracker::GetAllTabNames()
 {
     QVector<QString> vTabNames;
-    for (auto material : materialTabs)
+    for (auto material : vMaterialTabs)
     {
         vTabNames.append(material->GetTabName());
     }
@@ -81,7 +81,7 @@ QVector<QString> MaterialTracker::GetAllTabNames()
 void MaterialTracker::SearchRecipe()
 {
     // Throw an error if there are no active tabs
-    if (materialTabs.size() <= 0)
+    if (vMaterialTabs.size() <= 0)
     {
         error.NonModalErrorMessage(this, "Error", "No Active Tabs");
         return;
@@ -144,7 +144,7 @@ void MaterialTracker::SearchRecipe()
 
         QString name = vRecipeNames[i];
         int count = vRecipeCounts[i];
-        materialTabs[ui->materialsTabWidget->currentIndex()]->AddMaterialByCountAndName(count, name);
+        vMaterialTabs[ui->materialsTabWidget->currentIndex()]->AddMaterialByCountAndName(count, name);
     }
     vRecipeNames.clear();
     vRecipeCounts.clear();
@@ -213,7 +213,7 @@ void MaterialTracker::RecursiveSearchRecipe(QString recipeName)
 void MaterialTracker::ImportExcelSheet()
 {
     // Throw an error if there are no active tabs
-    if (materialTabs.size() <= 0)
+    if (vMaterialTabs.size() <= 0)
     {
         error.NonModalErrorMessage(this, "Error", "No Active Tabs");
         return;
@@ -295,7 +295,7 @@ void MaterialTracker::ImportExcelSheet()
     int currentActiveTab = ui->materialsTabWidget->currentIndex();
     for (int i = 0; i < vMatCounts.size(); i++)
     {
-        materialTabs[currentActiveTab]->AddMaterialByCountAndName(vMatCounts[i], vMatNames[i]);
+        vMaterialTabs[currentActiveTab]->AddMaterialByCountAndName(vMatCounts[i], vMatNames[i]);
     }
 
     ui->fileStatusLabel->setText("Importing File Complete");
@@ -311,7 +311,7 @@ void MaterialTracker::ImportExcelSheet()
 void MaterialTracker::SaveFile()
 {
     // Throw an error if there are no active tabs
-    if (materialTabs.size() <= 0)
+    if (vMaterialTabs.size() <= 0)
     {
         error.NonModalErrorMessage(this, "Error", "No Active Tabs");
         return;
@@ -320,7 +320,7 @@ void MaterialTracker::SaveFile()
     UpdateStatusBar("Saving File...");
 
     // GET AMT OF TABS
-    int tabAmt = materialTabs.size();
+    int tabAmt = vMaterialTabs.size();
 
     // GET AND STORE THE ALL INFORMATION ABOUT EACH TAB
     QVector<QString> vTabNames;
@@ -328,7 +328,7 @@ void MaterialTracker::SaveFile()
     QVector<QVector<QString>> vNamesInTab;
     QVector<QVector<int>> vCurrentAmtsInTab;
     QVector<QVector<int>> vGoalAmtsInTab;
-    for(auto tab : materialTabs)
+    for(auto tab : vMaterialTabs)
     {
         // GET EACH TAB NAME
         vTabNames.append(tab->GetTabName());
@@ -358,7 +358,7 @@ void MaterialTracker::SaveFile()
 void MaterialTracker::SaveAsFile()
 {
     // Throw an error if there are no active tabs
-    if (materialTabs.size() <= 0)
+    if (vMaterialTabs.size() <= 0)
     {
         error.NonModalErrorMessage(this, "Error", "No Active Tabs");
         return;
@@ -367,7 +367,7 @@ void MaterialTracker::SaveAsFile()
     UpdateStatusBar("Saving As File...");
 
     // GET AMT OF TABS
-    int tabAmt = materialTabs.size();
+    int tabAmt = vMaterialTabs.size();
 
     // GET AND STORE THE ALL INFORMATION ABOUT EACH TAB
     QVector<QString> vTabNames;
@@ -375,7 +375,7 @@ void MaterialTracker::SaveAsFile()
     QVector<QVector<QString>> vNamesInTab;
     QVector<QVector<int>> vCurrentAmtsInTab;
     QVector<QVector<int>> vGoalAmtsInTab;
-    for (auto tab : materialTabs)
+    for (auto tab : vMaterialTabs)
     {
         // GET EACH TAB NAME
         vTabNames.append(tab->GetTabName());
@@ -569,7 +569,7 @@ void MaterialTracker::AddTab()
         // creates a new tab with the widget
         MaterialStatusBar* tab = new MaterialStatusBar;
         tab->SetTabName(name); // Set the tab name for that stores this widget
-        materialTabs.append(tab);
+        vMaterialTabs.append(tab);
         ui->materialsTabWidget->addTab(tab, name);
     }
 }
@@ -588,12 +588,12 @@ void MaterialTracker::RemoveTab(int index)
     // the tab bar from the UI and vector
     DeleteTabDataTable(ui->materialsTabWidget->tabText(index));
     ui->materialsTabWidget->removeTab(index);
-    materialTabs.remove(index);
+    vMaterialTabs.remove(index);
 
 	// If there are still active tabs, reset the sorting
 	// config for the current tab to resume the sorting button
 	// config
-	if (materialTabs.size() > 0)
+	if (vMaterialTabs.size() > 0)
 	{
 		SortingConfig(ui->materialsTabWidget->currentIndex());
 	}
@@ -618,7 +618,7 @@ void MaterialTracker::RenameTab(int index)
     else if(isOk && !name.isEmpty())
     {
         // Update the database with the new tab name
-        QString currentTabName = materialTabs[index]->GetTabName();
+        QString currentTabName = vMaterialTabs[index]->GetTabName();
         DataInterface* dataInterface = new DataInterface;
         dataInterface->UpdateTabDataTableName(currentTabName, name);
         delete dataInterface;
@@ -627,7 +627,7 @@ void MaterialTracker::RenameTab(int index)
         // update the materials in that tab for the new
         // tab name
         ui->materialsTabWidget->tabBar()->setTabText(index, name);
-        materialTabs[index]->UpdateTabName(name);
+        vMaterialTabs[index]->UpdateTabName(name);
     }
 }
 
@@ -636,7 +636,7 @@ void MaterialTracker::RenameTab(int index)
 void MaterialTracker::UpdateMaterials()
 {
 	// Throw an error if there are no active tabs
-	if (materialTabs.size() <= 0)
+	if (vMaterialTabs.size() <= 0)
 	{
 		error.NonModalErrorMessage(this, "Error", "No Active Tabs");
 		return;
@@ -648,7 +648,7 @@ void MaterialTracker::UpdateMaterials()
 
     // After retrieving the API data
     // update all the values for the ui
-    for(auto tab : materialTabs)
+    for(auto tab : vMaterialTabs)
     {
         tab->UpdateAllMaterials();
         // Show that we are waiting for the API reply
@@ -665,7 +665,7 @@ void MaterialTracker::SortingConfig(int index)
     ResetSortingButtons();
 
 	// Update the tab's sorting buttons to their remembered config
-	switch (materialTabs[index]->GetCurrentSortState())
+	switch (vMaterialTabs[index]->GetCurrentSortState())
 	{
 	case MaterialStatusBar::SortingState::CATEGORY_NONE:
 		// No filter
@@ -757,7 +757,7 @@ void MaterialTracker::SortingConfig(int index)
 void MaterialTracker::SortByCategory()
 {
     // Throw an error if there are no active tabs
-    if(materialTabs.size() <= 0)
+    if(vMaterialTabs.size() <= 0)
     {
         error.NonModalErrorMessage(this, "Error", "No Active Tabs");
         return;
@@ -768,40 +768,40 @@ void MaterialTracker::SortByCategory()
     // Retrieve the next sort state when the sorting button is pressed
     // Once retrieved run the sorting algorithm and set the current sort state
     // and the next sort state for when the button is pressed again
- 	switch (materialTabs[currentTab]->GetNextSortState())
+ 	switch (vMaterialTabs[currentTab]->GetNextSortState())
 	{
     case MaterialStatusBar::SortingState::CATEGORY_NONE:
 		// No filter
-		materialTabs[currentTab]->SortNoFilter();
+		vMaterialTabs[currentTab]->SortNoFilter();
 		ui->sortCategoryPushButton->setText("Sort Category");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CATEGORY_NONE);
-		materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CURRENT_ASCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CATEGORY_NONE);
+		vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CURRENT_ASCENDING);
 		break;
 
 	case MaterialStatusBar::SortingState::CATEGORY_ASCENDING:
 		// Lowest-Highest
-		materialTabs[currentTab]->SortLowToHighCategory();
+		vMaterialTabs[currentTab]->SortLowToHighCategory();
 		ui->sortCategoryPushButton->setText("Sort Category - Ascending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CATEGORY_ASCENDING);
-		materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CATEGORY_DESCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CATEGORY_ASCENDING);
+		vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CATEGORY_DESCENDING);
 		break;
 
 	case MaterialStatusBar::SortingState::CATEGORY_DESCENDING:
 		// Highest-Lowest
-		materialTabs[currentTab]->SortHighToLowCategory();
+		vMaterialTabs[currentTab]->SortHighToLowCategory();
 		ui->sortCategoryPushButton->setText("Sort Category - Descending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CATEGORY_DESCENDING);
-		materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CATEGORY_NONE);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CATEGORY_DESCENDING);
+		vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CATEGORY_NONE);
 		break;
 
         // Default when the button hasn't been pressed yet
     default:
 		// Lowest-Highest
         ResetSortingButtons();
-		materialTabs[currentTab]->SortLowToHighCategory();
+		vMaterialTabs[currentTab]->SortLowToHighCategory();
 		ui->sortCategoryPushButton->setText("Sort Category - Ascending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CATEGORY_ASCENDING);
-		materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CATEGORY_DESCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CATEGORY_ASCENDING);
+		vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CATEGORY_DESCENDING);
         break;
 	}
 }
@@ -811,7 +811,7 @@ void MaterialTracker::SortByCategory()
 void MaterialTracker::SortByName()
 {
     // Throw an error if there are no active tabs
-    if(materialTabs.size() <= 0)
+    if(vMaterialTabs.size() <= 0)
     {
         error.NonModalErrorMessage(this, "Error", "No Active Tabs");
         return;
@@ -822,39 +822,39 @@ void MaterialTracker::SortByName()
 	// Retrieve the next sort state when the sorting button is pressed
 	// Once retrieved run the sorting algorithm and set the current sort state
 	// and the next sort state for when the button is pressed again
-    switch(materialTabs[currentTab]->GetNextSortState())
+    switch(vMaterialTabs[currentTab]->GetNextSortState())
     {
     case MaterialStatusBar::SortingState::NAME_NONE:
         // No filter
-        materialTabs[currentTab]->SortNoFilter();
+        vMaterialTabs[currentTab]->SortNoFilter();
         ui->sortNamePushButton->setText("Sort Name");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::NAME_NONE);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::NAME_ASCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::NAME_NONE);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::NAME_ASCENDING);
         break;
 
     case MaterialStatusBar::SortingState::NAME_ASCENDING:
         // Lowest-Highest
-        materialTabs[currentTab]->SortLowToHighName();
+        vMaterialTabs[currentTab]->SortLowToHighName();
         ui->sortNamePushButton->setText("Sort Name - Ascending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::NAME_ASCENDING);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::NAME_DESCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::NAME_ASCENDING);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::NAME_DESCENDING);
         break;
 
     case MaterialStatusBar::SortingState::NAME_DESCENDING:
         // Highest-Lowest
-        materialTabs[currentTab]->SortHighToLowName();
+        vMaterialTabs[currentTab]->SortHighToLowName();
         ui->sortNamePushButton->setText("Sort Name - Descending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::NAME_DESCENDING);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::NAME_NONE);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::NAME_DESCENDING);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::NAME_NONE);
         break;
 
     default:
 		// Lowest-Highest
         ResetSortingButtons();
-		materialTabs[currentTab]->SortLowToHighName();
+		vMaterialTabs[currentTab]->SortLowToHighName();
 		ui->sortNamePushButton->setText("Sort Name - Ascending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::NAME_ASCENDING);
-		materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::NAME_DESCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::NAME_ASCENDING);
+		vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::NAME_DESCENDING);
         break;
     }
 }
@@ -864,7 +864,7 @@ void MaterialTracker::SortByName()
 void MaterialTracker::SortByCurrent()
 {
     // Throw an error if there are no active tabs
-    if(materialTabs.size() <= 0)
+    if(vMaterialTabs.size() <= 0)
     {
         error.NonModalErrorMessage(this, "Error", "No Active Tabs");
         return;
@@ -875,39 +875,39 @@ void MaterialTracker::SortByCurrent()
 	// Retrieve the next sort state when the sorting button is pressed
 	// Once retrieved run the sorting algorithm and set the current sort state
 	// and the next sort state for when the button is pressed again
-    switch(materialTabs[currentTab]->GetNextSortState())
+    switch(vMaterialTabs[currentTab]->GetNextSortState())
     {
     case MaterialStatusBar::SortingState::CURRENT_NONE:
         // No filter
-        materialTabs[currentTab]->SortNoFilter();
+        vMaterialTabs[currentTab]->SortNoFilter();
         ui->sortCurrentPushButton->setText("Sort Current");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CURRENT_NONE);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CURRENT_ASCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CURRENT_NONE);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CURRENT_ASCENDING);
         break;
 
     case MaterialStatusBar::SortingState::CURRENT_ASCENDING:
         // Lowest-Highest
-        materialTabs[currentTab]->SortLowToHighCurrent();
+        vMaterialTabs[currentTab]->SortLowToHighCurrent();
         ui->sortCurrentPushButton->setText("Sort Current - Ascending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CURRENT_ASCENDING);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CURRENT_DESCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CURRENT_ASCENDING);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CURRENT_DESCENDING);
         break;
 
     case MaterialStatusBar::SortingState::CURRENT_DESCENDING:
         // Highest-Lowest
-        materialTabs[currentTab]->SortHighToLowCurrent();
+        vMaterialTabs[currentTab]->SortHighToLowCurrent();
         ui->sortCurrentPushButton->setText("Sort Current - Descending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CURRENT_DESCENDING);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CURRENT_NONE);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CURRENT_DESCENDING);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CURRENT_NONE);
         break;
 
     default:
 		// Lowest-Highest
         ResetSortingButtons();
-		materialTabs[currentTab]->SortLowToHighCurrent();
+		vMaterialTabs[currentTab]->SortLowToHighCurrent();
 		ui->sortCurrentPushButton->setText("Sort Current - Ascending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CURRENT_ASCENDING);
-		materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CURRENT_DESCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::CURRENT_ASCENDING);
+		vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::CURRENT_DESCENDING);
         break;
     }
 }
@@ -917,7 +917,7 @@ void MaterialTracker::SortByCurrent()
 void MaterialTracker::SortByGoal()
 {
     // Throw an error if there are no active tabs
-    if(materialTabs.size() <= 0)
+    if(vMaterialTabs.size() <= 0)
     {
         error.NonModalErrorMessage(this, "Error", "No Active Tabs");
         return;
@@ -928,39 +928,39 @@ void MaterialTracker::SortByGoal()
 	// Retrieve the next sort state when the sorting button is pressed
 	// Once retrieved run the sorting algorithm and set the current sort state
 	// and the next sort state for when the button is pressed again
-    switch(materialTabs[currentTab]->GetNextSortState())
+    switch(vMaterialTabs[currentTab]->GetNextSortState())
     {
     case MaterialStatusBar::SortingState::GOAL_NONE:
         // No filter
-        materialTabs[currentTab]->SortNoFilter();
+        vMaterialTabs[currentTab]->SortNoFilter();
         ui->sortGoalPushButton->setText("Sort Goal");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::GOAL_NONE);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::GOAL_ASCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::GOAL_NONE);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::GOAL_ASCENDING);
         break;
 
     case MaterialStatusBar::SortingState::GOAL_ASCENDING:
         // Lowest-Highest
-        materialTabs[currentTab]->SortLowToHighGoal();
+        vMaterialTabs[currentTab]->SortLowToHighGoal();
         ui->sortGoalPushButton->setText("Sort Goal - Ascending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::GOAL_ASCENDING);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::GOAL_DESCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::GOAL_ASCENDING);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::GOAL_DESCENDING);
         break;
 
     case MaterialStatusBar::SortingState::GOAL_DESCENDING:
         // Highest-Lowest
-        materialTabs[currentTab]->SortHighToLowGoal();
+        vMaterialTabs[currentTab]->SortHighToLowGoal();
         ui->sortGoalPushButton->setText("Sort Goal - Descending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::GOAL_DESCENDING);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::GOAL_NONE);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::GOAL_DESCENDING);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::GOAL_NONE);
         break;
 
     default:
 		// Lowest-Highest
         ResetSortingButtons();
-		materialTabs[currentTab]->SortLowToHighGoal();
+		vMaterialTabs[currentTab]->SortLowToHighGoal();
 		ui->sortGoalPushButton->setText("Sort Goal - Ascending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::GOAL_ASCENDING);
-		materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::GOAL_DESCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::GOAL_ASCENDING);
+		vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::GOAL_DESCENDING);
 		break;
     }
 }
@@ -970,7 +970,7 @@ void MaterialTracker::SortByGoal()
 void MaterialTracker::SortByPercent()
 {
     // Throw an error if there are no active tabs
-    if(materialTabs.size() <= 0)
+    if(vMaterialTabs.size() <= 0)
     {
         error.NonModalErrorMessage(this, "Error", "No Active Tabs");
         return;
@@ -981,39 +981,39 @@ void MaterialTracker::SortByPercent()
 	// Retrieve the next sort state when the sorting button is pressed
 	// Once retrieved run the sorting algorithm and set the current sort state
 	// and the next sort state for when the button is pressed again
-    switch(materialTabs[currentTab]->GetNextSortState())
+    switch(vMaterialTabs[currentTab]->GetNextSortState())
     {
     case MaterialStatusBar::SortingState::PERCENT_NONE:
         // No filter
-        materialTabs[currentTab]->SortNoFilter();
+        vMaterialTabs[currentTab]->SortNoFilter();
         ui->sortPercentPushButton->setText("Sort Percent");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::PERCENT_NONE);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::PERCENT_ASCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::PERCENT_NONE);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::PERCENT_ASCENDING);
         break;
 
     case MaterialStatusBar::SortingState::PERCENT_ASCENDING:
         // Lowest-Highest Percentage
-        materialTabs[currentTab]->SortLowToHighPercent();
+        vMaterialTabs[currentTab]->SortLowToHighPercent();
         ui->sortPercentPushButton->setText("Sort Percent - Ascending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::PERCENT_ASCENDING);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::PERCENT_DESCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::PERCENT_ASCENDING);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::PERCENT_DESCENDING);
         break;
 
     case MaterialStatusBar::SortingState::PERCENT_DESCENDING:
         // Highest-Lowest Percentage
-        materialTabs[currentTab]->SortHighToLowPercent();
+        vMaterialTabs[currentTab]->SortHighToLowPercent();
         ui->sortPercentPushButton->setText("Sort Percent - Descending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::PERCENT_DESCENDING);
-        materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::PERCENT_NONE);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::PERCENT_DESCENDING);
+        vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::PERCENT_NONE);
         break;
 
     default:
 		// Lowest-Highest Percentage
         ResetSortingButtons();
-		materialTabs[currentTab]->SortLowToHighPercent();
+		vMaterialTabs[currentTab]->SortLowToHighPercent();
 		ui->sortPercentPushButton->setText("Sort Percent - Ascending");
-        materialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::PERCENT_ASCENDING);
-		materialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::PERCENT_DESCENDING);
+        vMaterialTabs[currentTab]->SetCurrentSortState(MaterialStatusBar::SortingState::PERCENT_ASCENDING);
+		vMaterialTabs[currentTab]->SetNextSortState(MaterialStatusBar::SortingState::PERCENT_DESCENDING);
 		break;
     }
 }
@@ -1082,7 +1082,7 @@ void MaterialTracker::CreateTabsFromFile(int tabAmt,
     ResetSortingButtons();
     // Clear the widget tab and vector tab
     ui->materialsTabWidget->clear();
-    materialTabs.clear();
+    vMaterialTabs.clear();
 
     for(int i = 0; i < tabAmt; i++)
     {
@@ -1099,7 +1099,7 @@ void MaterialTracker::CreateTabsFromFile(int tabAmt,
             material->AddMaterialFromSaveFile(amtOfMatsInTab[i], namesInTab[i],
                                               currentAmtsInTab[i], goalAmtsInTab[i]);
         }
-        materialTabs.append(material);
+        vMaterialTabs.append(material);
         ui->materialsTabWidget->addTab(material, tabNames[i]);
     }
 

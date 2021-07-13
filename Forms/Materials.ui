@@ -320,7 +320,7 @@ QSpinBox::down-button:pressed
            <enum>Qt::StrongFocus</enum>
           </property>
           <property name="maximum">
-           <number>9999</number>
+           <number>99999</number>
           </property>
          </widget>
         </item>
