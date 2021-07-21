@@ -4,7 +4,8 @@
 
 *OPEN SOURCE*
 
-Download Here (v1.2.5): <a href="https://www.dropbox.com/s/zscl0ivxhqh95kr/GW2ToolHub_Installer_1_2_2.zip?dl=1"> .zip Installer </a>
+Online-Installer no longer supported
+<br>Download Here (Offline-Installer: v1.2.5): <a href="https://www.dropbox.com/s/fknh7nvud73vuzp/GW2ToolHub_Installer_1_2_5.zip?dl=1"> .zip Installer </a>
 
 An application aimed at providing resourceful tools to complement the Guild Wars 2 gaming experience 
 
