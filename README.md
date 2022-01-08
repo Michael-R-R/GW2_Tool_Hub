@@ -1,5 +1,7 @@
 # GW2 Tool Hub
 
+(This is an older project of mine. Please be aware that there are some bad design decisions made and less than wanted code practices)
+
 *NOW AVAILABLE*
 
 *OPEN SOURCE*
